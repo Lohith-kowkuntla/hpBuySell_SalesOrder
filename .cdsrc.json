@@ -1,0 +1,16 @@
+{
+  "requires": {
+    "auth": {
+      "kind": "mocked",
+      "users": {
+        "admin": {
+          "roles": ["SalesOrderManage"]
+        },
+        "viewer": {
+          "roles": ["SalesOrderViewer"]
+        }
+      }
+    }
+  }
+}
+ 

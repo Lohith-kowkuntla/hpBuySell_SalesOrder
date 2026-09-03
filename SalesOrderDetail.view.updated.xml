@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+====================================================================================
+Confidential and Proprietary
+Copyright 2026, HP
+All Rights Reserved
+====================================================================================
+
+Application Name : Sales Order
+Module           : Sales Order Detail
+Namespace        : hpbuysell.otc.salesorder
+
+Important OData bindings used in this view:
+
+Header Entity:
+    SalesOrders
+
+Header Key:
+    hpSalesOrder
+
+Item Navigation:
+    items
+
+Item Entity:
+    SalesOrderItems
+
+Item Key:
+    salesOrder_hpSalesOrder
+    lineId
+
+IMPORTANT:
+    Use lineId, NOT lineID
+    Use hpPartNumber, NOT material
+    Use hpPartDescription, NOT materialDescription
+    Use quantity, NOT requestedQty
+    Use quantityUnit, NOT salesUnit
+    Use confirmedQuantity, NOT confirmedQty
+====================================================================================
+-->
+
+<mvc:View
+    controllerName="hpbuysell.otc.salesorder.ui.controller.SalesOrderDetail"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:table="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
+    xmlns:l="sap.ui.layout"
+    displayBlock="true"
+    height="100%">
+
+    <!-- ====================================================================== -->
+    <!-- DYNAMIC PAGE                                                          -->
+    <!-- ====================================================================== -->
+
+    <f:DynamicPage
+        id="salesOrderDetailPage"
+        fitContent="false"
+        headerExpanded="true"
+        toggleHeaderOnTitleClick="true"
+        showFooter="false"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0">
+
+        <!-- ================================================================== -->
+        <!-- TITLE                                                              -->
+        <!-- ================================================================== -->
+
+        <f:title>
+
+            <f:DynamicPageTitle
+                id="salesOrderDetailTitle">
+
+                <f:heading>
+
+                    <HBox
+                        id="salesOrderDetailHeadingBox"
+                        alignItems="Center">
+
+                        <Button
+                            id="salesOrderDetailNavBack"
+                            type="Transparent"
+                            icon="sap-icon://nav-back"
+                            tooltip="{i18n>back}"
+                            press=".onNavBackPress"
+                            class="sapUiTinyMarginEnd"/>
+
+                        <VBox
+                            id="salesOrderDetailTitleBox">
+
+                            <Title
+                                id="salesOrderDetailTitleText"
+                                text="{i18n>salesOrder}"
+                                level="H1"/>
+
+                            <HBox
+                                id="salesOrderDetailSubTitleBox"
+                                alignItems="Center">
+
+                                <Text
+                                    id="salesOrderDetailNumber"
+                                    text="{hpSalesOrder}"
+                                    class="sapUiTinyMarginEnd"/>
+
+                                <Text
+                                    id="salesOrderDetailCustomerShort"
+                                    text="{customerDescription}"/>
+
+                            </HBox>
+
+                        </VBox>
+
+                    </HBox>
+
+                </f:heading>
+
+                <f:actions>
+
+                    <Button
+                        id="salesOrderRefreshButton"
+                        type="Transparent"
+                        icon="sap-icon://refresh"
+                        tooltip="{i18n>refresh}"
+                        press=".onRefresh"/>
+
+                </f:actions>
+
+            </f:DynamicPageTitle>
+
+        </f:title>
+
+
+        <!-- ================================================================== -->
+        <!-- HEADER                                                             -->
+        <!-- ================================================================== -->
+
+        <f:header>
+
+            <f:DynamicPageHeader
+                id="salesOrderDetailHeader"
+                pinnable="true">
+
+                <VBox
+                    id="salesOrderHeaderContainer"
+                    class="sapUiSmallMarginBottom">
+
+                    <!-- ====================================================== -->
+                    <!-- MAIN HEADER FACTS                                       -->
+                    <!-- ====================================================== -->
+
+                    <FlexBox
+                        id="salesOrderHeaderFacts"
+                        wrap="Wrap"
+                        justifyContent="SpaceBetween"
+                        class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+
+                        <!-- CUSTOMER -->
+
+                        <VBox
+                            id="headerFactCustomer"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerCustomerLabel"
+                                text="{i18n>customer}"
+                                design="Bold"/>
+
+                            <Text
+                                id="headerCustomerDescription"
+                                text="{customerDescription}"
+                                wrapping="true"/>
+
+                            <Text
+                                id="headerCustomerCode"
+                                text="{customerCode}"
+                                wrapping="false"/>
+
+                        </VBox>
+
+
+                        <!-- SALES ORGANIZATION -->
+
+                        <VBox
+                            id="headerFactSalesOrganization"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerSalesOrganizationLabel"
+                                text="{i18n>salesOrganization}"
+                                design="Bold"/>
+
+                            <Text
+                                id="headerSalesOrganization"
+                                text="{hpSalesOrganization}"/>
+
+                            <Text
+                                id="headerPlant"
+                                text="{
+                                    path: 'hpPlant'
+                                }"/>
+
+                        </VBox>
+
+
+                        <!-- ORDER DATE -->
+
+                        <VBox
+                            id="headerFactOrderDate"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerOrderDateLabel"
+                                text="{i18n>orderDate}"
+                                design="Bold"/>
+
+                            <Text
+                                id="headerOrderDate"
+                                text="{soOrderDate}"/>
+
+                            <Text
+                                id="headerCustomerOrderDate"
+                                text="{customerOrderDate}"/>
+
+                        </VBox>
+
+
+                        <!-- STATUS -->
+
+                        <VBox
+                            id="headerFactStatus"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerStatusLabel"
+                                text="{i18n>salesOrderStatus}"
+                                design="Bold"/>
+
+                            <ObjectStatus
+                                id="headerStatus"
+                                text="{salesOrderStatus_code}"
+                                state="Information"/>
+
+                        </VBox>
+
+
+                        <!-- CUSTOMER ORDER -->
+
+                        <VBox
+                            id="headerFactCustomerOrder"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerCustomerOrderLabel"
+                                text="{i18n>customerOrder}"
+                                design="Bold"/>
+
+                            <Text
+                                id="headerCustomerOrder"
+                                text="{customerOrder}"/>
+
+                        </VBox>
+
+
+                        <!-- WBS -->
+
+                        <VBox
+                            id="headerFactWbs"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerWbsLabel"
+                                text="{i18n>wbsProject}"
+                                design="Bold"/>
+
+                            <Text
+                                id="headerWbs"
+                                text="{wbsProjectCode}"/>
+
+                            <Text
+                                id="headerWbsDescription"
+                                text="{wbsProjectCodeDescription}"
+                                wrapping="true"/>
+
+                        </VBox>
+
+
+                        <!-- ATTACHMENTS -->
+
+                        <VBox
+                            id="headerFactAttachments"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="headerAttachmentsLabel"
+                                text="{i18n>attachments}"
+                                design="Bold"/>
+
+                            <HBox
+                                id="headerAttachmentsBox"
+                                alignItems="Center">
+
+                                <core:Icon
+                                    id="headerAttachmentIcon"
+                                    src="sap-icon://attachment"
+                                    class="sapUiTinyMarginEnd"/>
+
+                                <Link
+                                    id="headerAttachmentLink"
+                                    text="{view>/attachmentCount}"
+                                    press=".onOpenAttachments"/>
+
+                            </HBox>
+
+                            <Text
+                                id="headerAttachmentHint"
+                                text="{i18n>confirmationPdfHeaderLevel}"
+                                wrapping="true"/>
+
+                        </VBox>
+
+                    </FlexBox>
+
+
+                    <!-- ====================================================== -->
+                    <!-- SECONDARY INFORMATION                                  -->
+                    <!-- ====================================================== -->
+
+                    <HBox
+                        id="salesOrderSecondaryFacts"
+                        wrap="Wrap"
+                        class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+
+                        <VBox
+                            id="secondaryDistributionChannel"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="distributionChannelLabel"
+                                text="{i18n>distributionChannel}"
+                                design="Bold"/>
+
+                            <Text
+                                id="distributionChannelValue"
+                                text="{businessModel}"/>
+
+                        </VBox>
+
+
+                        <VBox
+                            id="secondaryBusinessUnit"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="businessUnitLabel"
+                                text="{i18n>businessUnit}"
+                                design="Bold"/>
+
+                            <Text
+                                id="businessUnitValue"
+                                text="{businessUnit}"/>
+
+                        </VBox>
+
+
+                        <VBox
+                            id="secondaryBuyer"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="buyerLabel"
+                                text="{i18n>hpBuyer}"
+                                design="Bold"/>
+
+                            <Text
+                                id="buyerValue"
+                                text="{hpBuyerName}"/>
+
+                            <Text
+                                id="buyerCodeValue"
+                                text="{hpBuyerCode}"/>
+
+                        </VBox>
+
+
+                        <VBox
+                            id="secondaryShipTo"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="shipToLabel"
+                                text="{i18n>shipTo}"
+                                design="Bold"/>
+
+                            <Text
+                                id="shipToValue"
+                                text="{shipTo}"
+                                wrapping="true"/>
+
+                        </VBox>
+
+
+                        <VBox
+                            id="secondaryPaymentTerms"
+                            width="15rem"
+                            class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
+
+                            <Label
+                                id="paymentTermsLabel"
+                                text="{i18n>paymentTerms}"
+                                design="Bold"/>
+
+                            <Text
+                                id="paymentTermsValue"
+                                text="{paymentTerms}"
+                                wrapping="true"/>
+
+                        </VBox>
+
+                    </HBox>
+
+                </VBox>
+
+            </f:DynamicPageHeader>
+
+        </f:header>
+
+
+        <!-- ================================================================== -->
+        <!-- CONTENT                                                            -->
+        <!-- ================================================================== -->
+
+        <f:content>
+
+            <IconTabBar
+                id="salesOrderDetailIconTabBar"
+                class="soDetailTabs"
+                expanded="true"
+                expandable="false"
+                stretchContentHeight="true"
+                applyContentPadding="false"
+                headerMode="Standard"
+                selectedKey="{view>/selectedTab}"
+                select=".onTabSelect">
+
+                <items>
+
+                    <!-- ====================================================== -->
+                    <!-- OVERVIEW                                               -->
+                    <!-- ====================================================== -->
+
+                    <IconTabFilter
+                        id="tabOverview"
+                        key="overview"
+                        icon="sap-icon://hint"
+                        text="{i18n>overview}">
+
+                        <ScrollContainer
+                            id="overviewScrollContainer"
+                            height="100%"
+                            vertical="true"
+                            horizontal="false">
+
+                            <VBox
+                                id="overviewContainer"
+                                class="sapUiSmallMargin">
+
+                                <form:SimpleForm
+                                    id="overviewGeneralForm"
+                                    editable="false"
+                                    layout="ColumnLayout"
+                                    columnsM="1"
+                                    columnsL="2"
+                                    columnsXL="3">
+
+                                    <!-- ================================================== -->
+                                    <!-- GENERAL / HEADER ENTITY DATA — 3 COLUMNS        -->
+                                    <!-- ================================================== -->
+
+                                    <Label id="overviewSalesOrganizationLabel" text="{i18n>salesOrganization}"/>
+                                    <Text id="overviewSalesOrganization" text="{hpSalesOrganization}"/>
+
+                                    <Label id="overviewPlantLabel" text="{i18n>plant}"/>
+                                    <Text id="overviewPlant" text="{hpPlant}"/>
+
+                                    <Label id="overviewBusinessModelLabel" text="{i18n>businessModel}"/>
+                                    <Text id="overviewBusinessModel" text="{businessModel}"/>
+
+                                    <Label id="overviewBusinessUnitLabel" text="{i18n>businessUnit}"/>
+                                    <Text id="overviewBusinessUnit" text="{businessUnit}"/>
+
+                                    <Label id="overviewPaymentTermsLabel" text="{i18n>paymentTerms}"/>
+                                    <Text id="overviewPaymentTerms" text="{paymentTerms}" wrapping="true"/>
+
+                                    <Label id="overviewSalesOrderLabel" text="{i18n>salesOrder}"/>
+                                    <Text id="overviewSalesOrder" text="{hpSalesOrder}"/>
+
+                                    <Label id="overviewCustomerOrderLabel" text="{i18n>customerOrder}"/>
+                                    <Text id="overviewCustomerOrder" text="{customerOrder}"/>
+
+                                    <Label id="overviewOrderDateLabel" text="{i18n>orderDate}"/>
+                                    <Text id="overviewOrderDate" text="{soOrderDate}" wrapping="true"/>
+
+                                    <Label id="overviewCustomerOrderDateLabel" text="{i18n>customerOrderDate}"/>
+                                    <Text id="overviewCustomerOrderDate" text="{customerOrderDate}" wrapping="true"/>
+
+                                    <Label id="overviewCreatedByLabel" text="{i18n>createdBy}"/>
+                                    <Text id="overviewCreatedBy" text="{createdBy}"/>
+
+                                    <Label id="overviewCreatedOnLabel" text="{i18n>createdOn}"/>
+                                    <Text id="overviewCreatedOn" text="{createdAt}" wrapping="true"/>
+
+                                    <Label id="overviewModifiedByLabel" text="{i18n>lastUpdatedBy}"/>
+                                    <Text id="overviewModifiedBy" text="{modifiedBy}"/>
+
+                                    <Label id="overviewModifiedOnLabel" text="{i18n>lastUpdatedOn}"/>
+                                    <Text id="overviewModifiedOn" text="{modifiedAt}" wrapping="true"/>
+
+                                    <Label id="overviewCustomerCodeLabel" text="{i18n>customerCode}"/>
+                                    <Text id="overviewCustomerCode" text="{customerCode}"/>
+
+                                    <Label id="overviewCustomerLabel" text="{i18n>customer}"/>
+                                    <Text id="overviewCustomer" text="{customerDescription}" wrapping="true"/>
+
+                                    <Label id="overviewShipToLabel" text="{i18n>shipTo}"/>
+                                    <Text id="overviewShipTo" text="{shipTo}" wrapping="true"/>
+
+                                    <Label id="overviewBillToLabel" text="{i18n>billTo}"/>
+                                    <Text id="overviewBillTo" text="{billTo}" wrapping="true"/>
+
+                                    <Label id="overviewPayerLabel" text="{i18n>payer}"/>
+                                    <Text id="overviewPayer" text="{payer}" wrapping="true"/>
+
+                                    <Label id="overviewWbsLabel" text="{i18n>wbsProject}"/>
+                                    <Text id="overviewWbs" text="{wbsProjectCode}"/>
+
+                                    <Label id="overviewWbsDescriptionLabel" text="{i18n>wbsProjectDescription}"/>
+                                    <Text id="overviewWbsDescription" text="{wbsProjectCodeDescription}" wrapping="true"/>
+
+                                    <Label id="overviewDistributionChannelLabel" text="{i18n>distributionChannel}"/>
+                                    <Text id="overviewDistributionChannel" text="{businessModel}"/>
+
+                                    <Label id="overviewHpBuyerLabel" text="{i18n>hpBuyer}"/>
+                                    <Text id="overviewHpBuyer" text="{hpBuyerName}" wrapping="true"/>
+
+                                    <Label id="overviewHpBuyerCodeLabel" text="{i18n>hpBuyerCode}"/>
+                                    <Text id="overviewHpBuyerCode" text="{hpBuyerCode}"/>
+
+                                </form:SimpleForm>
+
+                                <Panel
+                                    id="overviewAttachmentsPanel"
+                                    headerText="{i18n>attachments}"
+                                    expandable="false"
+                                    class="sapUiMediumMarginTop">
+
+                                    <HBox
+                                        id="overviewAttachmentsBox"
+                                        alignItems="Center"
+                                        class="sapUiSmallMargin">
+
+                                        <core:Icon
+                                            id="overviewAttachmentIcon"
+                                            src="sap-icon://attachment"
+                                            class="sapUiTinyMarginEnd"/>
+
+                                        <Link
+                                            id="overviewAttachmentLink"
+                                            text="{view>/attachmentCount}"
+                                            tooltip="{i18n>openAttachments}"
+                                            press=".onOpenAttachments"/>
+
+                                    </HBox>
+
+                                </Panel>
+
+                            </VBox>
+
+                        </ScrollContainer>
+
+                    </IconTabFilter>
+
+
+                    <!-- ====================================================== -->
+                    <!-- ITEMS                                                   -->
+                    <!-- ====================================================== -->
+
+                    <IconTabFilter
+                        id="tabItems"
+                        key="items"
+                        icon="sap-icon://list"
+                        text="{i18n>items}"
+                        count="{view>/itemCount}">
+
+                        <VBox
+                            id="itemsContainer"
+                            height="100%"
+                            fitContainer="true">
+
+                            <!-- ITEM TOOLBAR -->
+
+                            <OverflowToolbar
+                                id="itemToolbar">
+
+                                <Title
+                                    id="itemTableTitle"
+                                    text="{view>/itemTitle}"
+                                    level="H3"/>
+
+                                <ToolbarSpacer
+                                    id="itemToolbarSpacer"/>
+
+
+                                <SearchField
+                                    id="itemSearchField"
+                                    width="15rem"
+                                    placeholder="{i18n>searchLineItemMaterial}"
+                                    search=".onItemSearch"/>
+
+
+                                <ToolbarSeparator
+                                    id="itemToolbarSeparator1"/>
+
+
+                                <Button
+                                    id="itemEditButton"
+                                    text="{i18n>edit}"
+                                    icon="sap-icon://edit"
+                                    type="Transparent"
+                                    enabled="{view>/itemsEditable}"
+                                    visible="{= !${view>/itemsEditMode} }"
+                                    press=".onEditItems"/>
+
+
+                                <Button
+                                    id="itemSaveButton"
+                                    text="{i18n>save}"
+                                    icon="sap-icon://save"
+                                    type="Emphasized"
+                                    visible="{view>/itemsEditMode}"
+                                    busy="{view>/actionBusy}"
+                                    press=".onSaveItems"/>
+
+
+                                <Button
+                                    id="itemCancelEditButton"
+                                    text="{i18n>cancel}"
+                                    icon="sap-icon://decline"
+                                    type="Transparent"
+                                    visible="{view>/itemsEditMode}"
+                                    press=".onCancelItemsEdit"/>
+
+
+                                <ToolbarSeparator
+                                    id="itemToolbarSeparator2"/>
+
+
+                                <Button
+                                    id="itemCancelLineButton"
+                                    text="{i18n>cancelLine}"
+                                    icon="sap-icon://sys-cancel"
+                                    type="Transparent"
+                                    enabled="{view>/itemsCancellable}"
+                                    visible="{= !${view>/itemsEditMode} }"
+                                    press=".onCancelLine"/>
+
+
+                                <Button
+                                    id="itemHistoryButton"
+                                    text="{i18n>history}"
+                                    icon="sap-icon://history"
+                                    type="Transparent"
+                                    enabled="{view>/itemsHistoryEnabled}"
+                                    press=".onItemHistory"/>
+
+
+                                <Button
+                                    id="itemRefreshButton"
+                                    icon="sap-icon://refresh"
+                                    type="Transparent"
+                                    tooltip="{i18n>refreshItems}"
+                                    press=".onRefresh"/>
+
+                            </OverflowToolbar>
+
+
+                            <!-- ================================================= -->
+                            <!-- ITEMS TABLE                                     -->
+                            <!-- ================================================= -->
+
+                            <table:Table
+                                id="itemTable"
+                                width="100%"
+                                class="soItemTable"
+                                selectionMode="MultiToggle"
+                                selectionBehavior="RowSelector"
+                                enableSelectAll="false"
+                                enableBusyIndicator="true"
+                                busy="{view>/actionBusy}"
+                                busyIndicatorDelay="0"
+                                rowSelectionChange=".onItemSelectionChange"
+                                rowsUpdated=".onItemsUpdateFinished"
+                                threshold="50"
+                                rows="{
+                                    path: 'items',
+                                    parameters: {
+                                        countMode: 'Inline'
+                                    },
+                                    sorter: {
+                                        path: 'lineId',
+                                        descending: false
+                                    }
+                                }">
+
+                                <table:layoutData>
+                                    <FlexItemData
+                                        id="itemTableFlexData"
+                                        growFactor="1"
+                                        baseSize="0%"/>
+                                </table:layoutData>
+
+
+                                <table:rowMode>
+                                    <rowmodes:Auto
+                                        id="itemRowMode"
+                                        minRowCount="5"
+                                        rowContentHeight="40"/>
+                                </table:rowMode>
+
+
+                                <!-- ================================================= -->
+                                <!-- LINE ID                                         -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnLineId"
+                                    width="8rem"
+                                    sortProperty="lineId"
+                                    filterProperty="lineId">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnLineIdLabel"
+                                            text="{i18n>lineItem}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Link
+                                            id="itemLineIdLink"
+                                            text="{lineId}"
+                                            press=".onItemPress"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- MATERIAL                                        -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnMaterial"
+                                    width="14rem"
+                                    sortProperty="hpPartNumber"
+                                    filterProperty="hpPartNumber">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnMaterialLabel"
+                                            text="{i18n>material}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemMaterial"
+                                            text="{hpPartNumber}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- MATERIAL DESCRIPTION                            -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnDescription"
+                                    width="20rem"
+                                    sortProperty="hpPartDescription"
+                                    filterProperty="hpPartDescription">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnDescriptionLabel"
+                                            text="{i18n>materialDescription}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemDescription"
+                                            text="{hpPartDescription}"
+                                            wrapping="true"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- CUSTOMER PART NUMBER                            -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnCustomerPart"
+                                    width="16rem"
+                                    sortProperty="customerPartNumber"
+                                    filterProperty="customerPartNumber">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnCustomerPartLabel"
+                                            text="{i18n>customerPartNumber}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemCustomerPart"
+                                            text="{customerPartNumber}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- REQUESTED QUANTITY                              -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnQuantity"
+                                    width="11rem"
+                                    hAlign="End"
+                                    sortProperty="quantity">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnQuantityLabel"
+                                            text="{i18n>requestedQty}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <ObjectNumber
+                                            id="itemQuantity"
+                                            number="{quantity}"
+                                            unit="{quantityUnit}"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- CONFIRMED QUANTITY                             -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnConfirmedQuantity"
+                                    width="11rem"
+                                    hAlign="End"
+                                    sortProperty="confirmedQuantity">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnConfirmedQuantityLabel"
+                                            text="{i18n>confirmedQty}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <ObjectNumber
+                                            id="itemConfirmedQuantity"
+                                            number="{confirmedQuantity}"
+                                            unit="{quantityUnit}"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- BALANCE QUANTITY                                -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnBalanceQuantity"
+                                    width="11rem"
+                                    hAlign="End"
+                                    sortProperty="balanceQuantity">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnBalanceQuantityLabel"
+                                            text="{i18n>balanceQty}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <ObjectNumber
+                                            id="itemBalanceQuantity"
+                                            number="{balanceQuantity}"
+                                            unit="{quantityUnit}"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- UOM                                              -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnUom"
+                                    width="7rem"
+                                    sortProperty="quantityUnit">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnUomLabel"
+                                            text="{i18n>uom}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemUom"
+                                            text="{quantityUnit}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- REQUESTED DELIVERY DATE                         -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnPlannedDate"
+                                    width="13rem"
+                                    sortProperty="plannedReceiptDate">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnPlannedDateLabel"
+                                            text="{i18n>requestedDeliveryDate}"
+                                            wrapping="true"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemPlannedDate"
+                                            text="{plannedReceiptDate}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- CONFIRMED RECEIPT DATE                         -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnConfirmedDate"
+                                    width="13rem"
+                                    sortProperty="confirmedReceiptDate">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnConfirmedDateLabel"
+                                            text="{i18n>confirmedReceiptDate}"
+                                            wrapping="true"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemConfirmedDate"
+                                            text="{confirmedReceiptDate}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- LINE STATUS                                      -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnLineStatus"
+                                    width="12rem"
+                                    sortProperty="lineStatus_code">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnLineStatusLabel"
+                                            text="{i18n>lineStatus}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <ObjectStatus
+                                            id="itemLineStatus"
+                                            text="{lineStatus_code}"
+                                            state="Information"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- CONFIRMED LINE                                   -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnConfirmedLine"
+                                    width="10rem">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnConfirmedLineLabel"
+                                            text="{i18n>confirmedLine}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Text
+                                            id="itemConfirmedLine"
+                                            text="{confirmedLineId}"
+                                            wrapping="false"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- SALES PRICE                                      -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnSalesPrice"
+                                    width="12rem"
+                                    hAlign="End"
+                                    sortProperty="salesPrice">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnSalesPriceLabel"
+                                            text="{i18n>salesPrice}"
+                                            wrapping="false"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Input
+                                            id="itemSalesPriceInput"
+                                            value="{salesPrice}"
+                                            description="{salesPriceCurrency}"
+                                            textAlign="End"
+                                            type="Number"
+                                            visible="{view>/itemsEditMode}"
+                                            liveChange=".onSalesPriceLiveChange"
+                                            width="100%"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+
+                                <!-- ================================================= -->
+                                <!-- ACTION                                          -->
+                                <!-- ================================================= -->
+
+                                <table:Column
+                                    id="itemColumnAction"
+                                    width="6rem"
+                                    hAlign="Center">
+
+                                    <table:label>
+
+                                        <Text
+                                            id="itemColumnActionLabel"
+                                            text="{i18n>action}"/>
+
+                                    </table:label>
+
+                                    <table:template>
+
+                                        <Button
+                                            id="itemActionButton"
+                                            icon="sap-icon://navigation-right-arrow"
+                                            type="Transparent"
+                                            tooltip="{i18n>openLineItem}"
+                                            press=".onItemPress"/>
+
+                                    </table:template>
+
+                                </table:Column>
+
+                            </table:Table>
+
+                        </VBox>
+
+                    </IconTabFilter>
+
+
+                    <!-- ====================================================== -->
+                    <!-- CHANGE HISTORY                                          -->
+                    <!-- ====================================================== -->
+
+                    <IconTabFilter
+                        id="tabChangeHistory"
+                        key="changeHistory"
+                        icon="sap-icon://history"
+                        text="{i18n>changeHistory}"
+                        count="{view>/changeCount}">
+
+                        <VBox
+                            id="changeHistoryContainer"
+                            height="100%"
+                            class="sapUiSmallMargin">
+
+                            <OverflowToolbar
+                                id="changeHistoryToolbar">
+
+                                <Title
+                                    id="changeHistoryTitle"
+                                    text="{view>/changeTitle}"
+                                    level="H3"/>
+
+                                <ToolbarSpacer
+                                    id="changeHistoryToolbarSpacer"/>
+
+                                <SearchField
+                                    id="changeSearchField"
+                                    width="15rem"
+                                    placeholder="{i18n>searchChangeHistory}"
+                                    search=".onChangeSearch"/>
+
+                                <Select
+                                    id="changeScopeFilter"
+                                    width="10rem"
+                                    selectedKey="ALL"
+                                    change=".onChangeScopeFilter">
+
+                                    <items>
+
+                                        <core:Item
+                                            id="changeScopeAll"
+                                            key="ALL"
+                                            text="{i18n>all}"/>
+
+                                        <core:Item
+                                            id="changeScopeHeader"
+                                            key="HEADER"
+                                            text="{i18n>header}"/>
+
+                                        <core:Item
+                                            id="changeScopeItem"
+                                            key="ITEM"
+                                            text="{i18n>item}"/>
+
+                                    </items>
+
+                                </Select>
+
+                            </OverflowToolbar>
+
+
+                            <!--
+                                The current metadata supplied for this service
+                                does not expose a "changes" navigation property.
+                                Therefore this table is intentionally not bound
+                                directly here. The controller can bind it if the
+                                change-tracking entity is exposed by the service.
+                            -->
+
+                            <VBox
+                                id="changeHistoryEmptyContainer"
+                                alignItems="Center"
+                                justifyContent="Center"
+                                height="15rem"
+                                class="sapUiLargeMarginTop">
+
+                                <core:Icon
+                                    id="changeHistoryEmptyIcon"
+                                    src="sap-icon://history"
+                                    size="3rem"
+                                    class="sapUiSmallMarginBottom"/>
+
+                                <Text
+                                    id="changeHistoryEmptyText"
+                                    text="{i18n>changeHistoryUnavailable}"
+                                    textAlign="Center"
+                                    wrapping="true"/>
+
+                            </VBox>
+
+                        </VBox>
+
+                    </IconTabFilter>
+
+
+                    <!-- ====================================================== -->
+                    <!-- ATTACHMENTS                                             -->
+                    <!-- ====================================================== -->
+
+                    <IconTabFilter
+                        id="tabAttachments"
+                        key="attachments"
+                        icon="sap-icon://attachment"
+                        text="{i18n>attachments}"
+                        count="{view>/attachmentCount}">
+
+                        <VBox
+                            id="attachmentsContainer"
+                            height="100%"
+                            class="sapUiSmallMargin">
+
+                            <OverflowToolbar
+                                id="attachmentToolbar">
+
+                                <Title
+                                    id="attachmentTitle"
+                                    text="{i18n>attachments}"
+                                    level="H3"/>
+
+                                <ToolbarSpacer
+                                    id="attachmentToolbarSpacer"/>
+
+                                <Button
+                                    id="attachmentRefreshButton"
+                                    icon="sap-icon://refresh"
+                                    type="Transparent"
+                                    tooltip="{i18n>refreshAttachments}"
+                                    press=".onRefresh"/>
+
+                            </OverflowToolbar>
+
+
+                            <Table
+                                id="attachmentTable"
+                                inset="false"
+                                growing="true"
+                                growingThreshold="20"
+                                noDataText="{i18n>noAttachmentsAvailable}"
+                                items="{
+                                    path: 'acknowledgements'
+                                }">
+
+                                <columns>
+
+                                    <Column
+                                        id="attachmentColumnFile">
+
+                                        <Text
+                                            id="attachmentColumnFileLabel"
+                                            text="{i18n>file}"/>
+
+                                    </Column>
+
+                                    <Column
+                                        id="attachmentColumnType">
+
+                                        <Text
+                                            id="attachmentColumnTypeLabel"
+                                            text="{i18n>type}"/>
+
+                                    </Column>
+
+                                    <Column
+                                        id="attachmentColumnVersion">
+
+                                        <Text
+                                            id="attachmentColumnVersionLabel"
+                                            text="{i18n>version}"/>
+
+                                    </Column>
+
+                                    <Column
+                                        id="attachmentColumnReceived">
+
+                                        <Text
+                                            id="attachmentColumnReceivedLabel"
+                                            text="{i18n>receivedAt}"/>
+
+                                    </Column>
+
+                                    <Column
+                                        id="attachmentColumnAction"
+                                        hAlign="Center">
+
+                                        <Text
+                                            id="attachmentColumnActionLabel"
+                                            text="{i18n>action}"/>
+
+                                    </Column>
+
+                                </columns>
+
+
+                                <items>
+
+                                    <ColumnListItem
+                                        id="attachmentListItem">
+
+                                        <cells>
+
+                                            <Text
+                                                id="attachmentFileName"
+                                                text="{fileName}"
+                                                wrapping="true"/>
+
+                                            <Text
+                                                id="attachmentMediaType"
+                                                text="{mediaType}"/>
+
+                                            <Text
+                                                id="attachmentVersion"
+                                                text="{version}"/>
+
+                                            <Text
+                                                id="attachmentReceivedAt"
+                                                text="{receivedAt}"/>
+
+                                            <Button
+                                                id="attachmentViewButton"
+                                                icon="sap-icon://show"
+                                                type="Transparent"
+                                                tooltip="{i18n>viewAttachment}"
+                                                press=".onViewAttachment"/>
+
+                                        </cells>
+
+                                    </ColumnListItem>
+
+                                </items>
+
+                            </Table>
+
+                        </VBox>
+
+                    </IconTabFilter>
+
+
+                    <!-- ====================================================== -->
+                    <!-- NOTES                                                   -->
+                    <!-- ====================================================== -->
+
+                    <IconTabFilter
+                        id="tabNotes"
+                        key="notes"
+                        icon="sap-icon://notes"
+                        text="{i18n>notes}">
+
+                        <ScrollContainer
+                            id="notesScrollContainer"
+                            height="100%"
+                            vertical="true"
+                            horizontal="false">
+
+                            <VBox
+                                id="notesContainer"
+                                class="sapUiSmallMargin">
+
+                                <Panel
+                                    id="customerNotesPanel"
+                                    headerText="{i18n>customerNotesToHp}"
+                                    expandable="false"
+                                    class="sapUiSmallMarginBottom">
+
+                                    <TextArea
+                                        id="customerNotesTextArea"
+                                        value="{customerNotesToHp}"
+                                        editable="false"
+                                        width="100%"
+                                        rows="6"/>
+
+                                </Panel>
+
+
+                                <Panel
+                                    id="hpNotesPanel"
+                                    headerText="{i18n>hpNotesToCustomer}"
+                                    expandable="false"
+                                    class="sapUiSmallMarginBottom">
+
+                                    <TextArea
+                                        id="hpNotesTextArea"
+                                        value="{hpNotesToCustomer}"
+                                        editable="false"
+                                        width="100%"
+                                        rows="6"/>
+
+                                </Panel>
+
+
+                                <Panel
+                                    id="notesAdditionalPanel"
+                                    headerText="{i18n>orderDetails}"
+                                    expandable="false">
+
+                                    <form:SimpleForm
+                                        id="notesAdditionalForm"
+                                        editable="false"
+                                        layout="ResponsiveGridLayout">
+
+                                        <Label
+                                            id="notesWbsLabel"
+                                            text="{i18n>wbsProjectCode}"/>
+
+                                        <Text
+                                            id="notesWbs"
+                                            text="{wbsProjectCode}"/>
+
+
+                                        <Label
+                                            id="notesWbsDescriptionLabel"
+                                            text="{i18n>wbsProjectDescription}"/>
+
+                                        <Text
+                                            id="notesWbsDescription"
+                                            text="{wbsProjectCodeDescription}"/>
+
+
+                                        <Label
+                                            id="notesContractNumberLabel"
+                                            text="{i18n>contractNumber}"/>
+
+                                        <Text
+                                            id="notesContractNumber"
+                                            text="{contractNumber}"/>
+
+
+                                        <Label
+                                            id="notesContractDateLabel"
+                                            text="{i18n>contractDate}"/>
+
+                                        <Text
+                                            id="notesContractDate"
+                                            text="{contractDate}"/>
+
+
+                                        <Label
+                                            id="notesLspAddressLabel"
+                                            text="{i18n>lspAddress}"/>
+
+                                        <Text
+                                            id="notesLspAddress"
+                                            text="{lspAddress}"
+                                            wrapping="true"/>
+
+                                    </form:SimpleForm>
+
+                                </Panel>
+
+                            </VBox>
+
+                        </ScrollContainer>
+
+                    </IconTabFilter>
+
+                </items>
+
+            </IconTabBar>
+
+        </f:content>
+
+    </f:DynamicPage>
+
+</mvc:View>

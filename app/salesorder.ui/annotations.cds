@@ -1,0 +1,1 @@
+using HpBuySellOtcSalesOrderService as service from '../../srv/hpbuysell-otc-salesorder-service';

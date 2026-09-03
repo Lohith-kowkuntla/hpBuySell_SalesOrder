@@ -1,0 +1,6 @@
+code,name,descr
+MANCUST,Manual Customer,Created manually by a customer user
+MANHP,Manual HP,Created manually by an HP user
+MUCUST,Mass Upload Customer,Created via customer mass upload
+MUHP,Mass Upload HP,Created via HP mass upload
+EDI,EDI,Received via EDI

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+====================================================================================
+Confidential and Proprietary
+Copyright 2026, HP
+All Rights Reserved
+====================================================================================
+
+Application Name : Sales Order
+Module           : Sales Order Detail - Cancel Line Reason Dialog
+Namespace        : hpbuysell.otc.salesorder
+
+Purpose:
+    Captures the mandatory Reason for Cancellation (FDS 3.9.2) before
+    cancelSalesOrderItem is invoked. Values come from the CancellationReasons
+    code list (ZG / ZH / ZI / ZJ) exposed by the service.
+
+Models used:
+    (default, unnamed) - main OData V2 model, backs the Select's items
+    cancelDialog        - local JSONModel, holds the current selection
+====================================================================================
+-->
+
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+
+    <Dialog
+        id="cancelLineReasonDialog"
+        title="{i18n>action.cancelLine}"
+        contentWidth="24rem">
+
+        <content>
+
+            <VBox
+                id="cancelLineReasonContent"
+                class="sapUiSmallMargin">
+
+                <Label
+                    id="cancelReasonLabel"
+                    text="{i18n>action.cancelLine.reason}"
+                    required="true"
+                    labelFor="cancelReasonSelect"
+                    class="sapUiTinyMarginBottom"/>
+
+                <Select
+                    id="cancelReasonSelect"
+                    width="100%"
+                    forceSelection="false"
+                    selectedKey="{cancelDialog>/selectedReason}"
+                    items="{
+                        path: '/CancellationReasons',
+                        sorter: {
+                            path: 'code'
+                        }
+                    }">
+
+                    <core:Item
+                        id="cancelReasonItem"
+                        key="{code}"
+                        text="{code} - {name}"/>
+
+                </Select>
+
+            </VBox>
+
+        </content>
+
+        <beginButton>
+
+            <Button
+                id="cancelReasonConfirmButton"
+                text="{i18n>ok}"
+                type="Emphasized"
+                press=".onConfirmCancelReason"/>
+
+        </beginButton>
+
+        <endButton>
+
+            <Button
+                id="cancelReasonCancelButton"
+                text="{i18n>cancel}"
+                press=".onCloseCancelReasonDialog"/>
+
+        </endButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

@@ -1,0 +1,1681 @@
+<!--
+    screen 2
+  ===================================================================================*
+   Confidential and Proprietary
+   Copyright 2026, HP
+   All Rights Reserved
+  ===================================================================================*
+   Application Name :    Sales Order
+   Module           :    Detail View
+   Namespace        :    hpbuysell.otc.salesorder
+   Description      :    SalesOrderDetail.view.xml
+  ===================================================================================*
+-->
+
+<mvc:View
+    controllerName="hpbuysell.otc.salesorder.ui.controller.SalesOrderDetail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:table="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
+    height="100%">
+
+    <f:DynamicPage
+        id="soDetailPage"
+        headerExpanded="true"
+        toggleHeaderOnTitleClick="true"
+        showFooter="false"
+        fitContent="true"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0">
+
+        <!-- ===================================================================== -->
+        <!-- TITLE                                                                 -->
+        <!-- ===================================================================== -->
+
+        <f:title>
+            <f:DynamicPageTitle id="soDetailTitle">
+
+                <f:heading>
+                    <HBox
+                        id="soHeadingBox"
+                        alignItems="Center"
+                        renderType="Bare">
+
+                        <Button
+                            id="soNavBack"
+                            type="Transparent"
+                            icon="sap-icon://nav-back"
+                            tooltip="{i18n>back}"
+                            class="sapUiTinyMarginEnd"
+                            press=".onNavBackPress" />
+
+                        <Title
+                            id="soHeading"
+                            text="{i18n>salesOrder} {hpSalesOrder}"
+                            level="H1"
+                            wrapping="true" />
+
+                    </HBox>
+                </f:heading>
+
+                <f:expandedContent>
+                    <Text
+                        id="soExpandedSubtitle"
+                        text="{parts: ['customerCode', 'customerDescription'], formatter: '.formatter.customerDisplay'}" />
+                </f:expandedContent>
+
+                <f:snappedContent>
+                    <Text
+                        id="soSnappedSubtitle"
+                        text="{parts: ['customerCode', 'customerDescription'], formatter: '.formatter.customerDisplay'}" />
+                </f:snappedContent>
+
+                <f:actions>
+
+                    <!--
+                        IMPORTANT:
+                        Use salesOrderStatus_code.
+                        Do not use salesOrderStatus.
+                    -->
+                    <!-- <ObjectStatus
+                        id="soHeaderStatus"
+                        text="{salesOrderStatus_code}"
+                        state="Information"
+                        icon="sap-icon://status-in-process" /> -->
+
+                </f:actions>
+
+            </f:DynamicPageTitle>
+        </f:title>
+
+
+        <!-- ===================================================================== -->
+        <!-- HEADER                                                                -->
+        <!-- ===================================================================== -->
+
+        <f:header>
+            <f:DynamicPageHeader
+                id="soDetailHeader"
+                pinnable="true">
+
+                <FlexBox
+                    id="soHeaderFacts"
+                    wrap="Wrap"
+                    fitContainer="true"
+                    renderType="Bare"
+                    justifyContent="SpaceBetween">
+
+                    <!-- Customer -->
+                    <VBox
+                id="soFactCustomer"
+                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                width="22%">
+
+                <Label
+                    id="soLblCustomer"
+                    text="{i18n>customer}"
+                    design="Bold" />
+
+                <Text
+                    id="soTxtCustomerName"
+                    text="{customerDescription}"
+                    wrapping="true" />
+
+                <Text
+                    id="soTxtCustomerCode"
+                    text="{customerCode}"
+                    wrapping="false" />
+
+            </VBox>
+
+              <!-- ========================================================= -->
+            <!-- 2. WBS-PROJECT CODE                                        -->
+            <!-- ========================================================= -->
+
+            <VBox
+                id="soFactWbs"
+                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                width="22%">
+
+                <Label
+                    id="soLblWbs"
+                    text="{i18n>wbsProjectCode}"
+                    design="Bold" />
+
+                <Text
+                    id="soTxtWbs"
+                    text="{wbsProjectCode}"
+                    wrapping="false" />
+
+                <Text
+                    id="soTxtWbsDesc"
+                    text="{wbsProjectCodeDescription}"
+                    wrapping="true" />
+
+            </VBox>
+
+
+            <!-- ========================================================= -->
+            <!-- 3. HP BUYER                                                -->
+            <!-- ========================================================= -->
+
+            <VBox
+                id="soFactBuyer"
+                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                width="22%">
+
+                <Label
+                    id="soLblBuyer"
+                    text="{i18n>hpBuyer}"
+                    design="Bold" />
+
+                <Text
+                    id="soTxtBuyerName"
+                    text="{hpBuyerName}"
+                    wrapping="true" />
+
+                <Text
+                    id="soTxtBuyerCode"
+                    text="{hpBuyerCode}"
+                    wrapping="false" />
+
+            </VBox>
+
+            <!-- ========================================================= -->
+            <!-- 4. SALES ORDER STATUS                                      -->
+            <!-- ========================================================= -->
+
+            <VBox
+                id="soFactStatus"
+                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                width="22%">
+
+                <Label
+                    id="soLblStatus"
+                    text="{i18n>salesOrderStatus}"
+                    design="Bold" />
+
+                <!-- status -->
+
+                <ObjectStatus
+                    id="soHeaderStatus"
+                    text="{salesOrderStatus_code}"
+                    state="Information"
+                    icon="sap-icon://status-in-process" />
+
+            </VBox>
+
+
+
+
+
+                </FlexBox>
+
+            </f:DynamicPageHeader>
+        </f:header>
+
+
+        <!-- ===================================================================== -->
+        <!-- CONTENT                                                               -->
+        <!-- ===================================================================== -->
+
+        <f:content>
+
+            <IconTabBar
+                id="soIconTabBar"
+                class="sapUiResponsiveContentPadding soDetailTabs"
+                expanded="true"
+                expandable="false"
+                stretchContentHeight="true"
+                applyContentPadding="false"
+                headerMode="Standard"
+                selectedKey="{view>/selectedTab}"
+                select=".onTabSelect">
+
+                <items>
+
+                    <!-- ========================================================= -->
+                    <!-- OVERVIEW                                                    -->
+                    <!-- ========================================================= -->
+
+                    <IconTabFilter
+                        id="soTabOverview"
+                        key="overview"
+                        icon="sap-icon://hint"
+                        text="{i18n>overview}">
+
+                        <ScrollContainer
+                            id="soOverviewScroll"
+                            height="100%"
+                            vertical="true"
+                            horizontal="false">
+
+                            <VBox
+                                id="soOverviewContent"
+                                class="sapUiSmallMargin">
+
+                                <form:SimpleForm
+                                    id="soFormGeneral"
+                                    title="{i18n>generalInformation}"
+                                    editable="false"
+                                    layout="ColumnLayout"
+                                    columnsM="2"
+                                    columnsL="3"
+                                    columnsXL="3">
+
+                                    <Label
+                                        id="soLblSoNumber"
+                                        text="{i18n>hpSalesOrder}" />
+
+                                    <Text
+                                        id="soValSoNumber"
+                                        text="{hpSalesOrder}" />
+
+
+                                    <Label
+                                        id="soLblCustomerOrder"
+                                        text="{i18n>customerOrder}" />
+
+                                    <Text
+                                        id="soValCustomerOrder"
+                                        text="{customerOrder}" />
+
+
+                                    <Label
+                                        id="soLblOrderDate"
+                                        text="{i18n>soOrderDate}" />
+
+                                    <Text
+                                        id="soValOrderDate"
+                                        text="{path: 'soOrderDate', formatter: '.formatter.date'}" />
+
+
+                                    <Label
+                                        id="soLblContractNumber"
+                                        text="{i18n>contractNumber}" />
+
+                                    <Text
+                                        id="soValContractNumber"
+                                        text="{contractNumber}" />
+
+
+                                    <Label
+                                        id="soLblBusinessModel"
+                                        text="{i18n>businessModel}" />
+
+                                    <Text
+                                        id="soValBusinessModel"
+                                        text="{businessModel}" />
+
+
+                                    <Label
+                                        id="soLblCompanyCode"
+                                        text="{i18n>hpCompanyCode}" />
+
+                                    <Text
+                                        id="soValCompanyCode"
+                                        text="{hpCompanyCode} - {hpCompanyDescription}" />
+
+
+                                    <Label
+                                        id="soLblShipTo"
+                                        text="{i18n>shipTo}" />
+
+                                    <Text
+                                        id="soValShipTo"
+                                        text="{shipToCode} - {shipToDescription}" />
+
+
+                                    <Label
+                                        id="soLblBillTo"
+                                        text="{i18n>billTo}" />
+
+                                    <Text
+                                        id="soValBillTo"
+                                        text="{billToCode} - {billToDescription}" />
+
+
+                                    <Label
+                                        id="soLblPayer"
+                                        text="{i18n>payer}" />
+
+                                    <Text
+                                        id="soValPayer"
+                                        text="{payerCode} - {payerDescription}" />
+
+
+                                    <Label
+                                        id="soLblSalesOrg"
+                                        text="{i18n>hpSalesOrganization}" />
+
+                                    <Text
+                                        id="soValSalesOrg"
+                                        text="{hpSalesOrganization}" />
+
+
+                                    <Label
+                                        id="soLblOrigin"
+                                        text="{i18n>salesOrderOrigin}" />
+
+                                    <Text
+                                        id="soValOrigin"
+                                        text="{salesOrderOrigin}" />
+
+
+                                    <Label
+                                        id="soLblPaymentTerms"
+                                        text="{i18n>paymentTerms}" />
+
+                                    <Text
+                                        id="soValPaymentTerms"
+                                        text="{paymentTerms} - {paymentTermsDescription}" />
+
+
+                                    <Label
+                                        id="soLblPlant"
+                                        text="{i18n>hpPlant}" />
+
+                                    <Text
+                                        id="soValPlant"
+                                        text="{hpPlant}" />
+
+
+                                    <Label
+                                        id="soLblSoType"
+                                        text="{i18n>salesOrderType}" />
+
+                                    <Text
+                                        id="soValSoType"
+                                        text="{salesOrderType}" />
+
+
+                                    <Label
+                                        id="soLblBlanket"
+                                        text="{i18n>blanketIndicator}" />
+
+                                    <Text
+                                        id="soValBlanket"
+                                        text="{path: 'blanketIndicator', formatter: '.formatter.yesNo'}" />
+
+
+                                    <Label
+                                        id="soLblCustNotes"
+                                        text="{i18n>customerNotesToHp}" />
+
+                                    <Text
+                                        id="soValCustNotes"
+                                        text="{customerNotesToHp}"
+                                        wrapping="true" />
+
+                                </form:SimpleForm>
+
+                            </VBox>
+
+                        </ScrollContainer>
+
+                    </IconTabFilter>
+
+
+                    <!-- ========================================================= -->
+                    <!-- ITEMS                                                       -->
+                    <!-- ========================================================= -->
+
+                    <IconTabFilter
+                        id="soTabItems"
+                        key="items"
+                        icon="sap-icon://list"
+                        text="{view>/itemTitle}"
+                        count="{view>/itemCount}">
+
+                        <VBox
+                            id="soItemTabBox"
+                            height="100%"
+                            fitContainer="true"
+                            renderType="Bare">
+
+                            <!-- Edit information -->
+                            <MessageStrip
+                                id="soItemEditHint"
+                                class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+                                type="Information"
+                                showIcon="true"
+                                visible="{view>/itemsEditMode}"
+                                text="{i18n>inlineEditHint}" />
+
+
+                            <!-- Cancel information -->
+                            <MessageStrip
+                                id="soItemCancelHint"
+                                class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+                                type="Warning"
+                                showIcon="true"
+                                visible="{view>/itemsCancelMode}"
+                                text="{i18n>inlineCancelHint}" />
+
+
+                            <table:Table
+                                id="soItemTable"
+                                class="soSubTable soGridTableFlex"
+                                selectionMode="MultiToggle"
+                                selectionBehavior="RowSelector"
+                                enableSelectAll="false"
+                                fixedColumnCount="1"
+                                enableColumnFreeze="true"
+                                enableBusyIndicator="true"
+                                busy="{view>/actionBusy}"
+                                busyIndicatorDelay="0"
+                                rowSelectionChange=".onItemSelectionChange"
+                                rowsUpdated=".onItemsUpdateFinished"
+                                rows="{
+                                    path: 'items',
+                                    parameters: {
+                                        countMode: 'Inline'
+                                    },
+                                    sorter: {
+                                        path: 'lineId',
+                                        descending: false
+                                    }
+                                }">
+
+                                <table:layoutData>
+                                    <FlexItemData
+                                        id="soItemTableFlexData"
+                                        growFactor="1"
+                                        baseSize="0%" />
+                                </table:layoutData>
+
+
+                                <table:rowMode>
+                                    <rowmodes:Auto
+                                        id="soItemRowMode"
+                                        minRowCount="5"
+                                        rowContentHeight="40" />
+                                </table:rowMode>
+
+
+                                <table:noData>
+
+                                    <IllustratedMessage
+                                        id="soItemNoData"
+                                        illustrationType="sapIllus-NoEntries"
+                                        title="{i18n>noDataItems}"
+                                        description="" />
+
+                                </table:noData>
+
+
+                                <!-- ================================================= -->
+                                <!-- ITEM TOOLBAR                                    -->
+                                <!-- ================================================= -->
+
+                                <table:extension>
+
+                                    <OverflowToolbar
+                                        id="soItemTableToolbar">
+
+                                        <Title
+                                            id="soItemTableTitle"
+                                            text="{view>/itemTitle}"
+                                            level="H3" />
+
+                                        <ToolbarSpacer
+                                            id="soItemTableSpacer" />
+
+
+                                        <!-- Search -->
+                                        <SearchField
+                                            id="soItemSearchField"
+                                            width="15rem"
+                                            placeholder="{i18n>phSearchItems}"
+                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} }"
+                                            search=".onItemSearch" />
+
+
+                                        <!-- Edit -->
+                                        <Button
+                                            id="soItemEditButton"
+                                            text="{i18n>edit}"
+                                            icon="sap-icon://edit"
+                                            type="Transparent"
+                                            tooltip="{i18n>editItemsTooltip}"
+                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} }"
+                                            enabled="{view>/itemsEditable}"
+                                            press=".onEditItems" />
+
+
+                                        <!-- Cancel Line -->
+                                        <Button
+                                            id="soItemCancelLineButton"
+                                            text="{i18n>cancelLine}"
+                                            icon="sap-icon://sys-cancel"
+                                            type="Transparent"
+                                            tooltip="{i18n>cancelItemsTooltip}"
+                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} }"
+                                            enabled="{view>/itemsCancellable}"
+                                            press=".onCancelItems" />
+
+
+                                        <!-- Save -->
+                                        <Button
+                                            id="soItemSaveButton"
+                                            text="{i18n>save}"
+                                            type="Emphasized"
+                                            visible="{view>/itemsEditMode}"
+                                            press=".onSaveItems" />
+
+
+                                        <!-- Confirm Cancellation -->
+                                        <Button
+                                            id="soItemConfirmCancelButton"
+                                            text="{i18n>confirmCancellation}"
+                                            type="Reject"
+                                            visible="{view>/itemsCancelMode}"
+                                            press=".onConfirmItemsCancel" />
+
+
+                                        <!-- History -->
+                                        <Button
+                                            id="soItemHistoryButton"
+                                            text="{i18n>actionViewHistory}"
+                                            icon="sap-icon://history"
+                                            type="Default"
+                                            tooltip="{i18n>historyItemsTooltip}"
+                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} }"
+                                            enabled="{view>/itemsHistoryEnabled}"
+                                            press=".onViewHistoryForSelection" />
+
+
+                                        <!-- Reset -->
+                                        <Button
+                                            id="soItemResetButton"
+                                            text="{i18n>reset}"
+                                            icon="sap-icon://reset"
+                                            type="Default"
+                                            tooltip="{i18n>resetItemsTooltip}"
+                                            visible="{= ${view>/itemsEditMode} || ${view>/itemsCancelMode} }"
+                                            press=".onCancelItemsEdit" />
+
+                                    </OverflowToolbar>
+
+                                </table:extension>
+
+
+                                <!-- ================================================= -->
+                                <!-- ITEM COLUMNS                                    -->
+                                <!-- ================================================= -->
+
+                                <table:columns>
+
+                                    <!-- ================================================= -->
+                                    <!-- Line ID                                        -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColLineId"
+                                        width="7rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="lineId">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColLineIdLbl"
+                                                text="{i18n>lineId}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <Link
+                                                id="soCellLineId"
+                                                text="{lineId}"
+                                                wrapping="false"
+                                                enabled="{parts: ['view>/itemsEditMode', 'view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                press=".onItemPress" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- HP Part Number                                  -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColMaterial"
+                                        width="12rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="hpPartNumber">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColMaterialLbl"
+                                                text="{i18n>hpPartNumber}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <Text
+                                                id="soCellMaterial"
+                                                text="{hpPartNumber}"
+                                                wrapping="false" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- HP Part Description                             -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColMaterialDesc"
+                                        width="18rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="hpPartDescription">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColMaterialDescLbl"
+                                                text="{i18n>hpPartDescription}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <Text
+                                                id="soCellMaterialDesc"
+                                                text="{hpPartDescription}"
+                                                wrapping="false" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- LINE STATUS                                     -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColStatus"
+                                        width="12rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="lineStatus_code">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColStatusLbl"
+                                                text="{i18n>lineStatus}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <!--
+                                                IMPORTANT:
+                                                Status is lineStatus_code.
+                                            -->
+                                            <ObjectStatus
+                                                id="soCellStatus"
+                                                text="{lineStatus_code}"
+                                                state="Information" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- CUSTOMER PART NUMBER                            -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColCustPart"
+                                        width="12rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="customerPartNumber">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColCustPartLbl"
+                                                text="{i18n>customerPartNumber}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <Text
+                                                id="soCellCustPart"
+                                                text="{customerPartNumber}"
+                                                wrapping="false" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- QUANTITY                                        -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColQty"
+                                        width="10rem"
+                                        hAlign="End"
+                                        autoResizable="true"
+                                        sortProperty="quantity">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColQtyLbl"
+                                                text="{i18n>quantity}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <ObjectNumber
+                                                id="soCellQty"
+                                                number="{path: 'quantity', formatter: '.formatter.quantity'}"
+                                                unit="{quantityUnit}" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- CONFIRMED QUANTITY                             -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColConfirmedQty"
+                                        width="10rem"
+                                        hAlign="End"
+                                        autoResizable="true"
+                                        sortProperty="confirmedQuantity">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColConfirmedQtyLbl"
+                                                text="{i18n>confirmedQuantity}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <ObjectNumber
+                                                id="soCellConfirmedQty"
+                                                number="{path: 'confirmedQuantity', formatter: '.formatter.quantity'}"
+                                                unit="{quantityUnit}" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- BALANCE QUANTITY                                -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColBalanceQty"
+                                        width="10rem"
+                                        hAlign="End"
+                                        autoResizable="true"
+                                        sortProperty="balanceQuantity">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColBalanceQtyLbl"
+                                                text="{i18n>balanceQuantity}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <ObjectNumber
+                                                id="soCellBalanceQty"
+                                                number="{path: 'balanceQuantity', formatter: '.formatter.quantity'}"
+                                                unit="{quantityUnit}" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- SALES PRICE                                     -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColPrice"
+                                        width="11rem"
+                                        hAlign="End"
+                                        autoResizable="true"
+                                        sortProperty="salesPrice">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColPriceLbl"
+                                                text="{i18n>salesPrice}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellPriceBox"
+                                                renderType="Bare"
+                                                justifyContent="End"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Read-only -->
+                                                <ObjectNumber
+                                                    id="soCellPrice"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    number="{path: 'salesPrice', formatter: '.formatter.amount'}"
+                                                    unit="{salesPriceCurrency}" />
+
+                                                <!-- Editable -->
+                                               <Input
+    id="soInpPrice"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+    value="{salesPrice}"
+    valueLiveUpdate="true"
+    description="{salesPriceCurrency}"
+    textAlign="End"
+    width="100%"
+    type="Number"
+    liveChange=".onSalesPriceLiveChange"
+    change=".onSalesPriceChange" />
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- SALES PRICE UNIT                                -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColPriceUnit"
+                                        width="9rem"
+                                        hAlign="End"
+                                        autoResizable="true"
+                                        sortProperty="salesPriceUnit">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColPriceUnitLbl"
+                                                text="{i18n>salesPriceUnit}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellPriceUnitBox"
+                                                renderType="Bare"
+                                                justifyContent="End"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Read-only -->
+                                                <Text
+                                                    id="soCellPriceUnit"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    text="{salesPriceUnit}" />
+
+                                                <!-- Editable -->
+                                               <Select
+    id="soSelPriceUnit"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+    width="100%"
+    forceSelection="false"
+    selectedKey="{salesPriceUnit}"
+    change=".onSalesPriceUnitChange">
+
+                                                    <items>
+
+                                                        <core:Item
+                                                            id="soPu1"
+                                                            key="1"
+                                                            text="1" />
+
+                                                        <core:Item
+                                                            id="soPu10"
+                                                            key="10"
+                                                            text="10" />
+
+                                                        <core:Item
+                                                            id="soPu100"
+                                                            key="100"
+                                                            text="100" />
+
+                                                        <core:Item
+                                                            id="soPu1000"
+                                                            key="1000"
+                                                            text="1000" />
+
+                                                        <core:Item
+                                                            id="soPu10000"
+                                                            key="10000"
+                                                            text="10000" />
+
+                                                    </items>
+
+                                                </Select>
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- SPECIAL DEAL FLAG                               -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColSpecialDeal"
+                                        width="11rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="specialDealFlag">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColSpecialDealLbl"
+                                                text="{i18n>specialDealFlag}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellSpecialDealBox"
+                                                renderType="Bare"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Read-only -->
+                                                <Text
+                                                    id="soCellSpecialDeal"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    text="{specialDealFlag}" />
+
+                                                <!-- Editable -->
+                                                <Select
+                                                    id="soSelSpecialDeal"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    width="100%"
+                                                    forceSelection="false"
+                                                    selectedKey="{specialDealFlag}"
+                                                    change=".onSpecialDealFlagChange">
+
+                                                    <items>
+
+                                                        <core:Item
+                                                            id="soSdY"
+                                                            key="Y"
+                                                            text="{i18n>yes}" />
+
+                                                        <core:Item
+                                                            id="soSdN"
+                                                            key="N"
+                                                            text="{i18n>no}" />
+
+                                                    </items>
+
+                                                </Select>
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- HP NOTES TO CUSTOMER - ITEM                     -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColHpNotes"
+                                        width="16rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="hpNotesToCustomer">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColHpNotesLbl"
+                                                text="{i18n>hpNotesToCustomerItem}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellHpNotesBox"
+                                                renderType="Bare"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Read-only -->
+                                                <Text
+                                                    id="soCellHpNotes"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    text="{hpNotesToCustomer}" />
+
+                                                <!-- Editable -->
+                                                <Input
+    id="soInpHpNotes"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+    value="{hpNotesToCustomer}"
+    valueLiveUpdate="true"
+    width="100%"
+    change=".onHpNotesChange" />
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- HP BACKLOG NOTES                                -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColBacklog"
+                                        width="16rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="hpBacklogNotes">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColBacklogLbl"
+                                                text="{i18n>hpBacklogNotes}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellBacklogBox"
+                                                renderType="Bare"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Read-only -->
+                                                <Text
+                                                    id="soCellBacklog"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    text="{hpBacklogNotes}" />
+
+                                                <!-- Editable -->
+                                               <Input
+    id="soInpBacklog"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+    value="{hpBacklogNotes}"
+    valueLiveUpdate="true"
+    width="100%"
+    change=".onBacklogNotesChange" />
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- REASON FOR CANCELLATION                         -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColReasonCancel"
+                                        width="16rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="reasonForCancellation">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColReasonCancelLbl"
+                                                text="{i18n>reasonForCancellation}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <HBox
+                                                id="soCellReasonCancelBox"
+                                                renderType="Bare"
+                                                alignItems="Center"
+                                                width="100%">
+
+                                                <!-- Normal read-only display -->
+                                                <Text
+                                                    id="soCellReasonCancel"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelReadOnly'}"
+                                                    text="{reasonForCancellation}" />
+
+                                                <!-- Cancel dropdown -->
+                                                <Select
+                                                    id="soSelReasonCancel"
+                                                    visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelVisible'}"
+                                                    width="100%"
+                                                    forceSelection="false"
+                                                    selectedKey="{reasonForCancellation}"
+                                                    tooltip="{i18n>reasonForCancellation}"
+                                                    items="{
+                                                        path: '/VH_CancellationReason',
+                                                        sorter: {
+                                                            path: 'code'
+                                                        }
+                                                    }">
+
+                                                    <core:ListItem
+                                                        id="soItmReasonCancel"
+                                                        key="{code}"
+                                                        text="{code} - {description}" />
+
+                                                </Select>
+
+                                            </HBox>
+
+                                        </table:template>
+
+                                    </table:Column>
+
+
+                                    <!-- ================================================= -->
+                                    <!-- SIMPLE CHANGE PROCESSING INDICATOR             -->
+                                    <!-- ================================================= -->
+
+                                    <table:Column
+                                        id="soColSimpleChangeInd"
+                                        width="9rem"
+                                        hAlign="Begin"
+                                        autoResizable="true"
+                                        sortProperty="simpleChangeProcessingIndicator">
+
+                                        <table:label>
+                                            <Text
+                                                id="soColSimpleChangeIndLbl"
+                                                text="{i18n>simpleChangeProcessingIndicator}"
+                                                wrapping="false" />
+                                        </table:label>
+
+                                        <table:template>
+
+                                            <ObjectStatus
+                                                id="soCellSimpleChangeInd"
+                                                text="{simpleChangeProcessingIndicator}"
+                                                state="{= ${simpleChangeProcessingIndicator} === 'X' ? 'Warning' : 'None' }" />
+
+                                        </table:template>
+
+                                    </table:Column>
+
+                                </table:columns>
+
+                            </table:Table>
+
+                        </VBox>
+
+                    </IconTabFilter>
+
+
+                    <!-- ========================================================= -->
+                    <!-- NOTES                                                       -->
+                    <!-- ========================================================= -->
+
+                    <IconTabFilter
+                        id="soTabNotes"
+                        key="notes"
+                        icon="sap-icon://notes"
+                        text="{i18n>notes}">
+
+                        <ScrollContainer
+                            id="soNotesScroll"
+                            height="100%"
+                            vertical="true"
+                            horizontal="false">
+
+                            <VBox
+                                id="soNotesContent"
+                                class="sapUiSmallMargin">
+
+
+
+                                
+                                <!-- HP Notes to Customer -->
+<Panel
+    id="soHpNotesPanel"
+    headerText="{i18n>hpNotesToCustomerHeader}"
+    expandable="false"
+    class="sapUiSmallMarginBottom">
+
+    <VBox width="100%">
+
+        <!-- Edit / Save button -->
+        <HBox
+            justifyContent="End"
+            width="100%"
+            class="sapUiTinyMarginBottom">
+
+            <Button
+                id="hpNotesEditButton"
+                icon="sap-icon://edit"
+                type="Transparent"
+                tooltip="Edit"
+                press=".onEditHpNotes"/>
+        </HBox>
+
+        <!-- Notes field -->
+        <TextArea
+            id="soHpNotesText"
+            value="{hpNotesToCustomer}"
+            editable="false"
+            width="100%"
+            rows="6"
+            growing="true"
+            growingMaxLines="8"/>
+
+    </VBox>
+
+</Panel>
+
+
+                                <!-- Customer Notes to HP -->
+                                <Panel
+                                    id="soCustomerNotesPanel"
+                                    headerText="{i18n>customerNotesToHp}"
+                                    expandable="false"
+                                    class="sapUiSmallMarginBottom">
+
+                                    <TextArea
+                                        id="soCustomerNotesText"
+                                        value="{customerNotesToHp}"
+                                        editable="false"
+                                        width="100%"
+                                        rows="6"
+                                        growing="true" />
+
+                                </Panel>
+
+                            </VBox>
+
+                        </ScrollContainer>
+
+                    </IconTabFilter>
+
+
+                    <!-- ========================================================= -->
+                    <!-- CHANGE HISTORY                                              -->
+                    <!-- ========================================================= -->
+
+                    <IconTabFilter
+                        id="soTabChangeHistory"
+                        key="changeHistory"
+                        icon="sap-icon://history"
+                        text="{view>/changeTitle}"
+                        count="{view>/changeCount}">
+
+                        <Table
+                            id="soChangeTable"
+                            class="soSubTable"
+                            inset="false"
+                            mode="None"
+                            growing="true"
+                            growingThreshold="25"
+                            growingScrollToLoad="true"
+                            sticky="ColumnHeaders,HeaderToolbar"
+                            updateFinished=".onChangesUpdateFinished"
+                            noDataText="{i18n>noDataChanges}"
+                            items="{
+                                path: 'changes',
+                                parameters: {
+                                    countMode: 'Inline'
+                                },
+                                filters: [
+                                    {
+                                        path: 'attribute',
+                                        operator: 'NE',
+                                        value1: 'items'
+                                    }
+                                ],
+                                sorter: {
+                                    path: 'createdAt',
+                                    descending: true
+                                }
+                            }">
+
+                            <headerToolbar>
+
+                                <OverflowToolbar
+                                    id="soChangeTableToolbar">
+
+                                    <Title
+                                        id="soChangeTableTitle"
+                                        text="{view>/changeTitle}"
+                                        level="H3" />
+
+                                    <ToolbarSpacer
+                                        id="soChangeTableSpacer" />
+
+                                    <SearchField
+                                        id="soChangeSearchField"
+                                        width="15rem"
+                                        placeholder="{i18n>phSearchChanges}"
+                                        search=".onChangeSearch" />
+
+                                    <Select
+                                        id="soChangeScopeFilter"
+                                        tooltip="{i18n>changeScope}"
+                                        change=".onChangeScopeFilter">
+
+                                        <items>
+
+                                            <core:Item
+                                                id="soChangeScopeAll"
+                                                key="ALL"
+                                                text="{i18n>changeScopeAll}" />
+
+                                            <core:Item
+                                                id="soChangeScopeHeader"
+                                                key="HEADER"
+                                                text="{i18n>changeScopeHeaderOnly}" />
+
+                                            <core:Item
+                                                id="soChangeScopeItem"
+                                                key="ITEM"
+                                                text="{i18n>changeScopeItemOnly}" />
+
+                                        </items>
+
+                                    </Select>
+
+                                </OverflowToolbar>
+
+                            </headerToolbar>
+
+
+                            <columns>
+
+                                <Column
+                                    id="soChangeColDate"
+                                    width="13rem">
+
+                                    <Text
+                                        id="soChangeTxtColDate"
+                                        text="{i18n>changedAt}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soChangeColUser"
+                                    width="10rem"
+                                    minScreenWidth="Tablet"
+                                    demandPopin="true">
+
+                                    <Text
+                                        id="soChangeTxtColUser"
+                                        text="{i18n>changedBy}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soChangeColObject"
+                                    width="13rem"
+                                    minScreenWidth="Tablet"
+                                    demandPopin="true">
+
+                                    <Text
+                                        id="soChangeTxtColObject"
+                                        text="{i18n>changedObject}" />
+
+                                </Column>
+
+
+                                <Column id="soChangeColField">
+
+                                    <Text
+                                        id="soChangeTxtColField"
+                                        text="{i18n>fieldLabel}" />
+
+                                </Column>
+
+
+                                <Column id="soChangeColOld">
+
+                                    <Text
+                                        id="soChangeTxtColOld"
+                                        text="{i18n>oldValue}" />
+
+                                </Column>
+
+
+                                <Column id="soChangeColNew">
+
+                                    <Text
+                                        id="soChangeTxtColNew"
+                                        text="{i18n>newValue}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soChangeColType"
+                                    width="9rem"
+                                    minScreenWidth="Desktop"
+                                    demandPopin="true">
+
+                                    <Text
+                                        id="soChangeTxtColType"
+                                        text="{i18n>changeType}" />
+
+                                </Column>
+
+                            </columns>
+
+
+                            <items>
+
+                                <ColumnListItem
+                                    id="soChangeRow">
+
+                                    <cells>
+
+                                        <Text
+                                            id="soChangeCellDate"
+                                            text="{path: 'createdAt', formatter: '.formatter.dateTime'}" />
+
+
+                                        <Text
+                                            id="soChangeCellUser"
+                                            text="{createdBy}" />
+
+
+                                        <ObjectIdentifier
+                                            id="soChangeCellObject"
+                                            title="{objectID}"
+                                            text="{path: 'entity', formatter: '.formatter.changeEntityText'}" />
+
+
+                                        <Text
+                                            id="soChangeCellField"
+                                            text="{attributeLabel}" />
+
+
+                                        <Text
+                                            id="soChangeCellOld"
+                                            text="{path: 'valueChangedFromLabel', formatter: '.formatter.changeValue'}" />
+
+
+                                        <ObjectIdentifier
+                                            id="soChangeCellNew"
+                                            title="{path: 'valueChangedToLabel', formatter: '.formatter.changeValue'}" />
+
+
+                                        <ObjectStatus
+                                            id="soChangeCellType"
+                                            text="{modificationLabel}"
+                                            state="{path: 'modification', formatter: '.formatter.modificationState'}"
+                                            icon="{path: 'modification', formatter: '.formatter.modificationIcon'}" />
+
+                                    </cells>
+
+                                </ColumnListItem>
+
+                            </items>
+
+                        </Table>
+
+                    </IconTabFilter>
+
+
+                    <!-- ========================================================= -->
+                    <!-- ATTACHMENTS                                                 -->
+                    <!-- ========================================================= -->
+
+                    <IconTabFilter
+                        id="soTabAttachments"
+                        key="attachments"
+                        icon="sap-icon://attachment"
+                        text="{i18n>attachments}"
+                        count="{view>/attachmentCount}">
+
+                        <Table
+                            id="soAttachmentTable"
+                            class="soSubTable"
+                            mode="None"
+                            noDataText="{i18n>noDataAttachments}"
+                            items="{
+                                path: 'attachments',
+                                sorter: {
+                                    path: 'version',
+                                    descending: true
+                                }
+                            }">
+
+                            <columns>
+
+                                <Column id="soAttColFile">
+
+                                    <Text
+                                        id="soAttTxtColFile"
+                                        text="{i18n>fileName}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soAttColVersion"
+                                    width="8rem">
+
+                                    <Text
+                                        id="soAttTxtColVersion"
+                                        text="{i18n>version}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soAttColDate"
+                                    width="12rem">
+
+                                    <Text
+                                        id="soAttTxtColDate"
+                                        text="{i18n>uploadedAt}" />
+
+                                </Column>
+
+
+                                <Column
+                                    id="soAttColAction"
+                                    width="6rem"
+                                    hAlign="End" />
+
+                            </columns>
+
+
+                            <items>
+
+                                <ColumnListItem
+                                    id="soAttRow">
+
+                                    <cells>
+
+                                        <Text
+                                            id="soAttCellFile"
+                                            text="{fileName}" />
+
+
+                                        <ObjectStatus
+                                            id="soAttCellVersion"
+                                            text="{= ${isLatest} ? ${i18n>latest} : String(${version}) }"
+                                            state="{= ${isLatest} ? 'Success' : 'None' }" />
+
+
+                                        <Text
+                                            id="soAttCellDate"
+                                            text="{path: 'uploadedAt', formatter: '.formatter.dateTime'}" />
+
+
+                                        <Button
+                                            id="soAttCellView"
+                                            icon="sap-icon://pdf-attachment"
+                                            type="Transparent"
+                                            tooltip="{i18n>viewAttachment}"
+                                            press=".onViewAttachment" />
+
+                                    </cells>
+
+                                </ColumnListItem>
+
+                            </items>
+
+                        </Table>
+
+                    </IconTabFilter>
+
+                </items>
+
+            </IconTabBar>
+
+        </f:content>
+
+    </f:DynamicPage>
+
+</mvc:View>
