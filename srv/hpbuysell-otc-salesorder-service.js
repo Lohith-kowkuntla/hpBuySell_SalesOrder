@@ -26,6 +26,8 @@ const EDITABLE_FIELDS = {
 
 const CANCELLED_LINE_STATUS_CODE = "CNCL"; // confirm against your LineStatuses data
 
+const { SELECT, UPDATE } = cds.ql;
+
 module.exports = cds.service.impl(async function (srv) {
 
 

@@ -808,7 +808,7 @@
                                             width="100%"
                                             forceSelection="false"
                                             items="{
-                                                path: '/VH_CancellationReason',
+                                                path: '/VH_ReasonForCancellation',
                                                 sorter: {
                                                     path: 'code'
                                                 }

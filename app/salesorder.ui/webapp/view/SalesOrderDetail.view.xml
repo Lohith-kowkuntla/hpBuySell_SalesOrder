@@ -1196,7 +1196,7 @@
                                                     selectedKey="{reasonForCancellation}"
                                                     tooltip="{i18n>reasonForCancellation}"
                                                     items="{
-                                                        path: '/VH_CancellationReason',
+                                                        path: '/VH_ReasonForCancellation',
                                                         sorter: {
                                                             path: 'code'
                                                         }
