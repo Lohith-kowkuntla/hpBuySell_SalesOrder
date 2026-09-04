@@ -105,80 +105,63 @@
                 <!-- HEADER TITLE                                                -->
                 <!-- ========================================================== -->
 
-                <uxap:headerTitle>
+              <uxap:headerTitle>
 
-                    <uxap:ObjectPageDynamicHeaderTitle
-                        id="itemHeaderTitle">
+    <uxap:ObjectPageDynamicHeaderTitle id="itemHeaderTitle">
 
-                        <uxap:heading>
+        <uxap:heading>
+            <Title
+                id="itemHeading"
+                text="{lineId} · {hpPartDescription}"
+                level="H1"
+                wrapping="true" />
+        </uxap:heading>
 
-                            <Title
-                                id="itemHeading"
-                                text="{lineId} - {hpPartDescription}"
-                                level="H1"
-                                wrapping="true" />
+        <uxap:snappedContent>
+            <l:HorizontalLayout id="itemSnappedLayout" allowWrapping="true">
+                <Text id="itemSnappedPartNumber" text="{hpPartNumber}" class="sapUiTinyMarginEnd" />
+            </l:HorizontalLayout>
+        </uxap:snappedContent>
 
-                        </uxap:heading>
+        <uxap:expandedContent>
+            <l:HorizontalLayout id="itemExpandedLayout" allowWrapping="true">
+                <Text id="itemExpandedSubtitle" text="{hpPartNumber}" class="sapUiTinyMarginEnd" />
+            </l:HorizontalLayout>
+        </uxap:expandedContent>
 
-                        <uxap:expandedContent>
+        <uxap:actions>
 
-                            <Text
-                                id="itemExpandedSubtitle"
-                                text="{hpPartNumber}" />
+            <Button
+                id="itemActionEdit"
+                text="{i18n>actionEdit}"
+                type="Emphasized"
+                icon="sap-icon://edit"
+                visible="{= ${view>/canUpdate} &amp;&amp; !${view>/mode} }"
+                enabled="{= !${view>/actionBusy} }"
+                press=".onUpdateLine" />
 
-                        </uxap:expandedContent>
+            <Button
+                id="itemActionCancel"
+                text="{i18n>actionCancel}"
+                type="Reject"
+                icon="sap-icon://sys-cancel"
+                visible="{= ${view>/canCancel} &amp;&amp; !${view>/mode} }"
+                enabled="{= !${view>/actionBusy} }"
+                press=".onCancelLine" />
 
+            <Button
+                id="itemHeaderHeaderLink"
+                text="{i18n>openSalesOrder}"
+                type="Transparent"
+                icon="sap-icon://sales-order"
+                visible="{= !${view>/mode} }"
+                press=".onNavToHeader" />
 
-                        <!-- ================================================== -->
-                        <!-- SCREEN 3 ACTIONS                                    -->
-                        <!-- ================================================== -->
+        </uxap:actions>
 
-                        <uxap:actions>
+    </uxap:ObjectPageDynamicHeaderTitle>
 
-                            <!-- EDIT -->
-                            <Button
-                                id="itemActionEdit"
-                                text="{i18n>actionEdit}"
-                                type="Emphasized"
-                                icon="sap-icon://edit"
-                                visible="{= ${view>/canUpdate} &amp;&amp; !${view>/mode} }"
-                                enabled="{= !${view>/actionBusy} }"
-                                press=".onUpdateLine" />
-
-                            <!-- CANCEL -->
-                            <Button
-                                id="itemActionCancel"
-                                text="{i18n>actionCancel}"
-                                type="Reject"
-                                icon="sap-icon://sys-cancel"
-                                visible="{= ${view>/canCancel} &amp;&amp; !${view>/mode} }"
-                                enabled="{= !${view>/actionBusy} }"
-                                press=".onCancelLine" />
-
-                            <!-- HISTORY -->
-                            <Button
-                                id="itemActionHistory"
-                                text="{i18n>actionViewHistory}"
-                                type="Default"
-                                icon="sap-icon://history"
-                                visible="{= ${view>/canViewHistory} &amp;&amp; !${view>/mode} }"
-                                enabled="{= !${view>/actionBusy} }"
-                                press=".onViewHistory" />
-
-                            <!-- SALES ORDER -->
-                            <Button
-                                id="itemHeaderHeaderLink"
-                                text="{i18n>openSalesOrder}"
-                                type="Transparent"
-                                icon="sap-icon://sales-order"
-                                visible="{= !${view>/mode} }"
-                                press=".onNavToHeader" />
-
-                        </uxap:actions>
-
-                    </uxap:ObjectPageDynamicHeaderTitle>
-
-                </uxap:headerTitle>
+</uxap:headerTitle>
 
 
                 <!-- ========================================================== -->
@@ -191,11 +174,10 @@
                         id="itemHeaderContent"
                         allowWrapping="true">
 
-
                         <!-- SALES ORDER -->
                         <l:VerticalLayout
                             id="itemHeaderDocument"
-                            class="sapUiMediumMarginEnd">
+                            class="sapUiLargeMarginEnd">
 
                             <Label
                                 id="itemLblHeaderDocument"
@@ -206,37 +188,12 @@
                                 text="{salesOrder}"
                                 press=".onNavToHeader" />
 
-                            <Text
-                                id="itemTxtHeaderCustomer"
-                                text="{customerDescription}" />
-
                         </l:VerticalLayout>
-
-
-                        <!-- HP PART -->
-                        <l:VerticalLayout
-                            id="itemHeaderMaterial"
-                            class="sapUiMediumMarginEnd">
-
-                            <Label
-                                id="itemLblHeaderMaterial"
-                                text="{i18n>hpPartNumber}" />
-
-                            <Text
-                                id="itemTxtHeaderMaterial"
-                                text="{hpPartNumber}" />
-
-                            <Text
-                                id="itemTxtHeaderDescription"
-                                text="{hpPartDescription}" />
-
-                        </l:VerticalLayout>
-
 
                         <!-- QUANTITY -->
                         <l:VerticalLayout
                             id="itemHeaderQuantity"
-                            class="sapUiMediumMarginEnd">
+                            class="sapUiLargeMarginEnd">
 
                             <Label
                                 id="itemLblHeaderQuantity"
@@ -247,16 +204,12 @@
                                 number="{path: 'quantity', formatter: '.formatter.quantity'}"
                                 unit="{quantityUnit}" />
 
-                            <Text
-                                id="itemTxtHeaderDeliveryDate"
-                                text="{i18n>plannedReceiptDate}: {path: 'plannedReceiptDate', formatter: '.formatter.date'}" />
-
                         </l:VerticalLayout>
-
 
                         <!-- LINE AMOUNT -->
                         <l:VerticalLayout
-                            id="itemHeaderValue">
+                            id="itemHeaderValue"
+                            class="sapUiLargeMarginEnd">
 
                             <Label
                                 id="itemLblHeaderValue"
@@ -268,12 +221,21 @@
                                 unit="{lineAmountCurrency}"
                                 emphasized="true" />
 
+                        </l:VerticalLayout>
+
+                        <!-- LINE STATUS -->
+                        <l:VerticalLayout
+                            id="itemHeaderStatus">
+
+                            <Label
+                                id="itemLblHeaderStatus"
+                                text="{i18n>lineStatus}" />
+
                             <ObjectStatus
                                 id="itemStatusLine"
-                                text="{requestStatus}"
-                                state="{path: 'requestStatus', formatter: '.formatter.statusState'}"
-                                icon="{path: 'requestStatus', formatter: '.formatter.statusIcon'}"
-                                title="{i18n>lineStatus}" />
+                                text="{lineStatus_code}"
+                                state="{path: 'lineStatus_code', formatter: '.formatter.statusState'}"
+                                icon="{path: 'lineStatus_code', formatter: '.formatter.statusIcon'}" />
 
                         </l:VerticalLayout>
 
@@ -325,25 +287,6 @@
 
 
                                         <Label
-                                            id="itemLblHpPartNumber"
-                                            text="{i18n>hpPartNumber}" />
-
-                                        <Text
-                                            id="itemValHpPartNumber"
-                                            text="{hpPartNumber}" />
-
-
-                                        <Label
-                                            id="itemLblHpPartDescription"
-                                            text="{i18n>hpPartDescription}" />
-
-                                        <Text
-                                            id="itemValHpPartDescription"
-                                            text="{hpPartDescription}"
-                                            wrapping="true" />
-
-
-                                        <Label
                                             id="itemLblCustomerPartNumber"
                                             text="{i18n>customerPartNumber}" />
 
@@ -368,17 +311,6 @@
                                         <Text
                                             id="itemValFromLine"
                                             text="{fromLine}" />
-
-
-                                        <Label
-                                            id="itemLblLineStatus"
-                                            text="{i18n>lineStatus}" />
-
-                                        <ObjectStatus
-                                            id="itemValLineStatus"
-                                            text="{requestStatus}"
-                                            state="{path: 'requestStatus', formatter: '.formatter.statusState'}"
-                                            icon="{path: 'requestStatus', formatter: '.formatter.statusIcon'}" />
 
 
                                         <Label
@@ -535,16 +467,6 @@
 
 
                                         <Label
-                                            id="itemLblQuantity"
-                                            text="{i18n>quantity}" />
-
-                                        <ObjectNumber
-                                            id="itemValQuantity"
-                                            number="{path: 'quantity', formatter: '.formatter.quantity'}"
-                                            unit="{quantityUnit}" />
-
-
-                                        <Label
                                             id="itemLblQuantityUnit"
                                             text="{i18n>quantityUnit}" />
 
@@ -645,16 +567,6 @@
                                             </items>
 
                                         </Select>
-
-
-                                        <Label
-                                            id="itemLblLineAmount"
-                                            text="{i18n>lineAmount}" />
-
-                                        <ObjectNumber
-                                            id="itemValLineAmount"
-                                            number="{path: 'lineAmount', formatter: '.formatter.amount'}"
-                                            unit="{lineAmountCurrency}" />
 
 
                                         <Label
@@ -798,7 +710,7 @@
 
                                         <Text
                                             id="itemValCancellationReason"
-                                            text="{reasonForCancellation}"
+                                            text="{reasonForCancellation_code}"
                                             visible="{= ${view>/mode} !== 'CANCEL' }" />
 
                                         <Select
@@ -808,7 +720,7 @@
                                             width="100%"
                                             forceSelection="false"
                                             items="{
-                                                path: '/VH_ReasonForCancellation',
+                                                path: '/CancellationReasons',
                                                 sorter: {
                                                     path: 'code'
                                                 }
@@ -817,27 +729,10 @@
                                             <core:ListItem
                                                 id="itemCancellationReason"
                                                 key="{code}"
-                                                text="{code} - {description}" />
+                                                text="{code} - {name}" />
 
                                         </Select>
 
-
-                                        <Label
-                                            id="itemLblGtsHoldCommercial"
-                                            text="{i18n>gtsHold}" />
-
-                                        <Text
-                                            id="itemValGtsHoldCommercial"
-                                            text="{gtsHold}" />
-
-
-                                        <Label
-                                            id="itemLblSimpleChangeCommercial"
-                                            text="{i18n>simpleChangeProcessingIndicator}" />
-
-                                        <Text
-                                            id="itemValSimpleChangeCommercial"
-                                            text="{simpleChangeProcessingIndicator}" />
 
                                     </form:SimpleForm>
 
@@ -988,15 +883,6 @@
                                             unit="{quantityUnit}" />
 
 
-                                        <Label
-                                            id="itemLblBalanceQuantityFulfilment"
-                                            text="{i18n>balanceQuantity}" />
-
-                                        <ObjectNumber
-                                            id="itemValBalanceQuantityFulfilment"
-                                            number="{path: 'balanceQuantity', formatter: '.formatter.quantity'}"
-                                            unit="{quantityUnit}" />
-
                                     </form:SimpleForm>
 
                                 </uxap:blocks>
@@ -1071,186 +957,6 @@
 
                     </uxap:ObjectPageSection>
 
-
-                    <!-- ====================================================== -->
-                    <!-- 7. CHANGE HISTORY                                      -->
-                    <!-- ====================================================== -->
-
-                    <uxap:ObjectPageSection
-                        id="itemSecHistory"
-                        title="{i18n>changeHistory}"
-                        titleUppercase="false">
-
-                        <uxap:subSections>
-
-                            <uxap:ObjectPageSubSection
-                                id="itemSubSecHistory"
-                                titleUppercase="false">
-
-                                <uxap:blocks>
-
-                                    <Table
-                                        id="historyTable"
-                                        inset="false"
-                                        mode="None"
-                                        growing="true"
-                                        growingThreshold="20"
-                                        updateFinished=".onHistoryUpdateFinished"
-                                        noDataText="{i18n>noDataHistory}"
-                                        items="{
-                                            path: 'changeHistory',
-                                            sorter: {
-                                                path: 'changedOn',
-                                                descending: true
-                                            }
-                                        }">
-
-                                        <headerToolbar>
-
-                                            <OverflowToolbar
-                                                id="historyToolbar">
-
-                                                <Title
-                                                    id="historyTitle"
-                                                    text="{view>/historyTitle}"
-                                                    level="H3" />
-
-                                            </OverflowToolbar>
-
-                                        </headerToolbar>
-
-
-                                        <columns>
-
-                                            <Column
-                                                id="historyColChangedOn"
-                                                width="11rem">
-
-                                                <Text
-                                                    id="historyTxtChangedOn"
-                                                    text="{i18n>changedOn}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColChangedBy"
-                                                width="10rem">
-
-                                                <Text
-                                                    id="historyTxtChangedBy"
-                                                    text="{i18n>changedBy}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColField"
-                                                width="13rem">
-
-                                                <Text
-                                                    id="historyTxtField"
-                                                    text="{i18n>field}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColOldValue">
-
-                                                <Text
-                                                    id="historyTxtOldValue"
-                                                    text="{i18n>oldValue}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColNewValue">
-
-                                                <Text
-                                                    id="historyTxtNewValue"
-                                                    text="{i18n>newValue}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColOperation"
-                                                width="10rem">
-
-                                                <Text
-                                                    id="historyTxtOperation"
-                                                    text="{i18n>operationType}" />
-
-                                            </Column>
-
-
-                                            <Column
-                                                id="historyColApproval"
-                                                width="10rem">
-
-                                                <Text
-                                                    id="historyTxtApproval"
-                                                    text="{i18n>approvalStatus}" />
-
-                                            </Column>
-
-                                        </columns>
-
-
-                                        <items>
-
-                                            <ColumnListItem
-                                                id="historyRow">
-
-                                                <cells>
-
-                                                    <Text
-                                                        id="historyCellChangedOn"
-                                                        text="{path: 'changedOn', formatter: '.formatter.dateTime'}" />
-
-                                                    <Text
-                                                        id="historyCellChangedBy"
-                                                        text="{changedBy}" />
-
-                                                    <Text
-                                                        id="historyCellField"
-                                                        text="{fieldName}" />
-
-                                                    <Text
-                                                        id="historyCellOldValue"
-                                                        text="{oldValue}"
-                                                        wrapping="true" />
-
-                                                    <Text
-                                                        id="historyCellNewValue"
-                                                        text="{newValue}"
-                                                        wrapping="true" />
-
-                                                    <Text
-                                                        id="historyCellOperation"
-                                                        text="{operationType}" />
-
-                                                    <Text
-                                                        id="historyCellApproval"
-                                                        text="{approvalStatus}" />
-
-                                                </cells>
-
-                                            </ColumnListItem>
-
-                                        </items>
-
-                                    </Table>
-
-                                </uxap:blocks>
-
-                            </uxap:ObjectPageSubSection>
-
-                        </uxap:subSections>
-
-                    </uxap:ObjectPageSection>
 
                 </uxap:sections>
 

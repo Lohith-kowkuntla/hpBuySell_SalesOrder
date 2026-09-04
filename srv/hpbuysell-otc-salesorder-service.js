@@ -9,6 +9,7 @@
 //---------------------------------------------------------------------------------*
 
 const cds = require("@sap/cds");
+const { buildCancelLineOrdchgPayload } = require("./integration/ordchg");
 
 // EDITABLE FIELDS Logic
 
@@ -24,14 +25,15 @@ const EDITABLE_FIELDS = {
     ]
 };
 
-const CANCELLED_LINE_STATUS_CODE = "CNCL"; // confirm against your LineStatuses data
+const CANCELLED_LINE_STATUS_CODE = "CANC"; // real seeded LineStatuses/SalesOrderItems code
+const CANCELLABLE_LINE_STATUS_CODES = ["AACK", "OPEN", "CONF"]; // FDS: cancellable set for MVP
 
-const { SELECT, UPDATE } = cds.ql;
+const { SELECT, UPDATE, INSERT } = cds.ql;
 
 module.exports = cds.service.impl(async function (srv) {
 
 
-    const { SalesOrders, SalesOrderItems } = srv.entities;
+    const { SalesOrders, SalesOrderItems, SalesOrderItemChangeHistory } = srv.entities;
 
     // =========================================================================
     // Static Value Help - Special Deal Flag
@@ -435,6 +437,90 @@ module.exports = cds.service.impl(async function (srv) {
 
             message:
                 "Sales Order item updated successfully"
+        };
+    });
+
+    // =========================================================================
+    // Cancel Sales Order Line
+    // =========================================================================
+
+    srv.on("cancelLine", "SalesOrderItems", async (req) => {
+
+        const key = req.params[0] || {};
+        const salesOrder_hpSalesOrder = key.salesOrder_hpSalesOrder;
+        const lineId = key.lineId;
+        const { reasonForCancellation } = req.data;
+
+        if (!salesOrder_hpSalesOrder || !lineId) {
+            return req.reject(400, "Sales Order and Line ID are required");
+        }
+
+        const oExisting = await SELECT.one
+            .from(SalesOrderItems)
+            .where({ salesOrder_hpSalesOrder, lineId });
+
+        if (!oExisting) {
+            return req.reject(404, `Sales Order ${salesOrder_hpSalesOrder}, Line ${lineId} not found`);
+        }
+
+        if (oExisting.lineStatus_code === CANCELLED_LINE_STATUS_CODE) {
+            return req.reject(400, "Line item is already cancelled");
+        }
+
+        if (!CANCELLABLE_LINE_STATUS_CODES.includes(oExisting.lineStatus_code)) {
+            return req.reject(
+                400,
+                `Line item cannot be cancelled from status '${oExisting.lineStatus_code}'. ` +
+                    `Cancellable statuses: ${CANCELLABLE_LINE_STATUS_CODES.join(", ")}`
+            );
+        }
+
+        const oReason = await SELECT.one
+            .from("HpBuySellOtcSalesOrderService.CancellationReasons")
+            .where({ code: reasonForCancellation });
+
+        if (!oReason) {
+            return req.reject(400, `Invalid cancellation reason code '${reasonForCancellation}'`);
+        }
+
+        const previousStatus = oExisting.lineStatus_code;
+
+        await UPDATE(SalesOrderItems)
+            .set({
+                lineStatus_code: CANCELLED_LINE_STATUS_CODE,
+                reasonForCancellation_code: reasonForCancellation,
+                simpleChangeProcessingInd: true
+            })
+            .where({ salesOrder_hpSalesOrder, lineId });
+
+        await INSERT.into(SalesOrderItemChangeHistory).entries({
+            salesOrder_hpSalesOrder,
+            lineId,
+            changedOn: new Date().toISOString(),
+            changedBy: req.user.id,
+            fieldName: "lineStatus",
+            oldValue: previousStatus,
+            newValue: CANCELLED_LINE_STATUS_CODE,
+            operationType: "CANCEL",
+            approvalStatus: "N/A",
+            reasonForCancellation_code: reasonForCancellation
+        });
+
+        const ordchgPayload = buildCancelLineOrdchgPayload({
+            hpSalesOrder: salesOrder_hpSalesOrder,
+            lineId,
+            reasonCode: reasonForCancellation,
+            userId: req.user.id
+        });
+
+        console.log("[ORDCHG] cancelLine payload (not sent - CPI integration out of scope):", ordchgPayload);
+
+        return {
+            hpSalesOrder: salesOrder_hpSalesOrder,
+            lineId,
+            status: CANCELLED_LINE_STATUS_CODE,
+            ordchgTriggered: false,
+            message: "Line item cancelled successfully"
         };
     });
 

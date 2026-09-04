@@ -1,53 +1,95 @@
 sap.ui.define([], function () {
     "use strict";
 
+    // Single source of truth for line/header status codes - matches the real
+    // seeded LineStatuses/SalesOrderStatuses data (AACK, OPEN, CONF, CHPR,
+    // PSHP, SHIP, DLVD, INVD, CANC). CHPR (Change Processing) is tolerated
+    // defensively in the cancellable set for forward-compat with Phase 2,
+    // even though the backend cannot produce it yet.
+    var CANCELLED_STATUS_CODE = "CANC";
+    var CANCELLABLE_STATUS_CODES = ["AACK", "OPEN", "CONF", "CHPR"];
+
+    function normalize(sStatus) {
+        return String(sStatus || "").toUpperCase();
+    }
+
+    // Plain closures, not exported methods - safe to call from anywhere in
+    // this module without relying on `this`, which UI5 does NOT guarantee to
+    // be bound to this module object when invoking a ".formatter.xxx" binding.
+    function isCancelledStatusImpl(sStatus) {
+        return normalize(sStatus) === CANCELLED_STATUS_CODE;
+    }
+
+    function isCancellableStatusImpl(sStatus) {
+        return CANCELLABLE_STATUS_CODES.indexOf(normalize(sStatus)) !== -1;
+    }
+
+    function formatYesNoImpl(bValue) {
+        return bValue ? "Yes" : "No"; // swap for i18n-resourced text if needed
+    }
+
     return {
+
+        isCancelledStatus: function (sStatus) {
+            return isCancelledStatusImpl(sStatus);
+        },
+
+        isCancellableStatus: function (sStatus) {
+            return isCancellableStatusImpl(sStatus);
+        },
+
         statusState: function (status) {
-            switch (String(status || "").toUpperCase()) {
-                case "CONFIRMED":
-                case "DELIVERED":
-                case "INVOICED":
-                case "RECEIVED":
+            switch (normalize(status)) {
+                case "CONF":
+                case "DLVD":
+                case "INVD":
                     return "Success";
 
-                case "CANCELLED":
-                case "REJECTED":
+                case "CANC":
                     return "Error";
 
-                case "AWAITING ACK":
-                case "AWAITING_ACK":
-                case "NEW - AWAITING ACK":
-                case "PARTIALLY SHIPPED":
-                case "PARTIALLY_SHIPPED":
-                case "CHANGE PROCESSING":
+                case "AACK":
+                case "OPEN":
+                case "CHPR":
+                case "PSHP":
                     return "Warning";
 
                 default:
                     return "Information";
             }
         },
-        isFieldEditable: function (bEditMode, sLineStatus) {
-            return !!bEditMode && sLineStatus !== "CNCL";
-        },
 
-        isFieldReadOnly: function (bEditMode, sLineStatus) {
-            return !bEditMode || sLineStatus === "CNCL";
+        statusIcon: function (status) {
+            switch (normalize(status)) {
+                case "CONF":
+                case "DLVD":
+                case "INVD":
+                    return "sap-icon://sys-enter-2";
+
+                case "CANC":
+                    return "sap-icon://sys-cancel-2";
+
+                case "AACK":
+                case "OPEN":
+                case "CHPR":
+                case "PSHP":
+                    return "sap-icon://warning";
+
+                default:
+                    return "sap-icon://message-information";
+            }
         },
 
         formatYesNo: function (bValue) {
-            return bValue ? "Yes" : "No"; // swap for i18n-resourced text if needed
+            return formatYesNoImpl(bValue);
+        },
+
+        yesNo: function (bValue) {
+            return formatYesNoImpl(bValue);
         },
 
         isEditableLine: function (status) {
-            var value = String(status || "").toUpperCase();
-            return [
-                "AWAITING ACK",
-                "AWAITING_ACK",
-                "OPEN",
-                "CONFIRMED",
-                "PARTIALLY SHIPPED",
-                "PARTIALLY_SHIPPED"
-            ].indexOf(value) !== -1;
+            return !isCancelledStatusImpl(status);
         },
 
         yesNoText: function (value) {
@@ -59,6 +101,17 @@ sap.ui.define([], function () {
                 return "";
             }
             return Number(value).toLocaleString();
+        },
+
+        dateTime: function (vValue) {
+            if (!vValue) {
+                return "";
+            }
+            var oDate = vValue instanceof Date ? vValue : new Date(vValue);
+            if (isNaN(oDate.getTime())) {
+                return "";
+            }
+            return oDate.toLocaleString();
         },
 
         // -----------------------------------------------------------------------*
@@ -74,17 +127,7 @@ sap.ui.define([], function () {
         //   2) that specific row is ticked, AND
         //   3) the row's status is not Cancelled - a cancelled line permits
         //      no action at all, ticked or not (FDS 3.9.6).
-        //
-        // NOTE: statusState/isEditableLine above compare against "CANCELLED",
-        // while isFieldEditable/isFieldReadOnly compare against "CNCL" - that
-        // looks like a leftover inconsistency between two status code schemes.
-        // The functions below match the "CANCELLED" convention used by
-        // statusState/isEditableLine. Confirm which status code your service
-        // actually returns and adjust the constant below if it turns out to be
-        // "CNCL" instead.
         // -----------------------------------------------------------------------*
-
-        _CANCELLED_STATUS: "CANCELLED",
 
         /**
          * True when this row's cell should show its Text (read-only) control -
@@ -92,7 +135,7 @@ sap.ui.define([], function () {
          * status is Cancelled.
          */
         lineDisplayOnly: function (bEditMode, mSelectedLines, sLineId, sLineStatus) {
-            if (String(sLineStatus || "").toUpperCase() === this._CANCELLED_STATUS) {
+            if (isCancelledStatusImpl(sLineStatus)) {
                 return true;
             }
             return !bEditMode || !mSelectedLines || !mSelectedLines[sLineId];
@@ -100,11 +143,10 @@ sap.ui.define([], function () {
 
         /**
          * True when this row's cell should show its Input/Select control.
-         * Exact inverse of lineDisplayOnly, written without relying on `this`
-         * binding inside a multi-part formatter call.
+         * Exact inverse of lineDisplayOnly.
          */
         lineEditable: function (bEditMode, mSelectedLines, sLineId, sLineStatus) {
-            if (String(sLineStatus || "").toUpperCase() === this._CANCELLED_STATUS) {
+            if (isCancelledStatusImpl(sLineStatus)) {
                 return false;
             }
             return !!bEditMode && !!mSelectedLines && !!mSelectedLines[sLineId];
@@ -116,7 +158,7 @@ sap.ui.define([], function () {
          * Cancelled.
          */
         lineCancelReadOnly: function (bCancelMode, mSelectedLines, sLineId, sLineStatus) {
-            if (String(sLineStatus || "").toUpperCase() === this._CANCELLED_STATUS) {
+            if (isCancelledStatusImpl(sLineStatus)) {
                 return true;
             }
             return !bCancelMode || !mSelectedLines || !mSelectedLines[sLineId];
@@ -127,7 +169,7 @@ sap.ui.define([], function () {
          * in Cancel Line mode, on a ticked, still-cancellable row.
          */
         lineCancelVisible: function (bCancelMode, mSelectedLines, sLineId, sLineStatus) {
-            if (String(sLineStatus || "").toUpperCase() === this._CANCELLED_STATUS) {
+            if (isCancelledStatusImpl(sLineStatus)) {
                 return false;
             }
             return !!bCancelMode && !!mSelectedLines && !!mSelectedLines[sLineId];

@@ -35,19 +35,20 @@ sap.ui.define(
         // =====================================================================
 
         /*
-         * Native CAP OData V4 service endpoint.
+         * OData V2 service endpoint (see manifest.json dataSources.salesOrderService,
+         * odataVersion 2.0 - the app runs on the V2 adapter, not native V4).
          *
-         * Action calls are sent to:
+         * Unbound action/function calls are sent to:
          *
-         *   /odata/v4/salesorder/<action>
+         *   /odata/v2/salesorder/<action>
          *
-         * Example:
-         *
-         *   /odata/v4/salesorder/updateSalesOrderItem
-         *
-         * Keep this aligned with the endpoint currently used by the application.
+         * Bound actions (declared inside an entity's `actions { }` block, e.g.
+         * cancelLine on SalesOrderItems) are exposed as a FunctionImport named
+         * "<EntitySet>_<action>", with the entity KEY passed as URL query
+         * literals and the action's OWN parameters passed as a JSON body - see
+         * callBoundAction() below.
          */
-        var SERVICE_URL = "/odata/v4/salesorder/";
+        var SERVICE_URL = "/odata/v2/salesorder/";
 
         return Controller.extend(
             "hpbuysell.otc.salesorder.ui.controller.BaseController",
@@ -428,7 +429,8 @@ sap.ui.define(
                 openSalesOrderDialog: function (
                     sFragmentName,
                     sCacheKey,
-                    oModel
+                    oModel,
+                    sModelName
                 ) {
 
                     var oView =
@@ -436,7 +438,7 @@ sap.ui.define(
 
                     this.setModel(
                         oModel,
-                        "salesOrderAction"
+                        sModelName || "salesOrderAction"
                     );
 
                     if (!this[sCacheKey]) {
@@ -448,7 +450,7 @@ sap.ui.define(
                                         oView.getId(),
 
                                     name:
-                                        "hpbuysell.otc.salesorder.ui.view.fragment." +
+                                        "hpbuysell.otc.salesorder.ui.fragment." +
                                         sFragmentName,
 
                                     controller:
@@ -610,12 +612,52 @@ sap.ui.define(
                                                 );
                                             }
 
-                                            return oBody;
+                                            return this._unwrapODataV2Body(
+                                                oBody,
+                                                sActionName
+                                            );
 
                                         }.bind(this)
                                     );
                             }.bind(this)
                         );
+                },
+
+                /**
+                 * Unwraps an OData V2 FunctionImport response body.
+                 *
+                 * A V2 response for a FunctionImport returning a complex type
+                 * is wrapped two levels deep:
+                 *
+                 *   { d: { <FunctionImportName>: { ...actual result... } } }
+                 *
+                 * (confirmed against the running @cap-js-community/odata-v2-adapter
+                 * for both bound actions and unbound functions/actions).
+                 *
+                 * @param {object} oBody
+                 * @param {string} sFunctionImportName
+                 * @returns {object}
+                 */
+                _unwrapODataV2Body: function (
+                    oBody,
+                    sFunctionImportName
+                ) {
+
+                    var oD =
+                        (oBody && oBody.d) ||
+                        oBody ||
+                        {};
+
+                    if (
+                        sFunctionImportName &&
+                        oD[sFunctionImportName] &&
+                        typeof oD[sFunctionImportName] === "object"
+                    ) {
+
+                        return oD[sFunctionImportName];
+                    }
+
+                    return oD;
                 },
 
                 /**
@@ -665,6 +707,142 @@ sap.ui.define(
                     return this.callSalesOrderAction(
                         sAction,
                         oPayload
+                    );
+                },
+
+                /**
+                 * Calls a bound OData action (declared inside an entity's
+                 * `actions { }` block in CDS). Under OData V2 this is exposed
+                 * as a FunctionImport named "<EntitySet>_<action>": the
+                 * entity's key is passed as URL query literals, and the
+                 * action's own parameters are passed as a JSON body.
+                 *
+                 * @param {string} sEntitySet
+                 * @param {object} oKeys
+                 * @param {string} sAction
+                 * @param {object} oParams
+                 * @returns {Promise<object>}
+                 */
+                callBoundAction: function (
+                    sEntitySet,
+                    oKeys,
+                    sAction,
+                    oParams
+                ) {
+
+                    var sFunctionImportName =
+                        sEntitySet + "_" + sAction;
+
+                    var sUrl =
+                        SERVICE_URL +
+                        sFunctionImportName;
+
+                    var aQuery =
+                        Object.keys(oKeys || {})
+                            .filter(function (sKey) {
+                                return oKeys[sKey] !== undefined && oKeys[sKey] !== null;
+                            })
+                            .map(function (sKey) {
+                                return sKey + "=" + this.quote(oKeys[sKey]);
+                            }.bind(this));
+
+                    if (aQuery.length) {
+
+                        sUrl += "?" + aQuery.join("&");
+                    }
+
+                    return this
+                        .postJson(
+                            sUrl,
+                            oParams
+                        )
+                        .then(
+                            function (
+                                oResponse
+                            ) {
+
+                                return oResponse
+                                    .text()
+                                    .then(
+                                        function (
+                                            sResponseText
+                                        ) {
+
+                                            var oBody =
+                                                {};
+
+                                            if (
+                                                sResponseText
+                                            ) {
+
+                                                try {
+
+                                                    oBody =
+                                                        JSON.parse(
+                                                            sResponseText
+                                                        );
+
+                                                } catch (
+                                                    oParseError
+                                                ) {
+
+                                                    oBody = {
+                                                        raw:
+                                                            sResponseText
+                                                    };
+                                                }
+                                            }
+
+                                            if (
+                                                !oResponse.ok
+                                            ) {
+
+                                                throw this._createHttpError(
+                                                    oResponse,
+                                                    oBody
+                                                );
+                                            }
+
+                                            return this._unwrapODataV2Body(
+                                                oBody,
+                                                sFunctionImportName
+                                            );
+
+                                        }.bind(this)
+                                    );
+                            }.bind(this)
+                        );
+                },
+
+                /**
+                 * Cancels a Sales Order line item - the single call site used
+                 * by every Cancel Line entry point in the app.
+                 *
+                 * @param {string} sHpSalesOrder
+                 * @param {string} sLineId
+                 * @param {string} sReasonCode
+                 * @returns {Promise<object>} resolves to an UpdateResult
+                 */
+                cancelSalesOrderLine: function (
+                    sHpSalesOrder,
+                    sLineId,
+                    sReasonCode
+                ) {
+
+                    return this.callBoundAction(
+                        "SalesOrderItems",
+                        {
+                            salesOrder_hpSalesOrder:
+                                sHpSalesOrder,
+
+                            lineId:
+                                sLineId
+                        },
+                        "cancelLine",
+                        {
+                            reasonForCancellation:
+                                sReasonCode
+                        }
                     );
                 },
 

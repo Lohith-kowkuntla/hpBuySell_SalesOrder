@@ -31,19 +31,6 @@ sap.ui.define(
         "use strict";
 
         // =====================================================================
-        // CONSTANTS
-        // =====================================================================
-
-        var CANCELLABLE_STATUSES = [
-            "AWAITING_ACK",
-            "OPEN",
-            "CONFIRMED",
-            "CHANGE_PROCESSING"
-        ];
-
-        var CANCELLED_STATUS = "CANCELLED";
-
-        // =====================================================================
         // CONTROLLER
         // =====================================================================
 
@@ -398,16 +385,17 @@ sap.ui.define(
                             }
 
                             if (
-                                sStatus !==
-                                CANCELLED_STATUS
+                                !formatter.isCancelledStatus(
+                                    sStatus
+                                )
                             ) {
                                 bAnyEditable = true;
                             }
 
                             if (
-                                CANCELLABLE_STATUSES.indexOf(
+                                formatter.isCancellableStatus(
                                     sStatus
-                                ) !== -1
+                                )
                             ) {
                                 bAnyCancellable = true;
                             }
@@ -561,33 +549,33 @@ sap.ui.define(
 
                             this._mOriginalLineValues[sLineId] = {
 
-    salesPrice:
-        oContext.getProperty(
-            "salesPrice"
-        ),
+                                salesPrice:
+                                    oContext.getProperty(
+                                        "salesPrice"
+                                    ),
 
-    salesPriceUnit:
-        oContext.getProperty(
-            "salesPriceUnit"
-        ),
+                                salesPriceUnit:
+                                    oContext.getProperty(
+                                        "salesPriceUnit"
+                                    ),
 
-    specialDealFlagSo:
-        oContext.getProperty(
-            "specialDealFlagSo"
-        ),
+                                specialDealFlagSo:
+                                    oContext.getProperty(
+                                        "specialDealFlagSo"
+                                    ),
 
-    hpNotesToCustomer:
-        oContext.getProperty(
-            "hpNotesToCustomer"
-        ),
+                                hpNotesToCustomer:
+                                    oContext.getProperty(
+                                        "hpNotesToCustomer"
+                                    ),
 
-    hpBacklogNotes:
-        oContext.getProperty(
-            "hpBacklogNotes"
-        )
-};
+                                hpBacklogNotes:
+                                    oContext.getProperty(
+                                        "hpBacklogNotes"
+                                    )
+                            };
 
-                           
+
 
                         }.bind(this)
                     );
@@ -798,7 +786,7 @@ sap.ui.define(
 
                                 var oOriginal =
                                     this._mOriginalLineValues[
-                                        sLineId
+                                    sLineId
                                     ];
 
                                 if (!oOriginal) {
@@ -1006,7 +994,7 @@ sap.ui.define(
 
                     var oOriginal =
                         this._mOriginalLineValues[
-                            sLineId
+                        sLineId
                         ];
 
                     if (!oOriginal) {
@@ -1096,7 +1084,7 @@ sap.ui.define(
 
                             var oOriginal =
                                 this._mOriginalLineValues[
-                                    sLineId
+                                sLineId
                                 ];
 
                             console.log(
@@ -1265,10 +1253,7 @@ sap.ui.define(
                             ) {
 
                                 oPayload.specialDealFlagSo =
-                                    this._parseValue(
-                                        vspecialDealFlagSo,
-                                        "string"
-                                    );
+                                    (vspecialDealFlagSo === "Y");
                             }
 
                             if (bNotesChanged) {
@@ -1523,7 +1508,7 @@ sap.ui.define(
                                                         ": " +
                                                         (
                                                             oError &&
-                                                            oError.message
+                                                                oError.message
                                                                 ? oError.message
                                                                 : String(
                                                                     oError
@@ -1640,7 +1625,7 @@ sap.ui.define(
                                                         );
 
                                                 } catch (
-                                                    e
+                                                e
                                                 ) {
 
                                                     oBody = {
@@ -1654,25 +1639,18 @@ sap.ui.define(
                                                 !oResponse.ok
                                             ) {
 
-                                                var sMessage =
-                                                    (
-                                                        oBody &&
-                                                        oBody.error &&
-                                                        oBody.error.message
-                                                    ) ||
-                                                    (
-                                                        oBody &&
-                                                        oBody.message
-                                                    ) ||
+                                                var sRawMessage =
+                                                    (oBody && oBody.error && oBody.error.message) ||
+                                                    (oBody && oBody.message) ||
                                                     sText ||
-                                                    (
-                                                        "HTTP " +
-                                                        oResponse.status
-                                                    );
+                                                    ("HTTP " + oResponse.status);
 
-                                                throw new Error(
-                                                    sMessage
-                                                );
+                                                var sMessage =
+                                                    (sRawMessage && typeof sRawMessage === "object" && sRawMessage.value)
+                                                        ? sRawMessage.value
+                                                        : sRawMessage;
+
+                                                throw new Error(sMessage);
                                             }
 
                                             return oBody;
@@ -1837,16 +1815,16 @@ sap.ui.define(
                                         );
 
                                     if (
-                                        CANCELLABLE_STATUSES.indexOf(
+                                        !formatter.isCancellableStatus(
                                             sStatus
-                                        ) === -1
+                                        )
                                     ) {
                                         return;
                                     }
 
                                     var sReason =
                                         oContext.getProperty(
-                                            "reasonForCancellation"
+                                            "reasonForCancellation_code"
                                         );
 
                                     aLines.push({
@@ -1870,7 +1848,7 @@ sap.ui.define(
                                             sReason
                                                 ? ""
                                                 : this.getText(
-                                                    "reasonForCancellationRequired"
+                                                    "cancellationReasonRequired"
                                                 )
                                     });
 
@@ -1906,9 +1884,10 @@ sap.ui.define(
                                         function () {
 
                                             return this
-                                                .callLineAction(
-                                                    "cancelSalesOrderItem",
-                                                    oLine.payload
+                                                .cancelSalesOrderLine(
+                                                    this._sHpSalesOrder,
+                                                    oLine.lineId,
+                                                    oLine.payload.reasonForCancellation
                                                 )
                                                 .then(
                                                     function () {
@@ -1926,7 +1905,7 @@ sap.ui.define(
                                                             ": " +
                                                             (
                                                                 oError &&
-                                                                oError.message
+                                                                    oError.message
                                                                     ? oError.message
                                                                     : String(
                                                                         oError
@@ -2397,7 +2376,7 @@ sap.ui.define(
 
                                 MessageBox.error(
                                     oError &&
-                                    oError.message
+                                        oError.message
                                         ? oError.message
                                         : "Failed to save HP Notes To Customer."
                                 );
@@ -2556,7 +2535,7 @@ sap.ui.define(
 
                                     MessageBox.error(
                                         oError &&
-                                        oError.message
+                                            oError.message
                                             ? oError.message
                                             : "Failed to save HP Notes To Customer."
                                     );

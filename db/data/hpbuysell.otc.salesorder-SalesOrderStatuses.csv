@@ -1,1 +1,10 @@
 code,priority,name,descr
+AACK,1,Awaiting Acknowledgement,Order is awaiting acknowledgement from the supplier
+OPEN,2,Open,Order is open and has not yet been confirmed
+CONF,3,Confirmed,Order has been confirmed by the supplier
+CHPR,4,Change Processing,Order is undergoing simple change processing (Phase 2 - not yet reachable in MVP)
+PSHP,5,Partially Shipped,Order has been partially shipped
+SHIP,6,Shipped,Order has been fully shipped
+DLVD,7,Delivered,Order has been delivered
+INVD,8,Invoiced,Order has been invoiced
+CANC,99,Cancelled,Order has been cancelled

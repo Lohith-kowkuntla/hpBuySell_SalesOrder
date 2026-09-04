@@ -47,6 +47,14 @@ service HpBuySellOtcSalesOrderService {
         {
             grant: ['UPDATE'],
             to   : ['SalesOrderManage']
+        },
+        {
+            // Custom bound actions must be explicitly granted here - once an
+            // entity has @restrict, it governs ALL events on that entity,
+            // including bound actions, regardless of the action's own
+            // @requires annotation below.
+            grant: ['cancelLine'],
+            to   : ['SalesOrderManage']
         }
     ]
     entity SalesOrderItems            as projection on db.SalesOrderItems
@@ -98,110 +106,123 @@ action updateSalesOrderHeader(hpSalesOrder: String(10),
                               
     entity SalesOrderAcknowledgements as projection on db.SalesOrderAcknowledgements;
 
-    // ==========================================================================
-    // Reporting — UI exports (FDS 3.13 / slide 53)
-    // Available read-only to both roles.
-    // // ==========================================================================
-    // /**
-    //  * Flat header + item projection backing the Search UI export.
-    //  * Covers the fields carried in the PS4 -> BTP mapping sheet. The legacy
-    //  * Collab export additionally expands Ship To / Bill To / Payer / LSP
-    //  * addresses and partner contacts into ~168 columns — those are not in the
-    //  * mapping sheet and need a Customer Master join if they stay in scope.
-    //  */
-
-
     @readonly
-    @title                 : '{i18n>SalesOrderSearchExport}'
-    @cds.redirection.target: false
-    @restrict              : [{
+    @title   : '{i18n>SalesOrderItemChangeHistory}'
+    @restrict: [{
         grant: ['READ'],
         to   : [
             'SalesOrderManage',
             'SalesOrderViewer'
         ]
     }]
-    entity SalesOrderSearchExport     as
-        projection on db.SalesOrderItems {
-            key salesOrder.hpSalesOrder                  as hpSalesOrder,
-                salesOrder.customerOrder                 as customerOrder,
-                salesOrder.soOrderDate                   as soOrderDate,
-                salesOrder.wbsProjectCode                as wbsProjectCode,
-                salesOrder.wbsProjectCodeDescription     as wbsProjectCodeDescription,
-                salesOrder.salesOrderStatus.code         as salesOrderStatus,
-                salesOrder.contractNumber                as contractNumber,
-                salesOrder.businessModel                 as businessModel,
-                salesOrder.hpCompanyCode                 as hpCompanyCode,
-                salesOrder.hpCompanyDescription          as hpCompanyDescription,
-                salesOrder.customerCode                  as customerCode,
-                salesOrder.customerDescription           as customerDescription,
-                salesOrder.shipTo                        as shipTo,
-                salesOrder.billTo                        as billTo,
-                salesOrder.payer                         as payer,
-                salesOrder.otherShipTo                   as otherShipTo,
-                salesOrder.hpBuyerCode                   as hpBuyerCode,
-                salesOrder.hpBuyerName                   as hpBuyerName,
-                salesOrder.hpSalesOrganization           as hpSalesOrganization,
-                salesOrder.salesOrderOrigin.code         as salesOrderOrigin,
-                salesOrder.businessUnit                  as businessUnit,
-                salesOrder.paymentTerms                  as paymentTerms,
-                salesOrder.hpPlant                       as hpPlant,
-                salesOrder.customerNotesToHp             as headerCustomerNotesToHp,
-                salesOrder.hpNotesToCustomer             as headerHpNotesToCustomer,
-                salesOrder.contractDate                  as contractDate,
-                salesOrder.customerOrderDate             as customerOrderDate,
-                salesOrder.soRequisitionCreationDateTime as soRequisitionCreationDateTime,
-                salesOrder.blanketIndicator              as blanketIndicator,
-                salesOrder.lspAddress                    as lspAddress,
-                salesOrder.salesOrderType.code           as salesOrderType,
+    entity SalesOrderItemChangeHistory as projection on db.SalesOrderItemChangeHistory;
 
-            key lineId,
-                hpPartNumber,
-                hpPartDescription,
-                lineStatus.code                          as lineStatus,
-                customerPartNumber,
-                quantity,
-                quantityUnit,
-                plannedReceiptDate,
-                salesPrice,
-                salesPriceUnit,
-                salesPriceCurrency,
-                lineAmount,
-                lineAmountCurrency,
-                fromLine,
-                originalPlannedReceiptDate,
-                carrierSo,
-                otherCarrierSo,
-                soChangeInOrigin,
-                reasonForCancellation.code               as reasonForCancellation,
-                shippingPoint,
-                soAckOutOrigin,
-                storageLocation,
-                endSupplier,
-                hpNotesToCustomer,
-                customerNotesToHp,
-                specialDealFlagSo,
-                specialPriceIndicatorSo,
-                transitTime,
-                customerLineId,
-                gtsHold,
-                incotermsRevision,
-                termsOfDelivery,
-                deliveryPlace,
-                confirmedLineId,
-                confirmedQuantity,
-                confirmedReceiptDate,
-                totalInvoicedQuantity,
-                totalShippedQuantity,
-                totalDeliveredQuantity,
-                balanceQuantity,
-                soRequisitionNumber,
-                hpPurchaseOrder,
-                hpPoLineItem,
-                hpBacklogNotes
-        };
+ // ==========================================================================
+// Reporting — UI exports (FDS 3.13 / slide 53)
+// Available read-only to both roles.
+// ==========================================================================
 
+/**
+ * Flat header + item projection backing the Search UI export.
+ * Covers the fields carried in the PS4 -> BTP mapping sheet.
+ *
+ * The export is a normal service projection over SalesOrderItems.
+ * Header fields are flattened through the SalesOrders association.
+ */
 
+@readonly
+@title                 : '{i18n>SalesOrderSearchExport}'
+@cds.redirection.target: false
+@restrict: [{
+    grant: ['READ'],
+    to: [
+        'SalesOrderManage',
+        'SalesOrderViewer'
+    ]
+}]
+entity SalesOrderSearchExport as
+    projection on db.SalesOrderItems {
+
+        key salesOrder.hpSalesOrder                  as hpSalesOrder,
+            salesOrder.customerOrder                 as customerOrder,
+            salesOrder.soOrderDate                   as soOrderDate,
+            salesOrder.wbsProjectCode                as wbsProjectCode,
+            salesOrder.wbsProjectCodeDescription     as wbsProjectCodeDescription,
+            salesOrder.salesOrderStatus.code         as salesOrderStatus,
+            salesOrder.contractNumber                as contractNumber,
+            salesOrder.businessModel                 as businessModel,
+            salesOrder.hpCompanyCode                 as hpCompanyCode,
+            salesOrder.hpCompanyDescription          as hpCompanyDescription,
+            salesOrder.customerCode                  as customerCode,
+            salesOrder.customerDescription           as customerDescription,
+            salesOrder.shipTo                        as shipTo,
+            salesOrder.billTo                        as billTo,
+            salesOrder.payer                         as payer,
+            salesOrder.otherShipTo                   as otherShipTo,
+            salesOrder.hpBuyerCode                   as hpBuyerCode,
+            salesOrder.hpBuyerName                   as hpBuyerName,
+            salesOrder.hpSalesOrganization           as hpSalesOrganization,
+            salesOrder.salesOrderOrigin.code         as salesOrderOrigin,
+            salesOrder.businessUnit                  as businessUnit,
+            salesOrder.paymentTerms                  as paymentTerms,
+            salesOrder.hpPlant                       as hpPlant,
+            salesOrder.customerNotesToHp             as headerCustomerNotesToHp,
+            salesOrder.hpNotesToCustomer             as headerHpNotesToCustomer,
+            salesOrder.contractDate                  as contractDate,
+            salesOrder.customerOrderDate              as customerOrderDate,
+            salesOrder.soRequisitionCreationDateTime as soRequisitionCreationDateTime,
+            salesOrder.blanketIndicator              as blanketIndicator,
+            salesOrder.lspAddress                    as lspAddress,
+            salesOrder.salesOrderType.code           as salesOrderType,
+
+        key lineId,
+            hpPartNumber,
+            hpPartDescription,
+            lineStatus.code                          as lineStatus,
+            customerPartNumber,
+            quantity,
+            quantityUnit,
+            plannedReceiptDate,
+            salesPrice,
+            salesPriceUnit,
+            salesPriceCurrency,
+            lineAmount,
+            lineAmountCurrency,
+            fromLine,
+            originalPlannedReceiptDate,
+            carrierSo,
+            otherCarrierSo,
+            soChangeInOrigin,
+            reasonForCancellation.code               as reasonForCancellation,
+            shippingPoint,
+            soAckOutOrigin,
+            storageLocation,
+            endSupplier,
+            hpNotesToCustomer,
+            customerNotesToHp,
+            specialDealFlagSo,
+            specialPriceIndicatorSo,
+            transitTime,
+            customerLineId,
+            gtsHold,
+            incotermsRevision,
+            termsOfDelivery,
+            deliveryPlace,
+            confirmedLineId,
+            confirmedQuantity,
+            confirmedReceiptDate,
+            totalInvoicedQuantity,
+            totalShippedQuantity,
+            totalDeliveredQuantity,
+            balanceQuantity,
+            soRequisitionNumber,
+            hpPurchaseOrder,
+            hpPoLineItem,
+            hpBacklogNotes
+    };
+
+   
+ 
     /** Schedule Summary screen — order counts per line status (FDS 3.13) */
     @readonly
     @title                 : '{i18n>SalesOrderScheduleSummary}'
@@ -699,32 +720,31 @@ action updateSalesOrderHeader(hpSalesOrder: String(10),
             description : String(60);
     }
 
+    // ==========================================================================
+    // Editable-fields metadata — lets the Freestyle UI fetch the whitelist
+    // instead of hardcoding it (single source of truth in the service impl)
+    // ==========================================================================
+
+    type EditableFieldsResult : {
+        entity : String;
+        fields : array of String;
+    };
+
+    @requires: 'authenticated-user'
+    function getEditableFields(entityName: String)                returns array of EditableFieldsResult;
+
+    // ==========================================================================
+    // Current-user role info — backs isHpBuyer in the Freestyle UI.
+    // Uses req.user.is(<role>), which resolves against the XSUAA/IAS scopes
+    // mapped to SalesOrderManage / SalesOrderViewer in xs-security.json.
+    // ==========================================================================
+
+    type UserInfoResult       : {
+        isHpBuyer : Boolean;
+        isViewer  : Boolean;
+    };
+
+    @requires: 'authenticated-user'
+    function getUserInfo()                                        returns UserInfoResult;
+
 }
-
-
-// ==========================================================================
-// Editable-fields metadata — lets the Freestyle UI fetch the whitelist
-// instead of hardcoding it (single source of truth in the service impl)
-// ==========================================================================
-
-type EditableFieldsResult : {
-    entity : String;
-    fields : array of String;
-};
-
-@requires: 'authenticated-user'
-function getEditableFields(entityName: String)                returns array of EditableFieldsResult;
-
-// ==========================================================================
-// Current-user role info — backs isHpBuyer in the Freestyle UI.
-// Uses req.user.is(<role>), which resolves against the XSUAA/IAS scopes
-// mapped to SalesOrderManage / SalesOrderViewer in xs-security.json.
-// ==========================================================================
-
-type UserInfoResult       : {
-    isHpBuyer : Boolean;
-    isViewer  : Boolean;
-};
-
-@requires: 'authenticated-user'
-function getUserInfo()                                        returns UserInfoResult;

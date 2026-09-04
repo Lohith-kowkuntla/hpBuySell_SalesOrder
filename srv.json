@@ -1,0 +1,6728 @@
+{
+  "definitions": {
+    "HpBuySellOtcSalesOrderService": {
+      "kind": "service",
+      "@path": "salesorder",
+      "@requires": "authenticated-user"
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrders": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrders}",
+      "@cds.redirection.target": true,
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        },
+        {
+          "grant": [
+            "UPDATE"
+          ],
+          "to": [
+            "SalesOrderManage"
+          ]
+        }
+      ],
+      "@description": "{i18n>SalesOrders.descr}",
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrders"
+          ]
+        }
+      },
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "hpSalesOrder": {
+          "@title": "{i18n>soHeader.hpSalesOrder}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerOrder": {
+          "@title": "{i18n>soHeader.customerOrder}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 20
+        },
+        "customerOrderDate": {
+          "@title": "{i18n>soHeader.customerOrderDate}",
+          "type": "cds.Date"
+        },
+        "soOrderDate": {
+          "@title": "{i18n>soHeader.soOrderDate}",
+          "type": "cds.Date"
+        },
+        "soRequisitionCreationDateTime": {
+          "@title": "{i18n>soHeader.soRequisitionCreationDateTime}",
+          "type": "cds.Timestamp"
+        },
+        "salesOrderStatus": {
+          "@title": "{i18n>soHeader.salesOrderStatus}",
+          "@readonly": true,
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderStatuses",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "salesOrderType": {
+          "@title": "{i18n>soHeader.salesOrderType}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderTypes",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "salesOrderOrigin": {
+          "@title": "{i18n>soHeader.salesOrderOrigin}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderOrigins",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "businessModel": {
+          "@title": "{i18n>soHeader.businessModel}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "businessUnit": {
+          "@title": "{i18n>soHeader.businessUnit}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "blanketIndicator": {
+          "@title": "{i18n>soHeader.blanketIndicator}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "contractNumber": {
+          "@title": "{i18n>soHeader.contractNumber}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "contractDate": {
+          "@title": "{i18n>soHeader.contractDate}",
+          "type": "cds.Date"
+        },
+        "wbsProjectCode": {
+          "@title": "{i18n>soHeader.wbsProjectCode}",
+          "type": "cds.String",
+          "length": 24
+        },
+        "wbsProjectCodeDescription": {
+          "@title": "{i18n>soHeader.wbsProjectCodeDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpCompanyCode": {
+          "@title": "{i18n>soHeader.hpCompanyCode}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpCompanyDescription": {
+          "@title": "{i18n>soHeader.hpCompanyDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "hpSalesOrganization": {
+          "@title": "{i18n>soHeader.hpSalesOrganization}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpPlant": {
+          "@title": "{i18n>soHeader.hpPlant}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpBuyerCode": {
+          "@title": "{i18n>soHeader.hpBuyerCode}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpBuyerName": {
+          "@title": "{i18n>soHeader.hpBuyerName}",
+          "type": "cds.String",
+          "length": 35
+        },
+        "customerCode": {
+          "@title": "{i18n>soHeader.customerCode}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerDescription": {
+          "@title": "{i18n>soHeader.customerDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "shipTo": {
+          "@title": "{i18n>soHeader.shipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 45
+        },
+        "otherShipTo": {
+          "@title": "{i18n>soHeader.otherShipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "billTo": {
+          "@title": "{i18n>soHeader.billTo}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "payer": {
+          "@title": "{i18n>soHeader.payer}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "paymentTerms": {
+          "@title": "{i18n>soHeader.paymentTerms}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "lspAddress": {
+          "@title": "{i18n>soHeader.lspAddress}",
+          "type": "cds.String",
+          "length": 80
+        },
+        "customerNotesToHp": {
+          "@title": "{i18n>soHeader.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpNotesToCustomer": {
+          "@title": "{i18n>soHeader.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "simpleChangeProcessingInd": {
+          "@title": "{i18n>soHeader.simpleChangeProcessingInd}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "acknowledgements": {
+          "@title": "{i18n>soHeader.acknowledgements}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderAcknowledgements",
+          "on": [
+            {
+              "ref": [
+                "acknowledgements",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "items": {
+          "@title": "{i18n>soHeader.items}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderItems",
+          "on": [
+            {
+              "ref": [
+                "items",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      },
+      "actions": {
+        "updateSalesOrder": {
+          "kind": "action",
+          "@title": "{i18n>action.updateSalesOrder}",
+          "@requires": "SalesOrderManage",
+          "returns": {
+            "type": "HpBuySellOtcSalesOrderService.UpdateResult"
+          }
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderItems": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderItems}",
+      "@cds.redirection.target": true,
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        },
+        {
+          "grant": [
+            "UPDATE"
+          ],
+          "to": [
+            "SalesOrderManage"
+          ]
+        },
+        {
+          "grant": [
+            "cancelLine"
+          ],
+          "to": [
+            "SalesOrderManage"
+          ]
+        }
+      ],
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderItems"
+          ]
+        }
+      },
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "salesOrder": {
+          "@title": "{i18n>soItem.salesOrder}",
+          "key": true,
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "lineId": {
+          "@title": "{i18n>soItem.lineId}",
+          "key": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "fromLine": {
+          "@title": "{i18n>soItem.fromLine}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "customerLineId": {
+          "@title": "{i18n>soItem.customerLineId}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "lineStatus": {
+          "@title": "{i18n>soItem.lineStatus}",
+          "@readonly": true,
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.LineStatuses",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "hpPartNumber": {
+          "@title": "{i18n>soItem.hpPartNumber}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpPartDescription": {
+          "@title": "{i18n>soItem.hpPartDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "customerPartNumber": {
+          "@title": "{i18n>soItem.customerPartNumber}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 35
+        },
+        "quantity": {
+          "@title": "{i18n>soItem.quantity}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "quantityUnit": {
+          "@title": "{i18n>soItem.quantityUnit}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "balanceQuantity": {
+          "@title": "{i18n>soItem.balanceQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalShippedQuantity": {
+          "@title": "{i18n>soItem.totalShippedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalInvoicedQuantity": {
+          "@title": "{i18n>soItem.totalInvoicedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalDeliveredQuantity": {
+          "@title": "{i18n>soItem.totalDeliveredQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "confirmedLineId": {
+          "@title": "{i18n>soItem.confirmedLineId}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "confirmedQuantity": {
+          "@title": "{i18n>soItem.confirmedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "confirmedReceiptDate": {
+          "@title": "{i18n>soItem.confirmedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "plannedReceiptDate": {
+          "@title": "{i18n>soItem.plannedReceiptDate}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Date"
+        },
+        "originalPlannedReceiptDate": {
+          "@title": "{i18n>soItem.originalPlannedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "salesPrice": {
+          "@title": "{i18n>soItem.salesPrice}",
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "salesPriceUnit": {
+          "@title": "{i18n>soItem.salesPriceUnit}",
+          "type": "cds.Decimal",
+          "precision": 5,
+          "scale": 0
+        },
+        "salesPriceCurrency": {
+          "@title": "{i18n>soItem.salesPriceCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "lineAmount": {
+          "@title": "{i18n>soItem.lineAmount}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 2
+        },
+        "lineAmountCurrency": {
+          "@title": "{i18n>soItem.lineAmountCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "specialDealFlagSo": {
+          "@title": "{i18n>soItem.specialDealFlagSo}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "specialPriceIndicatorSo": {
+          "@title": "{i18n>soItem.specialPriceIndicatorSo}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "specialPriceIndicatorPo": {
+          "@title": "{i18n>soItem.specialPriceIndicatorPo}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "reasonForCancellation": {
+          "@title": "{i18n>soItem.reasonForCancellation}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.CancellationReasons",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "carrierSo": {
+          "@title": "{i18n>soItem.carrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "otherCarrierSo": {
+          "@title": "{i18n>soItem.otherCarrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "shippingPoint": {
+          "@title": "{i18n>soItem.shippingPoint}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "storageLocation": {
+          "@title": "{i18n>soItem.storageLocation}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "termsOfDelivery": {
+          "@title": "{i18n>soItem.termsOfDelivery}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "deliveryPlace": {
+          "@title": "{i18n>soItem.deliveryPlace}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 25
+        },
+        "incotermsRevision": {
+          "@title": "{i18n>soItem.incotermsRevision}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "transitTime": {
+          "@title": "{i18n>soItem.transitTime}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "endSupplier": {
+          "@title": "{i18n>soItem.endSupplier}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "gtsHold": {
+          "@title": "{i18n>soItem.gtsHold}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "hpPurchaseOrder": {
+          "@title": "{i18n>soItem.hpPurchaseOrder}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpPoLineItem": {
+          "@title": "{i18n>soItem.hpPoLineItem}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "soRequisitionNumber": {
+          "@title": "{i18n>soItem.soRequisitionNumber}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "soAckOutOrigin": {
+          "@title": "{i18n>soItem.soAckOutOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "soChangeInOrigin": {
+          "@title": "{i18n>soItem.soChangeInOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerNotesToHp": {
+          "@title": "{i18n>soItem.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpNotesToCustomer": {
+          "@title": "{i18n>soItem.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpBacklogNotes": {
+          "@title": "{i18n>soItem.hpBacklogNotes}",
+          "type": "cds.LargeString"
+        },
+        "simpleChangeProcessingInd": {
+          "@title": "{i18n>soItem.simpleChangeProcessingInd}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "changeHistory": {
+          "@title": "{i18n>soItem.changeHistory}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderItemChangeHistory",
+          "on": [
+            {
+              "ref": [
+                "changeHistory",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "salesOrder"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "changeHistory",
+                "lineId"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "lineId"
+              ]
+            }
+          ]
+        }
+      },
+      "actions": {
+        "cancelLine": {
+          "kind": "action",
+          "@title": "{i18n>action.cancelLine}",
+          "@requires": "SalesOrderManage",
+          "params": {
+            "reasonForCancellation": {
+              "@title": "{i18n>action.cancelLine.reason}",
+              "@mandatory": true,
+              "type": "cds.String",
+              "length": 2
+            }
+          },
+          "returns": {
+            "type": "HpBuySellOtcSalesOrderService.UpdateResult"
+          }
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.updateSalesOrderItem": {
+      "kind": "action",
+      "@requires": "SalesOrderManage",
+      "params": {
+        "salesOrder": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "lineID": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "salesPrice": {
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "salesPriceUnit": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "specialDealFlagSo": {
+          "type": "cds.Boolean"
+        },
+        "hpNotesToCustomer": {
+          "type": "cds.String",
+          "length": 1000
+        },
+        "hpBacklogNotes": {
+          "type": "cds.String",
+          "length": 1000
+        }
+      },
+      "returns": {
+        "type": "HpBuySellOtcSalesOrderService.UpdateResult"
+      }
+    },
+    "HpBuySellOtcSalesOrderService.updateSalesOrderHeader": {
+      "kind": "action",
+      "@readonly": true,
+      "@title": "{i18n>SalesOrderAcknowledgements}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@requires": "SalesOrderManage",
+      "params": {
+        "hpSalesOrder": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpNotesToCustomer": {
+          "type": "cds.String",
+          "length": 1000
+        }
+      },
+      "returns": {
+        "type": "HpBuySellOtcSalesOrderService.UpdateResult"
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderAcknowledgements": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderAcknowledgements}",
+      "@description": "{i18n>SalesOrderAcknowledgements.descr}",
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderAcknowledgements"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "salesOrder": {
+          "@title": "{i18n>soAck.salesOrder}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "content": {
+          "@title": "{i18n>soAck.content}",
+          "@Core.MediaType": {
+            "=": "mediaType"
+          },
+          "type": "cds.LargeBinary"
+        },
+        "mediaType": {
+          "@title": "{i18n>soAck.mediaType}",
+          "@Core.IsMediaType": true,
+          "type": "cds.String",
+          "length": 100,
+          "default": {
+            "val": "application/pdf"
+          }
+        },
+        "fileName": {
+          "@title": "{i18n>soAck.fileName}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "version": {
+          "@title": "{i18n>soAck.version}",
+          "type": "cds.Integer"
+        },
+        "isLatest": {
+          "@title": "{i18n>soAck.isLatest}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": true
+          }
+        },
+        "ackType": {
+          "@title": "{i18n>soAck.ackType}",
+          "type": "cds.String",
+          "length": 20
+        },
+        "receivedAt": {
+          "@title": "{i18n>soAck.receivedAt}",
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderItemChangeHistory": {
+      "kind": "entity",
+      "@readonly": true,
+      "@title": "{i18n>SalesOrderItemChangeHistory}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@description": "{i18n>SalesOrderItemChangeHistory.descr}",
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderItemChangeHistory"
+          ]
+        }
+      },
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "salesOrder": {
+          "@title": "{i18n>history.salesOrder}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "lineId": {
+          "@title": "{i18n>history.lineId}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "changedOn": {
+          "@title": "{i18n>history.changedOn}",
+          "type": "cds.Timestamp"
+        },
+        "changedBy": {
+          "@title": "{i18n>history.changedBy}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "fieldName": {
+          "@title": "{i18n>history.fieldName}",
+          "type": "cds.String",
+          "length": 100
+        },
+        "oldValue": {
+          "@title": "{i18n>history.oldValue}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "newValue": {
+          "@title": "{i18n>history.newValue}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "operationType": {
+          "@title": "{i18n>history.operationType}",
+          "type": "cds.String",
+          "length": 20
+        },
+        "approvalStatus": {
+          "@title": "{i18n>history.approvalStatus}",
+          "type": "cds.String",
+          "length": 20,
+          "default": {
+            "val": "N/A"
+          }
+        },
+        "reasonForCancellation": {
+          "@title": "{i18n>history.reasonForCancellation}",
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.CancellationReasons",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderSearchExport": {
+      "kind": "entity",
+      "@readonly": true,
+      "@title": "{i18n>SalesOrderSearchExport}",
+      "@cds.redirection.target": false,
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderItems"
+          ]
+        },
+        "columns": [
+          {
+            "key": true,
+            "ref": [
+              "salesOrder",
+              "hpSalesOrder"
+            ],
+            "as": "hpSalesOrder"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "customerOrder"
+            ],
+            "as": "customerOrder"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "soOrderDate"
+            ],
+            "as": "soOrderDate"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "wbsProjectCode"
+            ],
+            "as": "wbsProjectCode"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "wbsProjectCodeDescription"
+            ],
+            "as": "wbsProjectCodeDescription"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "salesOrderStatus",
+              "code"
+            ],
+            "as": "salesOrderStatus"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "contractNumber"
+            ],
+            "as": "contractNumber"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "businessModel"
+            ],
+            "as": "businessModel"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpCompanyCode"
+            ],
+            "as": "hpCompanyCode"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpCompanyDescription"
+            ],
+            "as": "hpCompanyDescription"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "customerCode"
+            ],
+            "as": "customerCode"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "customerDescription"
+            ],
+            "as": "customerDescription"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "shipTo"
+            ],
+            "as": "shipTo"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "billTo"
+            ],
+            "as": "billTo"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "payer"
+            ],
+            "as": "payer"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "otherShipTo"
+            ],
+            "as": "otherShipTo"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpBuyerCode"
+            ],
+            "as": "hpBuyerCode"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpBuyerName"
+            ],
+            "as": "hpBuyerName"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpSalesOrganization"
+            ],
+            "as": "hpSalesOrganization"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "salesOrderOrigin",
+              "code"
+            ],
+            "as": "salesOrderOrigin"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "businessUnit"
+            ],
+            "as": "businessUnit"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "paymentTerms"
+            ],
+            "as": "paymentTerms"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpPlant"
+            ],
+            "as": "hpPlant"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "customerNotesToHp"
+            ],
+            "as": "headerCustomerNotesToHp"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "hpNotesToCustomer"
+            ],
+            "as": "headerHpNotesToCustomer"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "contractDate"
+            ],
+            "as": "contractDate"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "customerOrderDate"
+            ],
+            "as": "customerOrderDate"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "soRequisitionCreationDateTime"
+            ],
+            "as": "soRequisitionCreationDateTime"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "blanketIndicator"
+            ],
+            "as": "blanketIndicator"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "lspAddress"
+            ],
+            "as": "lspAddress"
+          },
+          {
+            "ref": [
+              "salesOrder",
+              "salesOrderType",
+              "code"
+            ],
+            "as": "salesOrderType"
+          },
+          {
+            "key": true,
+            "ref": [
+              "lineId"
+            ]
+          },
+          {
+            "ref": [
+              "hpPartNumber"
+            ]
+          },
+          {
+            "ref": [
+              "hpPartDescription"
+            ]
+          },
+          {
+            "ref": [
+              "lineStatus",
+              "code"
+            ],
+            "as": "lineStatus"
+          },
+          {
+            "ref": [
+              "customerPartNumber"
+            ]
+          },
+          {
+            "ref": [
+              "quantity"
+            ]
+          },
+          {
+            "ref": [
+              "quantityUnit"
+            ]
+          },
+          {
+            "ref": [
+              "plannedReceiptDate"
+            ]
+          },
+          {
+            "ref": [
+              "salesPrice"
+            ]
+          },
+          {
+            "ref": [
+              "salesPriceUnit"
+            ]
+          },
+          {
+            "ref": [
+              "salesPriceCurrency"
+            ]
+          },
+          {
+            "ref": [
+              "lineAmount"
+            ]
+          },
+          {
+            "ref": [
+              "lineAmountCurrency"
+            ]
+          },
+          {
+            "ref": [
+              "fromLine"
+            ]
+          },
+          {
+            "ref": [
+              "originalPlannedReceiptDate"
+            ]
+          },
+          {
+            "ref": [
+              "carrierSo"
+            ]
+          },
+          {
+            "ref": [
+              "otherCarrierSo"
+            ]
+          },
+          {
+            "ref": [
+              "soChangeInOrigin"
+            ]
+          },
+          {
+            "ref": [
+              "reasonForCancellation",
+              "code"
+            ],
+            "as": "reasonForCancellation"
+          },
+          {
+            "ref": [
+              "shippingPoint"
+            ]
+          },
+          {
+            "ref": [
+              "soAckOutOrigin"
+            ]
+          },
+          {
+            "ref": [
+              "storageLocation"
+            ]
+          },
+          {
+            "ref": [
+              "endSupplier"
+            ]
+          },
+          {
+            "ref": [
+              "hpNotesToCustomer"
+            ]
+          },
+          {
+            "ref": [
+              "customerNotesToHp"
+            ]
+          },
+          {
+            "ref": [
+              "specialDealFlagSo"
+            ]
+          },
+          {
+            "ref": [
+              "specialPriceIndicatorSo"
+            ]
+          },
+          {
+            "ref": [
+              "transitTime"
+            ]
+          },
+          {
+            "ref": [
+              "customerLineId"
+            ]
+          },
+          {
+            "ref": [
+              "gtsHold"
+            ]
+          },
+          {
+            "ref": [
+              "incotermsRevision"
+            ]
+          },
+          {
+            "ref": [
+              "termsOfDelivery"
+            ]
+          },
+          {
+            "ref": [
+              "deliveryPlace"
+            ]
+          },
+          {
+            "ref": [
+              "confirmedLineId"
+            ]
+          },
+          {
+            "ref": [
+              "confirmedQuantity"
+            ]
+          },
+          {
+            "ref": [
+              "confirmedReceiptDate"
+            ]
+          },
+          {
+            "ref": [
+              "totalInvoicedQuantity"
+            ]
+          },
+          {
+            "ref": [
+              "totalShippedQuantity"
+            ]
+          },
+          {
+            "ref": [
+              "totalDeliveredQuantity"
+            ]
+          },
+          {
+            "ref": [
+              "balanceQuantity"
+            ]
+          },
+          {
+            "ref": [
+              "soRequisitionNumber"
+            ]
+          },
+          {
+            "ref": [
+              "hpPurchaseOrder"
+            ]
+          },
+          {
+            "ref": [
+              "hpPoLineItem"
+            ]
+          },
+          {
+            "ref": [
+              "hpBacklogNotes"
+            ]
+          }
+        ]
+      },
+      "elements": {
+        "hpSalesOrder": {
+          "@title": "{i18n>soHeader.hpSalesOrder}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerOrder": {
+          "@title": "{i18n>soHeader.customerOrder}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 20
+        },
+        "soOrderDate": {
+          "@title": "{i18n>soHeader.soOrderDate}",
+          "type": "cds.Date"
+        },
+        "wbsProjectCode": {
+          "@title": "{i18n>soHeader.wbsProjectCode}",
+          "type": "cds.String",
+          "length": 24
+        },
+        "wbsProjectCodeDescription": {
+          "@title": "{i18n>soHeader.wbsProjectCodeDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "salesOrderStatus": {
+          "@title": "{i18n>codeList.code}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "contractNumber": {
+          "@title": "{i18n>soHeader.contractNumber}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "businessModel": {
+          "@title": "{i18n>soHeader.businessModel}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpCompanyCode": {
+          "@title": "{i18n>soHeader.hpCompanyCode}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpCompanyDescription": {
+          "@title": "{i18n>soHeader.hpCompanyDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "customerCode": {
+          "@title": "{i18n>soHeader.customerCode}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerDescription": {
+          "@title": "{i18n>soHeader.customerDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "shipTo": {
+          "@title": "{i18n>soHeader.shipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 45
+        },
+        "billTo": {
+          "@title": "{i18n>soHeader.billTo}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "payer": {
+          "@title": "{i18n>soHeader.payer}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "otherShipTo": {
+          "@title": "{i18n>soHeader.otherShipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpBuyerCode": {
+          "@title": "{i18n>soHeader.hpBuyerCode}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpBuyerName": {
+          "@title": "{i18n>soHeader.hpBuyerName}",
+          "type": "cds.String",
+          "length": 35
+        },
+        "hpSalesOrganization": {
+          "@title": "{i18n>soHeader.hpSalesOrganization}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "salesOrderOrigin": {
+          "@title": "{i18n>codeList.code}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "businessUnit": {
+          "@title": "{i18n>soHeader.businessUnit}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "paymentTerms": {
+          "@title": "{i18n>soHeader.paymentTerms}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "hpPlant": {
+          "@title": "{i18n>soHeader.hpPlant}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "headerCustomerNotesToHp": {
+          "@title": "{i18n>soHeader.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "headerHpNotesToCustomer": {
+          "@title": "{i18n>soHeader.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "contractDate": {
+          "@title": "{i18n>soHeader.contractDate}",
+          "type": "cds.Date"
+        },
+        "customerOrderDate": {
+          "@title": "{i18n>soHeader.customerOrderDate}",
+          "type": "cds.Date"
+        },
+        "soRequisitionCreationDateTime": {
+          "@title": "{i18n>soHeader.soRequisitionCreationDateTime}",
+          "type": "cds.Timestamp"
+        },
+        "blanketIndicator": {
+          "@title": "{i18n>soHeader.blanketIndicator}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "lspAddress": {
+          "@title": "{i18n>soHeader.lspAddress}",
+          "type": "cds.String",
+          "length": 80
+        },
+        "salesOrderType": {
+          "@title": "{i18n>codeList.code}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "lineId": {
+          "@title": "{i18n>soItem.lineId}",
+          "key": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "hpPartNumber": {
+          "@title": "{i18n>soItem.hpPartNumber}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpPartDescription": {
+          "@title": "{i18n>soItem.hpPartDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "lineStatus": {
+          "@title": "{i18n>codeList.code}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "customerPartNumber": {
+          "@title": "{i18n>soItem.customerPartNumber}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 35
+        },
+        "quantity": {
+          "@title": "{i18n>soItem.quantity}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "quantityUnit": {
+          "@title": "{i18n>soItem.quantityUnit}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "plannedReceiptDate": {
+          "@title": "{i18n>soItem.plannedReceiptDate}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Date"
+        },
+        "salesPrice": {
+          "@title": "{i18n>soItem.salesPrice}",
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "salesPriceUnit": {
+          "@title": "{i18n>soItem.salesPriceUnit}",
+          "type": "cds.Decimal",
+          "precision": 5,
+          "scale": 0
+        },
+        "salesPriceCurrency": {
+          "@title": "{i18n>soItem.salesPriceCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "lineAmount": {
+          "@title": "{i18n>soItem.lineAmount}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 2
+        },
+        "lineAmountCurrency": {
+          "@title": "{i18n>soItem.lineAmountCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "fromLine": {
+          "@title": "{i18n>soItem.fromLine}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "originalPlannedReceiptDate": {
+          "@title": "{i18n>soItem.originalPlannedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "carrierSo": {
+          "@title": "{i18n>soItem.carrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "otherCarrierSo": {
+          "@title": "{i18n>soItem.otherCarrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "soChangeInOrigin": {
+          "@title": "{i18n>soItem.soChangeInOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "reasonForCancellation": {
+          "@title": "{i18n>codeList.code}",
+          "type": "cds.String",
+          "length": 2
+        },
+        "shippingPoint": {
+          "@title": "{i18n>soItem.shippingPoint}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "soAckOutOrigin": {
+          "@title": "{i18n>soItem.soAckOutOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "storageLocation": {
+          "@title": "{i18n>soItem.storageLocation}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "endSupplier": {
+          "@title": "{i18n>soItem.endSupplier}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpNotesToCustomer": {
+          "@title": "{i18n>soItem.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "customerNotesToHp": {
+          "@title": "{i18n>soItem.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "specialDealFlagSo": {
+          "@title": "{i18n>soItem.specialDealFlagSo}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "specialPriceIndicatorSo": {
+          "@title": "{i18n>soItem.specialPriceIndicatorSo}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "transitTime": {
+          "@title": "{i18n>soItem.transitTime}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "customerLineId": {
+          "@title": "{i18n>soItem.customerLineId}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "gtsHold": {
+          "@title": "{i18n>soItem.gtsHold}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "incotermsRevision": {
+          "@title": "{i18n>soItem.incotermsRevision}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "termsOfDelivery": {
+          "@title": "{i18n>soItem.termsOfDelivery}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "deliveryPlace": {
+          "@title": "{i18n>soItem.deliveryPlace}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 25
+        },
+        "confirmedLineId": {
+          "@title": "{i18n>soItem.confirmedLineId}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "confirmedQuantity": {
+          "@title": "{i18n>soItem.confirmedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "confirmedReceiptDate": {
+          "@title": "{i18n>soItem.confirmedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "totalInvoicedQuantity": {
+          "@title": "{i18n>soItem.totalInvoicedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalShippedQuantity": {
+          "@title": "{i18n>soItem.totalShippedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalDeliveredQuantity": {
+          "@title": "{i18n>soItem.totalDeliveredQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "balanceQuantity": {
+          "@title": "{i18n>soItem.balanceQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "soRequisitionNumber": {
+          "@title": "{i18n>soItem.soRequisitionNumber}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpPurchaseOrder": {
+          "@title": "{i18n>soItem.hpPurchaseOrder}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpPoLineItem": {
+          "@title": "{i18n>soItem.hpPoLineItem}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "hpBacklogNotes": {
+          "@title": "{i18n>soItem.hpBacklogNotes}",
+          "type": "cds.LargeString"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderScheduleSummary": {
+      "kind": "entity",
+      "@readonly": true,
+      "@title": "{i18n>SalesOrderScheduleSummary}",
+      "@cds.redirection.target": false,
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "lineStatus",
+                "code"
+              ],
+              "as": "lineStatus",
+              "cast": {
+                "type": "cds.String",
+                "length": 4
+              }
+            },
+            {
+              "ref": [
+                "lineStatus",
+                "name"
+              ],
+              "as": "lineStatusName",
+              "cast": {
+                "type": "cds.String"
+              }
+            },
+            {
+              "ref": [
+                "lineStatus",
+                "priority"
+              ],
+              "as": "priority",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            },
+            {
+              "func": "count",
+              "args": [
+                {
+                  "val": 1
+                }
+              ],
+              "as": "orderCount",
+              "cast": {
+                "type": "cds.Integer"
+              }
+            }
+          ],
+          "groupBy": [
+            {
+              "ref": [
+                "lineStatus",
+                "code"
+              ]
+            },
+            {
+              "ref": [
+                "lineStatus",
+                "name"
+              ]
+            },
+            {
+              "ref": [
+                "lineStatus",
+                "priority"
+              ]
+            }
+          ]
+        }
+      },
+      "elements": {
+        "lineStatus": {
+          "@title": "{i18n>summary.lineStatus}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "lineStatusName": {
+          "@title": "{i18n>summary.lineStatusName}",
+          "type": "cds.String"
+        },
+        "priority": {
+          "@title": "{i18n>summary.priority}",
+          "type": "cds.Integer"
+        },
+        "orderCount": {
+          "@title": "{i18n>summary.orderCount}",
+          "@Core.Computed": true,
+          "type": "cds.Integer",
+          "$calc": {
+            "func": "count",
+            "args": [
+              {
+                "val": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderStatuses": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.odata.valuelist": true,
+      "@title": "{i18n>SalesOrderStatuses}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderStatuses"
+          ]
+        }
+      },
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.LineStatuses": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.odata.valuelist": true,
+      "@title": "{i18n>LineStatuses}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.LineStatuses"
+          ]
+        }
+      },
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.LineStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.LineStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderTypes": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.odata.valuelist": true,
+      "@title": "{i18n>SalesOrderTypes}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderTypes"
+          ]
+        }
+      },
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderTypes.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderTypes.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderOrigins": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.odata.valuelist": true,
+      "@title": "{i18n>SalesOrderOrigins}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderOrigins"
+          ]
+        }
+      },
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderOrigins.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.SalesOrderOrigins.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.CancellationReasons": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.odata.valuelist": true,
+      "@title": "{i18n>CancellationReasons}",
+      "@restrict": [
+        {
+          "grant": [
+            "READ"
+          ],
+          "to": [
+            "SalesOrderManage",
+            "SalesOrderViewer"
+          ]
+        }
+      ],
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.CancellationReasons"
+          ]
+        }
+      },
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "HpBuySellOtcSalesOrderService.CancellationReasons.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "HpBuySellOtcSalesOrderService.CancellationReasons.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.UpdateResult": {
+      "kind": "type",
+      "elements": {
+        "hpSalesOrder": {
+          "@title": "{i18n>result.hpSalesOrder}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "lineId": {
+          "@title": "{i18n>result.lineId}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "status": {
+          "@title": "{i18n>result.status}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "ordchgTriggered": {
+          "@title": "{i18n>result.ordchgTriggered}",
+          "type": "cds.Boolean"
+        },
+        "message": {
+          "@title": "{i18n>result.message}",
+          "type": "cds.String"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_OrderStatus": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderStatuses}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderStatuses"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "code"
+            ]
+          },
+          {
+            "ref": [
+              "priority"
+            ]
+          }
+        ],
+        "orderBy": [
+          {
+            "ref": [
+              "priority"
+            ],
+            "sort": "asc"
+          }
+        ]
+      },
+      "elements": {
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_LineStatus": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>LineStatuses}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.LineStatuses"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "code"
+            ]
+          },
+          {
+            "ref": [
+              "priority"
+            ]
+          }
+        ],
+        "orderBy": [
+          {
+            "ref": [
+              "priority"
+            ],
+            "sort": "asc"
+          }
+        ]
+      },
+      "elements": {
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SalesOrderType": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderTypes}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderTypes"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "code"
+            ]
+          }
+        ]
+      },
+      "elements": {
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SalesOrderOrigin": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderOrigins}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderOrigins"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "code"
+            ]
+          }
+        ]
+      },
+      "elements": {
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_ReasonForCancellation": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>CancellationReasons}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.CancellationReasons"
+          ]
+        },
+        "columns": [
+          {
+            "ref": [
+              "code"
+            ]
+          }
+        ]
+      },
+      "elements": {
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_BusinessModel": {
+      "kind": "entity",
+      "@readonly": true,
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "businessModel"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "businessModel"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "businessModel"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "businessModel": {
+          "@title": "{i18n>soHeader.businessModel}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SalesOrderNumber": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpSalesOrder"
+              ]
+            },
+            {
+              "ref": [
+                "customerDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpSalesOrder": {
+          "@title": "{i18n>soHeader.hpSalesOrder}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerDescription": {
+          "@title": "{i18n>soHeader.customerDescription}",
+          "type": "cds.String",
+          "length": 25
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_Customer": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "customerCode"
+              ]
+            },
+            {
+              "ref": [
+                "customerDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "customerCode"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "customerCode"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "customerCode": {
+          "@title": "{i18n>soHeader.customerCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerDescription": {
+          "@title": "{i18n>soHeader.customerDescription}",
+          "type": "cds.String",
+          "length": 25
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_CustomerOrder": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "customerOrder"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "customerOrder"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "customerOrder"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "customerOrder": {
+          "@title": "{i18n>soHeader.customerOrder}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 20
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_Buyer": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpBuyerCode"
+              ]
+            },
+            {
+              "ref": [
+                "hpBuyerName"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpBuyerCode"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpBuyerCode"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpBuyerCode": {
+          "@title": "{i18n>soHeader.hpBuyerCode}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpBuyerName": {
+          "@title": "{i18n>soHeader.hpBuyerName}",
+          "type": "cds.String",
+          "length": 35
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_CompanyCode": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpCompanyCode"
+              ]
+            },
+            {
+              "ref": [
+                "hpCompanyDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpCompanyCode"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpCompanyCode"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpCompanyCode": {
+          "@title": "{i18n>soHeader.hpCompanyCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpCompanyDescription": {
+          "@title": "{i18n>soHeader.hpCompanyDescription}",
+          "type": "cds.String",
+          "length": 25
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SalesOrganization": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpSalesOrganization"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpSalesOrganization"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpSalesOrganization"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpSalesOrganization": {
+          "@title": "{i18n>soHeader.hpSalesOrganization}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_Plant": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpPlant"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpPlant"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpPlant"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpPlant": {
+          "@title": "{i18n>soHeader.hpPlant}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_BusinessUnit": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "businessUnit"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "businessUnit"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "businessUnit"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "businessUnit": {
+          "@title": "{i18n>soHeader.businessUnit}",
+          "key": true,
+          "type": "cds.String",
+          "length": 40
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_WbsProject": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "wbsProjectCode"
+              ]
+            },
+            {
+              "ref": [
+                "wbsProjectCodeDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "wbsProjectCode"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "wbsProjectCode"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "wbsProjectCode": {
+          "@title": "{i18n>soHeader.wbsProjectCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 24
+        },
+        "wbsProjectCodeDescription": {
+          "@title": "{i18n>soHeader.wbsProjectCodeDescription}",
+          "type": "cds.String",
+          "length": 40
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_ShipTo": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "shipTo"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "shipTo"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "shipTo"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "shipTo": {
+          "@title": "{i18n>soHeader.shipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 45
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_BillTo": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "billTo"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "billTo"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "billTo"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "billTo": {
+          "@title": "{i18n>soHeader.billTo}",
+          "key": true,
+          "type": "cds.String",
+          "length": 45
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_Payer": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "payer"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "payer"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "payer"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "payer": {
+          "@title": "{i18n>soHeader.payer}",
+          "key": true,
+          "type": "cds.String",
+          "length": 45
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_OtherShipTo": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "otherShipTo"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "otherShipTo"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "otherShipTo"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "otherShipTo": {
+          "@title": "{i18n>soHeader.otherShipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_PaymentTerms": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrders"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "paymentTerms"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "paymentTerms"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "paymentTerms"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "paymentTerms": {
+          "@title": "{i18n>soHeader.paymentTerms}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 50
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_HpPartNumber": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "hpPartNumber"
+              ]
+            },
+            {
+              "ref": [
+                "hpPartDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "hpPartNumber"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "hpPartNumber"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "hpPartNumber": {
+          "@title": "{i18n>soItem.hpPartNumber}",
+          "key": true,
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpPartDescription": {
+          "@title": "{i18n>soItem.hpPartDescription}",
+          "type": "cds.String",
+          "length": 40
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_CustomerPart": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "customerPartNumber"
+              ]
+            },
+            {
+              "ref": [
+                "hpPartNumber"
+              ]
+            },
+            {
+              "ref": [
+                "hpPartDescription"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "customerPartNumber"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "customerPartNumber"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "customerPartNumber": {
+          "@title": "{i18n>soItem.customerPartNumber}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 35
+        },
+        "hpPartNumber": {
+          "@title": "{i18n>soItem.hpPartNumber}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpPartDescription": {
+          "@title": "{i18n>soItem.hpPartDescription}",
+          "type": "cds.String",
+          "length": 40
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_StorageLocation": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "storageLocation"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "storageLocation"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "storageLocation"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "storageLocation": {
+          "@title": "{i18n>soItem.storageLocation}",
+          "key": true,
+          "type": "cds.String",
+          "length": 40
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_EndSupplier": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "endSupplier"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "endSupplier"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "endSupplier"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "endSupplier": {
+          "@title": "{i18n>soItem.endSupplier}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SoAckOutOrigin": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "soAckOutOrigin"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "soAckOutOrigin"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "soAckOutOrigin"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "soAckOutOrigin": {
+          "@title": "{i18n>soItem.soAckOutOrigin}",
+          "@readonly": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SoChangeInOrigin": {
+      "kind": "entity",
+      "@cds.redirection.target": false,
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "query": {
+        "SELECT": {
+          "from": {
+            "ref": [
+              "hpbuysell.otc.salesorder.SalesOrderItems"
+            ]
+          },
+          "distinct": true,
+          "columns": [
+            {
+              "key": true,
+              "ref": [
+                "soChangeInOrigin"
+              ]
+            }
+          ],
+          "where": [
+            {
+              "ref": [
+                "soChangeInOrigin"
+              ]
+            },
+            "is",
+            "not",
+            "null",
+            "and",
+            {
+              "ref": [
+                "soChangeInOrigin"
+              ]
+            },
+            "<>",
+            {
+              "val": ""
+            }
+          ]
+        }
+      },
+      "elements": {
+        "soChangeInOrigin": {
+          "@title": "{i18n>soItem.soChangeInOrigin}",
+          "@readonly": true,
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_SpecialDealFlag": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "@cds.redirection.target": false,
+      "@readonly": true,
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.Boolean"
+        },
+        "description": {
+          "type": "cds.String",
+          "length": 60
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_GtsHold": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "@cds.redirection.target": false,
+      "@readonly": true,
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.Boolean"
+        },
+        "description": {
+          "type": "cds.String",
+          "length": 60
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.VH_BlanketIndicator": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "@cds.redirection.target": false,
+      "@readonly": true,
+      "elements": {
+        "code": {
+          "key": true,
+          "type": "cds.Boolean"
+        },
+        "description": {
+          "type": "cds.String",
+          "length": 60
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.EditableFieldsResult": {
+      "kind": "type",
+      "elements": {
+        "entity": {
+          "type": "cds.String"
+        },
+        "fields": {
+          "items": {
+            "type": "cds.String"
+          }
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.getEditableFields": {
+      "kind": "function",
+      "@requires": "authenticated-user",
+      "params": {
+        "entityName": {
+          "type": "cds.String"
+        }
+      },
+      "returns": {
+        "items": {
+          "type": "HpBuySellOtcSalesOrderService.EditableFieldsResult"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.UserInfoResult": {
+      "kind": "type",
+      "elements": {
+        "isHpBuyer": {
+          "type": "cds.Boolean"
+        },
+        "isViewer": {
+          "type": "cds.Boolean"
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.getUserInfo": {
+      "kind": "function",
+      "@requires": "authenticated-user",
+      "returns": {
+        "type": "HpBuySellOtcSalesOrderService.UserInfoResult"
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrders": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrders}",
+      "@description": "{i18n>SalesOrders.descr}",
+      "includes": [
+        "managed"
+      ],
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "hpSalesOrder": {
+          "@title": "{i18n>soHeader.hpSalesOrder}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerOrder": {
+          "@title": "{i18n>soHeader.customerOrder}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 20
+        },
+        "customerOrderDate": {
+          "@title": "{i18n>soHeader.customerOrderDate}",
+          "type": "cds.Date"
+        },
+        "soOrderDate": {
+          "@title": "{i18n>soHeader.soOrderDate}",
+          "type": "cds.Date"
+        },
+        "soRequisitionCreationDateTime": {
+          "@title": "{i18n>soHeader.soRequisitionCreationDateTime}",
+          "type": "cds.Timestamp"
+        },
+        "salesOrderStatus": {
+          "@title": "{i18n>soHeader.salesOrderStatus}",
+          "@readonly": true,
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderStatuses",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "salesOrderType": {
+          "@title": "{i18n>soHeader.salesOrderType}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderTypes",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "salesOrderOrigin": {
+          "@title": "{i18n>soHeader.salesOrderOrigin}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderOrigins",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "businessModel": {
+          "@title": "{i18n>soHeader.businessModel}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "businessUnit": {
+          "@title": "{i18n>soHeader.businessUnit}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "blanketIndicator": {
+          "@title": "{i18n>soHeader.blanketIndicator}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "contractNumber": {
+          "@title": "{i18n>soHeader.contractNumber}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "contractDate": {
+          "@title": "{i18n>soHeader.contractDate}",
+          "type": "cds.Date"
+        },
+        "wbsProjectCode": {
+          "@title": "{i18n>soHeader.wbsProjectCode}",
+          "type": "cds.String",
+          "length": 24
+        },
+        "wbsProjectCodeDescription": {
+          "@title": "{i18n>soHeader.wbsProjectCodeDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpCompanyCode": {
+          "@title": "{i18n>soHeader.hpCompanyCode}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpCompanyDescription": {
+          "@title": "{i18n>soHeader.hpCompanyDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "hpSalesOrganization": {
+          "@title": "{i18n>soHeader.hpSalesOrganization}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpPlant": {
+          "@title": "{i18n>soHeader.hpPlant}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "hpBuyerCode": {
+          "@title": "{i18n>soHeader.hpBuyerCode}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpBuyerName": {
+          "@title": "{i18n>soHeader.hpBuyerName}",
+          "type": "cds.String",
+          "length": 35
+        },
+        "customerCode": {
+          "@title": "{i18n>soHeader.customerCode}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerDescription": {
+          "@title": "{i18n>soHeader.customerDescription}",
+          "type": "cds.String",
+          "length": 25
+        },
+        "shipTo": {
+          "@title": "{i18n>soHeader.shipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 45
+        },
+        "otherShipTo": {
+          "@title": "{i18n>soHeader.otherShipTo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "billTo": {
+          "@title": "{i18n>soHeader.billTo}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "payer": {
+          "@title": "{i18n>soHeader.payer}",
+          "type": "cds.String",
+          "length": 45
+        },
+        "paymentTerms": {
+          "@title": "{i18n>soHeader.paymentTerms}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "lspAddress": {
+          "@title": "{i18n>soHeader.lspAddress}",
+          "type": "cds.String",
+          "length": 80
+        },
+        "customerNotesToHp": {
+          "@title": "{i18n>soHeader.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpNotesToCustomer": {
+          "@title": "{i18n>soHeader.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "simpleChangeProcessingInd": {
+          "@title": "{i18n>soHeader.simpleChangeProcessingInd}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "acknowledgements": {
+          "@title": "{i18n>soHeader.acknowledgements}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderAcknowledgements",
+          "on": [
+            {
+              "ref": [
+                "acknowledgements",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        },
+        "items": {
+          "@title": "{i18n>soHeader.items}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderItems",
+          "on": [
+            {
+              "ref": [
+                "items",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$self"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderItems": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderItems}",
+      "@description": "{i18n>SalesOrderItems.descr}",
+      "includes": [
+        "managed"
+      ],
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "salesOrder": {
+          "@title": "{i18n>soItem.salesOrder}",
+          "key": true,
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "lineId": {
+          "@title": "{i18n>soItem.lineId}",
+          "key": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "fromLine": {
+          "@title": "{i18n>soItem.fromLine}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "customerLineId": {
+          "@title": "{i18n>soItem.customerLineId}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "lineStatus": {
+          "@title": "{i18n>soItem.lineStatus}",
+          "@readonly": true,
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.LineStatuses",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "hpPartNumber": {
+          "@title": "{i18n>soItem.hpPartNumber}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "hpPartDescription": {
+          "@title": "{i18n>soItem.hpPartDescription}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "customerPartNumber": {
+          "@title": "{i18n>soItem.customerPartNumber}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 35
+        },
+        "quantity": {
+          "@title": "{i18n>soItem.quantity}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "quantityUnit": {
+          "@title": "{i18n>soItem.quantityUnit}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "balanceQuantity": {
+          "@title": "{i18n>soItem.balanceQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalShippedQuantity": {
+          "@title": "{i18n>soItem.totalShippedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalInvoicedQuantity": {
+          "@title": "{i18n>soItem.totalInvoicedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "totalDeliveredQuantity": {
+          "@title": "{i18n>soItem.totalDeliveredQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "confirmedLineId": {
+          "@title": "{i18n>soItem.confirmedLineId}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 6
+        },
+        "confirmedQuantity": {
+          "@title": "{i18n>soItem.confirmedQuantity}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 13,
+          "scale": 3
+        },
+        "confirmedReceiptDate": {
+          "@title": "{i18n>soItem.confirmedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "plannedReceiptDate": {
+          "@title": "{i18n>soItem.plannedReceiptDate}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.Date"
+        },
+        "originalPlannedReceiptDate": {
+          "@title": "{i18n>soItem.originalPlannedReceiptDate}",
+          "@readonly": true,
+          "type": "cds.Date"
+        },
+        "salesPrice": {
+          "@title": "{i18n>soItem.salesPrice}",
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 3
+        },
+        "salesPriceUnit": {
+          "@title": "{i18n>soItem.salesPriceUnit}",
+          "type": "cds.Decimal",
+          "precision": 5,
+          "scale": 0
+        },
+        "salesPriceCurrency": {
+          "@title": "{i18n>soItem.salesPriceCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "lineAmount": {
+          "@title": "{i18n>soItem.lineAmount}",
+          "@readonly": true,
+          "type": "cds.Decimal",
+          "precision": 15,
+          "scale": 2
+        },
+        "lineAmountCurrency": {
+          "@title": "{i18n>soItem.lineAmountCurrency}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "specialDealFlagSo": {
+          "@title": "{i18n>soItem.specialDealFlagSo}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "specialPriceIndicatorSo": {
+          "@title": "{i18n>soItem.specialPriceIndicatorSo}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "specialPriceIndicatorPo": {
+          "@title": "{i18n>soItem.specialPriceIndicatorPo}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "reasonForCancellation": {
+          "@title": "{i18n>soItem.reasonForCancellation}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.CancellationReasons",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "carrierSo": {
+          "@title": "{i18n>soItem.carrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "otherCarrierSo": {
+          "@title": "{i18n>soItem.otherCarrierSo}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 10
+        },
+        "shippingPoint": {
+          "@title": "{i18n>soItem.shippingPoint}",
+          "type": "cds.String",
+          "length": 4
+        },
+        "storageLocation": {
+          "@title": "{i18n>soItem.storageLocation}",
+          "type": "cds.String",
+          "length": 40
+        },
+        "termsOfDelivery": {
+          "@title": "{i18n>soItem.termsOfDelivery}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 50
+        },
+        "deliveryPlace": {
+          "@title": "{i18n>soItem.deliveryPlace}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 25
+        },
+        "incotermsRevision": {
+          "@title": "{i18n>soItem.incotermsRevision}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "transitTime": {
+          "@title": "{i18n>soItem.transitTime}",
+          "type": "cds.String",
+          "length": 3
+        },
+        "endSupplier": {
+          "@title": "{i18n>soItem.endSupplier}",
+          "type": "cds.String",
+          "length": 10
+        },
+        "gtsHold": {
+          "@title": "{i18n>soItem.gtsHold}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "hpPurchaseOrder": {
+          "@title": "{i18n>soItem.hpPurchaseOrder}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "hpPoLineItem": {
+          "@title": "{i18n>soItem.hpPoLineItem}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 5
+        },
+        "soRequisitionNumber": {
+          "@title": "{i18n>soItem.soRequisitionNumber}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "soAckOutOrigin": {
+          "@title": "{i18n>soItem.soAckOutOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "soChangeInOrigin": {
+          "@title": "{i18n>soItem.soChangeInOrigin}",
+          "@readonly": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "customerNotesToHp": {
+          "@title": "{i18n>soItem.customerNotesToHp}",
+          "@Common.FieldControl": {
+            "#": "ReadOnly"
+          },
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpNotesToCustomer": {
+          "@title": "{i18n>soItem.hpNotesToCustomer}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "hpBacklogNotes": {
+          "@title": "{i18n>soItem.hpBacklogNotes}",
+          "type": "cds.LargeString"
+        },
+        "simpleChangeProcessingInd": {
+          "@title": "{i18n>soItem.simpleChangeProcessingInd}",
+          "@readonly": true,
+          "type": "cds.Boolean",
+          "default": {
+            "val": false
+          }
+        },
+        "changeHistory": {
+          "@title": "{i18n>soItem.changeHistory}",
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderItemChangeHistory",
+          "on": [
+            {
+              "ref": [
+                "changeHistory",
+                "salesOrder"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "salesOrder"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "changeHistory",
+                "lineId"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "lineId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderAcknowledgements": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderAcknowledgements}",
+      "@description": "{i18n>SalesOrderAcknowledgements.descr}",
+      "includes": [
+        "cuid",
+        "managed"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "salesOrder": {
+          "@title": "{i18n>soAck.salesOrder}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "content": {
+          "@title": "{i18n>soAck.content}",
+          "@Core.MediaType": {
+            "=": "mediaType"
+          },
+          "type": "cds.LargeBinary"
+        },
+        "mediaType": {
+          "@title": "{i18n>soAck.mediaType}",
+          "@Core.IsMediaType": true,
+          "type": "cds.String",
+          "length": 100,
+          "default": {
+            "val": "application/pdf"
+          }
+        },
+        "fileName": {
+          "@title": "{i18n>soAck.fileName}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "version": {
+          "@title": "{i18n>soAck.version}",
+          "type": "cds.Integer"
+        },
+        "isLatest": {
+          "@title": "{i18n>soAck.isLatest}",
+          "type": "cds.Boolean",
+          "default": {
+            "val": true
+          }
+        },
+        "ackType": {
+          "@title": "{i18n>soAck.ackType}",
+          "type": "cds.String",
+          "length": 20
+        },
+        "receivedAt": {
+          "@title": "{i18n>soAck.receivedAt}",
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderItemChangeHistory": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderItemChangeHistory}",
+      "@description": "{i18n>SalesOrderItemChangeHistory.descr}",
+      "includes": [
+        "cuid"
+      ],
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        },
+        "salesOrder": {
+          "@title": "{i18n>history.salesOrder}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrders",
+          "keys": [
+            {
+              "ref": [
+                "hpSalesOrder"
+              ]
+            }
+          ]
+        },
+        "lineId": {
+          "@title": "{i18n>history.lineId}",
+          "type": "cds.String",
+          "length": 6
+        },
+        "changedOn": {
+          "@title": "{i18n>history.changedOn}",
+          "type": "cds.Timestamp"
+        },
+        "changedBy": {
+          "@title": "{i18n>history.changedBy}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "fieldName": {
+          "@title": "{i18n>history.fieldName}",
+          "type": "cds.String",
+          "length": 100
+        },
+        "oldValue": {
+          "@title": "{i18n>history.oldValue}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "newValue": {
+          "@title": "{i18n>history.newValue}",
+          "type": "cds.String",
+          "length": 255
+        },
+        "operationType": {
+          "@title": "{i18n>history.operationType}",
+          "type": "cds.String",
+          "length": 20
+        },
+        "approvalStatus": {
+          "@title": "{i18n>history.approvalStatus}",
+          "type": "cds.String",
+          "length": 20,
+          "default": {
+            "val": "N/A"
+          }
+        },
+        "reasonForCancellation": {
+          "@title": "{i18n>history.reasonForCancellation}",
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.CancellationReasons",
+          "keys": [
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderStatuses": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderStatuses}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.LineStatuses": {
+      "kind": "entity",
+      "@title": "{i18n>LineStatuses}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "priority": {
+          "@title": "{i18n>codeList.priority}",
+          "type": "cds.Integer"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.LineStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.LineStatuses.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderTypes": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderTypes}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderTypes.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderTypes.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderOrigins": {
+      "kind": "entity",
+      "@title": "{i18n>SalesOrderOrigins}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.SalesOrderOrigins.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.SalesOrderOrigins.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.CancellationReasons": {
+      "kind": "entity",
+      "@title": "{i18n>CancellationReasons}",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "hpbuysell.otc.salesorder.CancellationReasons.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "hpbuysell.otc.salesorder.CancellationReasons.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "Language": {
+      "kind": "type",
+      "@title": "{i18n>Language}",
+      "@description": "{i18n>LanguageCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Languages",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Currency": {
+      "kind": "type",
+      "@title": "{i18n>Currency}",
+      "@description": "{i18n>CurrencyCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Currencies",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Country": {
+      "kind": "type",
+      "@title": "{i18n>Country}",
+      "@description": "{i18n>CountryCode.Description}",
+      "type": "cds.Association",
+      "target": "sap.common.Countries",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "Timezone": {
+      "kind": "type",
+      "type": "cds.Association",
+      "target": "sap.common.Timezones",
+      "keys": [
+        {
+          "ref": [
+            "code"
+          ]
+        }
+      ]
+    },
+    "sap.common": {
+      "kind": "context"
+    },
+    "sap.common.Locale": {
+      "kind": "type",
+      "@title": "{i18n>LanguageCode}",
+      "type": "cds.String",
+      "length": 14
+    },
+    "sap.common.Languages": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@Common.Text": {
+            "=": "name"
+          },
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Languages.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Languages.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Countries": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>CountryCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Countries.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Countries.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Currencies": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>CurrencyCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        },
+        "symbol": {
+          "@title": "{i18n>CurrencySymbol}",
+          "type": "cds.String",
+          "length": 5
+        },
+        "minorUnit": {
+          "@title": "{i18n>CurrencyMinorUnit}",
+          "type": "cds.Int16"
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Currencies.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.Timezones": {
+      "kind": "entity",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "includes": [
+        "sap.common.CodeList"
+      ],
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@title": "{i18n>TimeZoneCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        },
+        "texts": {
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "target": "sap.common.Timezones.texts",
+          "on": [
+            {
+              "ref": [
+                "texts",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            }
+          ]
+        },
+        "localized": {
+          "type": "cds.Association",
+          "target": "sap.common.Timezones.texts",
+          "on": [
+            {
+              "ref": [
+                "localized",
+                "code"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "code"
+              ]
+            },
+            "and",
+            {
+              "ref": [
+                "localized",
+                "locale"
+              ]
+            },
+            "=",
+            {
+              "ref": [
+                "$user",
+                "locale"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "sap.common.CodeList": {
+      "kind": "aspect",
+      "@cds.autoexpose": true,
+      "@cds.persistence.skip": "if-unused",
+      "@UI.Identification": [
+        {
+          "Value": {
+            "=": "name"
+          }
+        }
+      ],
+      "@cds.odata.valuelist": true,
+      "elements": {
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": true,
+          "type": "cds.String",
+          "length": 1000
+        }
+      }
+    },
+    "sap.common.TextsAspect": {
+      "kind": "aspect",
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        }
+      }
+    },
+    "sap.common.FlowHistory": {
+      "kind": "aspect",
+      "@cds.persistence.skip": "if-unused",
+      "elements": {
+        "transitions_": {
+          "@odata.draft.enabled": false,
+          "type": "cds.Composition",
+          "cardinality": {
+            "max": "*"
+          },
+          "targetAspect": {
+            "elements": {
+              "timestamp": {
+                "@cds.on.insert": {
+                  "=": "$now"
+                },
+                "@UI.HiddenFilter": true,
+                "@UI.ExcludeFromNavigationContext": true,
+                "@Core.Immutable": true,
+                "@title": "{i18n>CreatedAt}",
+                "@readonly": true,
+                "key": true,
+                "type": {
+                  "ref": [
+                    "managed",
+                    "createdAt"
+                  ]
+                }
+              },
+              "user": {
+                "@cds.on.insert": {
+                  "=": "$user"
+                },
+                "@UI.HiddenFilter": true,
+                "@UI.ExcludeFromNavigationContext": true,
+                "@Core.Immutable": true,
+                "@title": "{i18n>CreatedBy}",
+                "@readonly": true,
+                "@description": "{i18n>UserID.Description}",
+                "type": {
+                  "ref": [
+                    "managed",
+                    "createdBy"
+                  ]
+                },
+                "length": 255
+              },
+              "status": {
+                "type": "cds.String"
+              },
+              "comment": {
+                "type": "cds.String"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cuid": {
+      "kind": "aspect",
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.UUID"
+        }
+      }
+    },
+    "managed": {
+      "kind": "aspect",
+      "elements": {
+        "createdAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "createdBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@Core.Immutable": true,
+          "@title": "{i18n>CreatedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        },
+        "modifiedAt": {
+          "@cds.on.insert": {
+            "=": "$now"
+          },
+          "@cds.on.update": {
+            "=": "$now"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedAt}",
+          "@readonly": true,
+          "type": "cds.Timestamp"
+        },
+        "modifiedBy": {
+          "@cds.on.insert": {
+            "=": "$user"
+          },
+          "@cds.on.update": {
+            "=": "$user"
+          },
+          "@UI.HiddenFilter": true,
+          "@UI.ExcludeFromNavigationContext": true,
+          "@title": "{i18n>ChangedBy}",
+          "@readonly": true,
+          "@description": "{i18n>UserID.Description}",
+          "type": "User",
+          "length": 255
+        }
+      }
+    },
+    "temporal": {
+      "kind": "aspect",
+      "elements": {
+        "validFrom": {
+          "@cds.valid.from": true,
+          "type": "cds.Timestamp"
+        },
+        "validTo": {
+          "@cds.valid.to": true,
+          "type": "cds.Timestamp"
+        }
+      }
+    },
+    "User": {
+      "kind": "type",
+      "@title": "{i18n>UserID}",
+      "@description": "{i18n>UserID.Description}",
+      "type": "cds.String",
+      "length": 255
+    },
+    "hpbuysell.otc.salesorder.SalesOrderStatuses.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderOrigins.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.SalesOrderTypes.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.LineStatuses.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "hpbuysell.otc.salesorder.CancellationReasons.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderStatuses.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderStatuses.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.LineStatuses.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.LineStatuses.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderTypes.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderTypes.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.SalesOrderOrigins.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.SalesOrderOrigins.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        }
+      }
+    },
+    "HpBuySellOtcSalesOrderService.CancellationReasons.texts": {
+      "kind": "entity",
+      "@cds.autoexposed": true,
+      "@odata.draft.enabled": false,
+      "projection": {
+        "from": {
+          "ref": [
+            "hpbuysell.otc.salesorder.CancellationReasons.texts"
+          ]
+        }
+      },
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>codeList.code}",
+          "key": true,
+          "type": "cds.String",
+          "length": 2
+        }
+      }
+    },
+    "sap.common.Languages.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@Common.Text": {
+            "=": "name"
+          },
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        }
+      }
+    },
+    "sap.common.Countries.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>CountryCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "sap.common.Currencies.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>CurrencyCode}",
+          "@Common.Text": {
+            "=": "name"
+          },
+          "key": true,
+          "type": "cds.String",
+          "length": 3
+        }
+      }
+    },
+    "sap.common.Timezones.texts": {
+      "kind": "entity",
+      "@odata.draft.enabled": false,
+      "includes": [
+        "sap.common.TextsAspect"
+      ],
+      "elements": {
+        "locale": {
+          "@title": "{i18n>LanguageCode}",
+          "key": true,
+          "type": "sap.common.Locale",
+          "length": 14
+        },
+        "name": {
+          "@title": "{i18n>Name}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 255
+        },
+        "descr": {
+          "@title": "{i18n>Description}",
+          "localized": null,
+          "type": "cds.String",
+          "length": 1000
+        },
+        "code": {
+          "@odata.containment.ignore": true,
+          "@title": "{i18n>TimeZoneCode}",
+          "key": true,
+          "type": "cds.String",
+          "length": 100
+        }
+      }
+    }
+  },
+  "meta": {
+    "creator": "CDS Compiler v6.9.4",
+    "compilerVersion": "6.9.4",
+    "compilerCsnFlavor": "inferred",
+    "flavor": "inferred"
+  },
+  "$version": "2.0"
+}

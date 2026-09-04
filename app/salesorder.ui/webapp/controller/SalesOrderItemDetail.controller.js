@@ -55,11 +55,11 @@ sap.ui.define(
                             // Allowed actions returned by the service
                             canUpdate: false,
                             canCancel: false,
-                            canViewHistory: false,
+                         
 
                             today: new Date(),
 
-                            historyTitle: this.getText("changeHistory")
+                          
                         }),
                         "view"
                     );
@@ -191,38 +191,7 @@ sap.ui.define(
                 },
 
 
-                //---------------------------------------------------------------------------*
-                // Child Tables
-                //---------------------------------------------------------------------------*
-
-                onHistoryUpdateFinished: function (oEvent) {
-
-                    this._setTableTitle(
-                        "/historyTitle",
-                        "changeHistory",
-                        oEvent.getParameter("total")
-                    );
-                },
-
-
-                _setTableTitle: function (
-                    sProperty,
-                    sTextKey,
-                    iCount
-                ) {
-
-                    this.getModel("view").setProperty(
-                        sProperty,
-                        this.getText(
-                            "titleWithCount",
-                            [
-                                this.getText(sTextKey),
-                                iCount || 0
-                            ]
-                        )
-                    );
-                },
-
+               
 
                 //---------------------------------------------------------------------------*
                 // Sales Order Line
@@ -244,7 +213,7 @@ sap.ui.define(
                     return {
 
                         salesOrder: oContext.getProperty(
-                            "salesOrder"
+                            "salesOrder_hpSalesOrder"
                         ),
 
                         lineId: oContext.getProperty(
@@ -344,7 +313,7 @@ sap.ui.define(
 
                         reasonForCancellation:
                             oContext.getProperty(
-                                "reasonForCancellation"
+                                "reasonForCancellation_code"
                             ),
 
                         hpPurchaseOrder:
@@ -362,14 +331,9 @@ sap.ui.define(
                                 "soRequisitionNumber"
                             ),
 
-                        requestStatus:
+                        lineStatus_code:
                             oContext.getProperty(
-                                "requestStatus"
-                            ),
-
-                        allowedActions:
-                            oContext.getProperty(
-                                "allowedActions"
+                                "lineStatus_code"
                             )
                     };
                 },
@@ -380,45 +344,44 @@ sap.ui.define(
                 //---------------------------------------------------------------------------*
 
                 /**
-                 * Reads allowedActions from the Sales Order Item and
-                 * updates the page view model.
+                 * Derives which actions are allowed on the bound Sales Order
+                 * Item (role + line status) and updates the page view model.
                  */
                 _refreshActions: function () {
 
                     var oLine = this._getLine();
 
-                    var sAllowed =
+                    var sLineStatus =
                         (
                             oLine &&
-                            oLine.allowedActions
+                            oLine.lineStatus_code
                         ) || "";
+
+                    var bIsHpBuyer =
+                        !!this.getModel("user").getProperty(
+                            "/isHpBuyer"
+                        );
 
                     var oViewModel =
                         this.getModel("view");
 
                     oViewModel.setProperty(
                         "/canUpdate",
-                        formatter.hasAction(
-                            sAllowed,
-                            "UPDATE"
+                        bIsHpBuyer &&
+                        formatter.isEditableLine(
+                            sLineStatus
                         )
                     );
 
                     oViewModel.setProperty(
                         "/canCancel",
-                        formatter.hasAction(
-                            sAllowed,
-                            "CANCEL"
+                        bIsHpBuyer &&
+                        formatter.isCancellableStatus(
+                            sLineStatus
                         )
                     );
 
-                    oViewModel.setProperty(
-                        "/canViewHistory",
-                        formatter.hasAction(
-                            sAllowed,
-                            "VIEWHISTORY"
-                        )
-                    );
+                  
                 },
 
 
@@ -575,21 +538,7 @@ sap.ui.define(
 
                 /**
                  * Navigates to the Sales Order Item History page.
-                 */
-                onViewHistory: function () {
-
-                    var oLine = this._getLine();
-
-                    if (!oLine) {
-                        return;
-                    }
-
-                    this.navToHistory(
-                        oLine.salesOrder,
-                        oLine.lineId
-                    );
-                },
-
+             
 
                 //---------------------------------------------------------------------------*
                 // Field Change Handlers
@@ -650,44 +599,27 @@ sap.ui.define(
                         return;
                     }
 
-                    var bPriceChanged =
-                        this.isSalesPriceChanged(
-                            oData.originalSalesPrice,
-                            oData.salesPrice
-                        );
-
                     this._callAction(
                         "updateSalesOrderItem",
                         {
 
                             salesOrder:
-                                oLine.salesOrder,
-
-                            lineId:
-                                oLine.lineId,
-
+                                this._sSalesOrder,
+                            lineID: oLine.lineId,
                             salesPrice:
                                 parseFloat(
                                     oData.salesPrice
                                 ),
 
-                            salesPriceUnit:
-                                parseInt(
-                                    oData.salesPriceUnit,
-                                    10
-                                ),
+                            salesPriceUnit: String(oData.salesPriceUnit),
 
-                            specialDealFlagSo:
-                                oData.specialDealFlagSo,
+                            specialDealFlagSo: oData.specialDealFlagSo === "Y",
 
                             hpNotesToCustomer:
                                 oData.hpNotesToCustomer,
 
                             hpBacklogNotes:
-                                oData.hpBacklogNotes,
-
-                            priceChanged:
-                                bPriceChanged
+                                oData.hpBacklogNotes
 
                         }
                     );
@@ -723,11 +655,11 @@ sap.ui.define(
                     }
 
                     this._callAction(
-                        "cancelSalesOrderItem",
+                        "cancelLine",
                         {
 
                             salesOrder:
-                                oLine.salesOrder,
+                                this._sSalesOrder,
 
                             lineId:
                                 oLine.lineId,
@@ -805,40 +737,6 @@ sap.ui.define(
                 },
 
 
-                /**
-                 * Compares the original and current Sales Price.
-                 */
-                isSalesPriceChanged: function (
-                    vOriginal,
-                    vCurrent
-                ) {
-
-                    var fOriginal =
-                        parseFloat(
-                            vOriginal
-                        );
-
-                    var fCurrent =
-                        parseFloat(
-                            vCurrent
-                        );
-
-                    if (
-                        Number.isNaN(
-                            fOriginal
-                        ) &&
-                        Number.isNaN(
-                            fCurrent
-                        )
-                    ) {
-
-                        return false;
-                    }
-
-                    return fOriginal !== fCurrent;
-                },
-
-
                 //---------------------------------------------------------------------------*
                 // Action Handling
                 //---------------------------------------------------------------------------*
@@ -859,10 +757,19 @@ sap.ui.define(
                         true
                     );
 
-                    return this.callLineAction(
-                        sAction,
-                        oPayload
-                    )
+                    var pAction =
+                        sAction === "cancelLine"
+                            ? this.cancelSalesOrderLine(
+                                oPayload.salesOrder,
+                                oPayload.lineId,
+                                oPayload.reasonForCancellation
+                            )
+                            : this.callLineAction(
+                                sAction,
+                                oPayload
+                            );
+
+                    return pAction
                         .then(
                             function (oResult) {
 
@@ -889,8 +796,36 @@ sap.ui.define(
                                  * - allowedActions
                                  *
                                  * are re-read from the service.
+                                 *
+                                 * "/busy" is driven by the element binding's
+                                 * own dataRequested/dataReceived pair, which
+                                 * never fires on a failed re-read. Clear it
+                                 * here as well once the refresh request
+                                 * completes, so a failed refresh can't leave
+                                 * the page stuck behind the busy indicator.
                                  */
-                                this.getModel().refresh(
+                                var oModel =
+                                    this.getModel();
+
+                                var fnRequestCompleted =
+                                    function () {
+
+                                        oModel.detachRequestCompleted(
+                                            fnRequestCompleted
+                                        );
+
+                                        oViewModel.setProperty(
+                                            "/busy",
+                                            false
+                                        );
+
+                                    };
+
+                                oModel.attachRequestCompleted(
+                                    fnRequestCompleted
+                                );
+
+                                oModel.refresh(
                                     true
                                 );
 

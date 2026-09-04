@@ -335,6 +335,12 @@ entity SalesOrderItems : managed {
       @title     : '{i18n>soItem.simpleChangeProcessingInd}'
       @readonly
       simpleChangeProcessingInd   : Boolean default false;
+
+      // Audit trail for the Cancel Line action (FDS: Change History)
+      @title     : '{i18n>soItem.changeHistory}'
+      changeHistory               : Composition of many SalesOrderItemChangeHistory
+                                       on  changeHistory.salesOrder = salesOrder
+                                       and changeHistory.lineId     = lineId;
 }
 
 // ---------------------------------------------------------------------------
@@ -371,6 +377,47 @@ entity SalesOrderAcknowledgements : cuid, managed {
 
   @title     : '{i18n>soAck.receivedAt}'
   receivedAt : Timestamp;
+}
+
+// ---------------------------------------------------------------------------
+// Item change history — audit trail written by the Cancel Line action.
+// Scoped to cancelLine only; a generic field-level history mechanism for
+// every other editable field does not exist yet and is out of scope here.
+// ---------------------------------------------------------------------------
+
+@title      : '{i18n>SalesOrderItemChangeHistory}'
+@description: '{i18n>SalesOrderItemChangeHistory.descr}'
+entity SalesOrderItemChangeHistory : cuid {
+
+  @title : '{i18n>history.salesOrder}'
+  salesOrder             : Association to SalesOrders;
+
+  @title : '{i18n>history.lineId}'
+  lineId                 : String(6);
+
+  @title : '{i18n>history.changedOn}'
+  changedOn              : Timestamp;
+
+  @title : '{i18n>history.changedBy}'
+  changedBy              : String(255);
+
+  @title : '{i18n>history.fieldName}'
+  fieldName              : String(100);
+
+  @title : '{i18n>history.oldValue}'
+  oldValue               : String(255);
+
+  @title : '{i18n>history.newValue}'
+  newValue               : String(255);
+
+  @title : '{i18n>history.operationType}'
+  operationType          : String(20);            // 'CANCEL' for now
+
+  @title : '{i18n>history.approvalStatus}'
+  approvalStatus         : String(20) default 'N/A';  // no approval workflow exists yet
+
+  @title : '{i18n>history.reasonForCancellation}'
+  reasonForCancellation  : Association to CancellationReasons;
 }
 
 // ---------------------------------------------------------------------------

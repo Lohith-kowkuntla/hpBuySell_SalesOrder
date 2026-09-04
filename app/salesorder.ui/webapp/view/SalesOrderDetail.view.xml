@@ -429,7 +429,7 @@
                         key="items"
                         icon="sap-icon://list"
                         text="{view>/itemTitle}"
-                        count="{view>/itemCount}">
+                       >
 
                         <VBox
                             id="soItemTabBox"
@@ -554,7 +554,7 @@
                                             icon="sap-icon://sys-cancel"
                                             type="Transparent"
                                             tooltip="{i18n>cancelItemsTooltip}"
-                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} }"
+                                            visible="{= !${view>/itemsEditMode} &amp;&amp; !${view>/itemsCancelMode} &amp;&amp; ${user>/isHpBuyer} }"
                                             enabled="{view>/itemsCancellable}"
                                             press=".onCancelItems" />
 
@@ -1017,38 +1017,30 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Read-only -->
-                                                <Text
-                                                    id="soCellSpecialDeal"
-                                                    wrapping="false"
-                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
-                                                    text="{specialDealFlag}" />
+                                            <!-- Read-only -->
+<Text
+    id="soCellSpecialDeal"
+    wrapping="false"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+    text="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }" />
 
-                                                <!-- Editable -->
-                                                <Select
-                                                    id="soSelSpecialDeal"
-                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-                                                    width="100%"
-                                                    forceSelection="false"
-                                                    selectedKey="{specialDealFlag}"
-                                                    change=".onSpecialDealFlagChange">
+<!-- Editable -->
+<Select
+    id="soSelSpecialDeal"
+    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+    width="100%"
+    forceSelection="false"
+    selectedKey="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }"
+    change=".onspecialDealFlagSoChange">
 
-                                                    <items>
+                                                
 
-                                                        <core:Item
-                                                            id="soSdY"
-                                                            key="Y"
-                                                            text="{i18n>yes}" />
-
-                                                        <core:Item
-                                                            id="soSdN"
-                                                            key="N"
-                                                            text="{i18n>no}" />
-
-                                                    </items>
-
-                                                </Select>
-
+    <items>
+        <core:Item id="soSdY" key="Y" text="{i18n>yes}" />
+        <core:Item id="soSdN" key="N" text="{i18n>no}" />
+    </items>
+</Select>
+                                      
                                             </HBox>
 
                                         </table:template>
@@ -1163,7 +1155,7 @@
                                         width="16rem"
                                         hAlign="Begin"
                                         autoResizable="true"
-                                        sortProperty="reasonForCancellation">
+                                        sortProperty="reasonForCancellation_code">
 
                                         <table:label>
                                             <Text
@@ -1185,7 +1177,7 @@
                                                     id="soCellReasonCancel"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelReadOnly'}"
-                                                    text="{reasonForCancellation}" />
+                                                    text="{reasonForCancellation_code}" />
 
                                                 <!-- Cancel dropdown -->
                                                 <Select
@@ -1193,10 +1185,10 @@
                                                     visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelVisible'}"
                                                     width="100%"
                                                     forceSelection="false"
-                                                    selectedKey="{reasonForCancellation}"
+                                                    selectedKey="{reasonForCancellation_code}"
                                                     tooltip="{i18n>reasonForCancellation}"
                                                     items="{
-                                                        path: '/VH_ReasonForCancellation',
+                                                        path: '/CancellationReasons',
                                                         sorter: {
                                                             path: 'code'
                                                         }
@@ -1205,7 +1197,7 @@
                                                     <core:ListItem
                                                         id="soItmReasonCancel"
                                                         key="{code}"
-                                                        text="{code} - {description}" />
+                                                        text="{code} - {name}" />
 
                                                 </Select>
 
@@ -1348,7 +1340,7 @@
                         key="changeHistory"
                         icon="sap-icon://history"
                         text="{view>/changeTitle}"
-                        count="{view>/changeCount}">
+                       >
 
                         <Table
                             id="soChangeTable"
