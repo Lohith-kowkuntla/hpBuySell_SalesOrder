@@ -106,17 +106,7 @@ action updateSalesOrderHeader(hpSalesOrder: String(10),
                               
     entity SalesOrderAcknowledgements as projection on db.SalesOrderAcknowledgements;
 
-    @readonly
-    @title   : '{i18n>SalesOrderItemChangeHistory}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
-    entity SalesOrderItemChangeHistory as projection on db.SalesOrderItemChangeHistory;
-
+  
  // ==========================================================================
 // Reporting — UI exports (FDS 3.13 / slide 53)
 // Available read-only to both roles.

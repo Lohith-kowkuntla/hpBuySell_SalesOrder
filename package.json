@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "dependencies": {
     "@cap-js-community/odata-v2-adapter": "^1.16.1",
+    "@cap-js/change-tracking": "^2.2.2",
     "@sap/cds": "^9",
     "@sap/xssec": "^4"
   },
@@ -18,9 +19,11 @@
   "private": true,
   "cds": {
     "requires": {
-       "db": {
+      "db": {
         "kind": "sqlite",
-        "credentials": { "url": "db.sqlite" }
+        "credentials": {
+          "url": "db.sqlite"
+        }
       },
       "[production]": {
         "auth": "xsuaa"

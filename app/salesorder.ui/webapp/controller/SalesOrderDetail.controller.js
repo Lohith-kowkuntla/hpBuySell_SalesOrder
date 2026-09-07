@@ -46,6 +46,13 @@ sap.ui.define(
 
                 onInit: function () {
 
+                    this._sSalesOrderNumber = "";
+                    this._sHeaderNotesBackup = "";
+
+                    // Change History state
+                    this._sChangeQuery = "";
+                    this._sChangeScope = "ALL";
+
                     this._mOriginalLineValues = {};
 
                     this.setModel(
@@ -2240,12 +2247,124 @@ sap.ui.define(
                         this._applyChangeFilters();
                     },
 
-                _applyChangeFilters:
-                    function () {
+                _applyChangeFilters: function () {
 
+                    var oTable = this.byId("soChangeTable");
+
+                    if (!oTable) {
                         return;
-                    },
+                    }
 
+                    var oBinding = oTable.getBinding("items");
+
+                    if (!oBinding) {
+                        return;
+                    }
+
+                    var aFilters = [];
+
+                    // ---------------------------------------------------------
+                    // Exclude the composition/root "items" change node
+                    // ---------------------------------------------------------
+
+                    aFilters.push(
+                        new Filter(
+                            "attribute",
+                            FilterOperator.NE,
+                            "items"
+                        )
+                    );
+
+                    // ---------------------------------------------------------
+                    // Search
+                    // ---------------------------------------------------------
+
+                    var sQuery = this._sChangeQuery || "";
+
+                    if (sQuery) {
+
+                        aFilters.push(
+                            new Filter({
+                                filters: [
+
+                                    new Filter(
+                                        "objectID",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    ),
+
+                                    new Filter(
+                                        "attributeLabel",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    ),
+
+                                    new Filter(
+                                        "valueChangedFromLabel",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    ),
+
+                                    new Filter(
+                                        "valueChangedToLabel",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    ),
+
+                                    new Filter(
+                                        "createdBy",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    ),
+
+                                    new Filter(
+                                        "modificationLabel",
+                                        FilterOperator.Contains,
+                                        sQuery
+                                    )
+
+                                ],
+                                and: false
+                            })
+                        );
+                    }
+
+                    // ---------------------------------------------------------
+                    // Header / Item
+                    // ---------------------------------------------------------
+
+                    if (this._sChangeScope === "HEADER") {
+
+                        aFilters.push(
+                            new Filter(
+                                "entity",
+                                FilterOperator.Contains,
+                                "SalesOrder"
+                            )
+                        );
+
+                    } else if (this._sChangeScope === "ITEM") {
+
+                        aFilters.push(
+                            new Filter(
+                                "entity",
+                                FilterOperator.Contains,
+                                "SalesOrderItem"
+                            )
+                        );
+                    }
+
+                    // ---------------------------------------------------------
+                    // Apply
+                    // ---------------------------------------------------------
+
+                    oBinding.filter(
+                        new Filter({
+                            filters: aFilters,
+                            and: true
+                        })
+                    );
+                },
                 // =============================================================
                 // HEADER HP NOTES
                 // =============================================================

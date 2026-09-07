@@ -472,9 +472,6 @@
                                 rowsUpdated=".onItemsUpdateFinished"
                                 rows="{
                                     path: 'items',
-                                    parameters: {
-                                        countMode: 'Inline'
-                                    },
                                     sorter: {
                                         path: 'lineId',
                                         descending: false
@@ -1342,217 +1339,145 @@
                         text="{view>/changeTitle}"
                        >
 
-                        <Table
-                            id="soChangeTable"
-                            class="soSubTable"
-                            inset="false"
-                            mode="None"
-                            growing="true"
-                            growingThreshold="25"
-                            growingScrollToLoad="true"
-                            sticky="ColumnHeaders,HeaderToolbar"
-                            updateFinished=".onChangesUpdateFinished"
-                            noDataText="{i18n>noDataChanges}"
-                            items="{
-                                path: 'changes',
-                                parameters: {
-                                    countMode: 'Inline'
-                                },
-                                filters: [
-                                    {
-                                        path: 'attribute',
-                                        operator: 'NE',
-                                        value1: 'items'
-                                    }
-                                ],
-                                sorter: {
-                                    path: 'createdAt',
-                                    descending: true
-                                }
-                            }">
+                       <Table
+    id="soChangeTable"
+    class="soSubTable"
+    inset="false"
+    mode="None"
+    growing="true"
+    growingThreshold="25"
+    updateFinished=".onChangesUpdateFinished"
+    noDataText="{i18n>noDataChanges}"
+    items="{
+        path: 'changes',
+        sorter: {
+            path: 'createdAt',
+            descending: true
+        }
+    }">
 
-                            <headerToolbar>
+    <headerToolbar>
 
-                                <OverflowToolbar
-                                    id="soChangeTableToolbar">
+        <OverflowToolbar
+            id="soChangeTableToolbar">
 
-                                    <Title
-                                        id="soChangeTableTitle"
-                                        text="{view>/changeTitle}"
-                                        level="H3" />
+            <Title
+                id="soChangeTableTitle"
+                text="{view>/changeTitle}"
+                level="H3" />
 
-                                    <ToolbarSpacer
-                                        id="soChangeTableSpacer" />
+            <ToolbarSpacer
+                id="soChangeTableSpacer" />
 
-                                    <SearchField
-                                        id="soChangeSearchField"
-                                        width="15rem"
-                                        placeholder="{i18n>phSearchChanges}"
-                                        search=".onChangeSearch" />
+            <SearchField
+                id="soChangeSearchField"
+                width="15rem"
+                placeholder="{i18n>phSearchChanges}"
+                search=".onChangeSearch" />
 
-                                    <Select
-                                        id="soChangeScopeFilter"
-                                        tooltip="{i18n>changeScope}"
-                                        change=".onChangeScopeFilter">
+            <Select
+                id="soChangeScopeFilter"
+                tooltip="{i18n>changeScope}"
+                selectedKey="ALL"
+                change=".onChangeScopeFilter">
 
-                                        <items>
+                <items>
 
-                                            <core:Item
-                                                id="soChangeScopeAll"
-                                                key="ALL"
-                                                text="{i18n>changeScopeAll}" />
+                    <core:Item
+                        key="ALL"
+                        text="{i18n>all}" />
 
-                                            <core:Item
-                                                id="soChangeScopeHeader"
-                                                key="HEADER"
-                                                text="{i18n>changeScopeHeaderOnly}" />
+                    <core:Item
+                        key="HEADER"
+                        text="{i18n>header}" />
 
-                                            <core:Item
-                                                id="soChangeScopeItem"
-                                                key="ITEM"
-                                                text="{i18n>changeScopeItemOnly}" />
+                    <core:Item
+                        key="ITEM"
+                        text="{i18n>item}" />
 
-                                        </items>
+                </items>
 
-                                    </Select>
+            </Select>
 
-                                </OverflowToolbar>
+        </OverflowToolbar>
 
-                            </headerToolbar>
+    </headerToolbar>
 
+    <columns>
 
-                            <columns>
+        <Column width="11rem">
+            <Text text="{i18n>changedAt}" />
+        </Column>
 
-                                <Column
-                                    id="soChangeColDate"
-                                    width="13rem">
+        <Column width="10rem">
+            <Text text="{i18n>changedBy}" />
+        </Column>
 
-                                    <Text
-                                        id="soChangeTxtColDate"
-                                        text="{i18n>changedAt}" />
+        <Column width="18rem">
+            <Text text="{i18n>changedObject}" />
+        </Column>
 
-                                </Column>
+        <Column width="16rem">
+            <Text text="{i18n>fieldLabel}" />
+        </Column>
 
+        <Column width="12rem">
+            <Text text="{i18n>oldValue}" />
+        </Column>
 
-                                <Column
-                                    id="soChangeColUser"
-                                    width="10rem"
-                                    minScreenWidth="Tablet"
-                                    demandPopin="true">
+        <Column width="12rem">
+            <Text text="{i18n>newValue}" />
+        </Column>
 
-                                    <Text
-                                        id="soChangeTxtColUser"
-                                        text="{i18n>changedBy}" />
+        <Column width="10rem">
+            <Text text="{i18n>changeType}" />
+        </Column>
 
-                                </Column>
+    </columns>
 
+    <items>
 
-                                <Column
-                                    id="soChangeColObject"
-                                    width="13rem"
-                                    minScreenWidth="Tablet"
-                                    demandPopin="true">
+        <ColumnListItem>
 
-                                    <Text
-                                        id="soChangeTxtColObject"
-                                        text="{i18n>changedObject}" />
+            <cells>
 
-                                </Column>
+                <Text
+                    text="{
+                        path: 'createdAt',
+                        type: 'sap.ui.model.type.DateTime'
+                    }" />
 
+                <Text
+                    text="{createdBy}" />
 
-                                <Column id="soChangeColField">
+                <Text
+                    text="{objectID}"
+                    wrapping="true" />
 
-                                    <Text
-                                        id="soChangeTxtColField"
-                                        text="{i18n>fieldLabel}" />
+                <Text
+                    text="{attributeLabel}"
+                    wrapping="true" />
 
-                                </Column>
+                <Text
+                    text="{valueChangedFromLabel}"
+                    wrapping="true" />
 
+                <Text
+                    text="{valueChangedToLabel}"
+                    wrapping="true" />
 
-                                <Column id="soChangeColOld">
+                <Text
+                    text="{modificationLabel}" />
 
-                                    <Text
-                                        id="soChangeTxtColOld"
-                                        text="{i18n>oldValue}" />
+            </cells>
 
-                                </Column>
+        </ColumnListItem>
 
+    </items>
 
-                                <Column id="soChangeColNew">
+</Table>
 
-                                    <Text
-                                        id="soChangeTxtColNew"
-                                        text="{i18n>newValue}" />
-
-                                </Column>
-
-
-                                <Column
-                                    id="soChangeColType"
-                                    width="9rem"
-                                    minScreenWidth="Desktop"
-                                    demandPopin="true">
-
-                                    <Text
-                                        id="soChangeTxtColType"
-                                        text="{i18n>changeType}" />
-
-                                </Column>
-
-                            </columns>
-
-
-                            <items>
-
-                                <ColumnListItem
-                                    id="soChangeRow">
-
-                                    <cells>
-
-                                        <Text
-                                            id="soChangeCellDate"
-                                            text="{path: 'createdAt', formatter: '.formatter.dateTime'}" />
-
-
-                                        <Text
-                                            id="soChangeCellUser"
-                                            text="{createdBy}" />
-
-
-                                        <ObjectIdentifier
-                                            id="soChangeCellObject"
-                                            title="{objectID}"
-                                            text="{path: 'entity', formatter: '.formatter.changeEntityText'}" />
-
-
-                                        <Text
-                                            id="soChangeCellField"
-                                            text="{attributeLabel}" />
-
-
-                                        <Text
-                                            id="soChangeCellOld"
-                                            text="{path: 'valueChangedFromLabel', formatter: '.formatter.changeValue'}" />
-
-
-                                        <ObjectIdentifier
-                                            id="soChangeCellNew"
-                                            title="{path: 'valueChangedToLabel', formatter: '.formatter.changeValue'}" />
-
-
-                                        <ObjectStatus
-                                            id="soChangeCellType"
-                                            text="{modificationLabel}"
-                                            state="{path: 'modification', formatter: '.formatter.modificationState'}"
-                                            icon="{path: 'modification', formatter: '.formatter.modificationIcon'}" />
-
-                                    </cells>
-
-                                </ColumnListItem>
-
-                            </items>
-
-                        </Table>
+                       
 
                     </IconTabFilter>
 

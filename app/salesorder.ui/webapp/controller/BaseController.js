@@ -13,6 +13,18 @@
 // -----------------------------------------------------------------------------------*
 // Change Log:
 //    Date      |   Author      |   Defect/Incident     |   Change Description
+//    04.09.2026|   Claude      |   -                    |   Added navToHistory,
+//                                                            the navigation helper
+//                                                            called by
+//                                                            SalesOrderDetail and
+//                                                            SalesOrderItemDetail
+//                                                            to open the audit
+//                                                            trail (FDS 3.7.9 /
+//                                                            6.7 "Order Change
+//                                                            Tracking & View
+//                                                            History"). It was
+//                                                            referenced but never
+//                                                            defined here.
 // -----------------------------------------------------------------------------------*
 
 sap.ui.define(
@@ -258,6 +270,50 @@ sap.ui.define(
                         .getRouter()
                         .navTo(
                             "salesOrderOverview"
+                        );
+                },
+
+                /**
+                 * Navigates to the audit trail (Change/View History screen)
+                 * of a Sales Order line, per FDS 3.7.9 / 6.7 "Order Change
+                 * Tracking & View History".
+                 *
+                 * Mirrors the Purchase Order app's navToHistory, using the
+                 * same "salesOrder" / "lineId" route parameter names already
+                 * used by navToSalesOrderItem above, so it needs a matching
+                 * route in manifest.json:
+                 *
+                 *   {
+                 *       "pattern": "SalesOrder/{salesOrder}/item/{lineId}/history",
+                 *       "name": "viewHistory",
+                 *       "target": "viewHistory"
+                 *   }
+                 *
+                 * Called from:
+                 *   - SalesOrderDetail.controller.js
+                 *       (onItemHistory / onViewHistoryForSelection / onViewHistory)
+                 *   - SalesOrderItemDetail.controller.js
+                 *       (onViewHistory)
+                 *
+                 * @param {string} sSalesOrder HP Sales Order number
+                 * @param {string} sLineId Sales Order line id
+                 */
+                navToHistory: function (
+                    sSalesOrder,
+                    sLineId
+                ) {
+
+                    this
+                        .getRouter()
+                        .navTo(
+                            "viewHistory",
+                            {
+                                salesOrder:
+                                    sSalesOrder,
+
+                                lineId:
+                                    sLineId
+                            }
                         );
                 },
 

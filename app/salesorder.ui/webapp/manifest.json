@@ -92,6 +92,11 @@
                     "pattern": "salesorder/{salesOrder}/item/{lineId}",
                     "name": "salesOrderItemDetail",
                     "target": "salesOrderItemDetail"
+                },
+                {
+                    "pattern": "salesorder/{salesOrder}/item/{lineId}/history",
+                    "name": "viewHistory",
+                    "target": "viewHistory"
                 }
             ],
             "targets": {
@@ -109,6 +114,11 @@
                     "type": "View",
                     "id": "salesOrderItemDetail",
                     "name": "SalesOrderItemDetail"
+                },
+                "viewHistory": {
+                    "type": "View",
+                    "id": "viewHistory",
+                    "name": "ViewHistory"
                 }
             }
         },

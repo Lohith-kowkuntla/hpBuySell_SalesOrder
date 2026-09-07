@@ -1,0 +1,166 @@
+<!--
+  ===================================================================================*
+   Confidential and Proprietary
+   Copyright 2026, HP
+   All Rights Reserved
+  ===================================================================================*
+   Application Name :    Sales Order
+   Module           :    View History Screen
+   Namespace        :    hpbuysell.otc.salesorder
+   Description      :    ViewHistory.view.xml - Chronological audit trail of a sales
+                         order line (FDS section 3.7.9 / 6.7 "Order Change Tracking &
+                         View History").
+
+                         Reads the standard change log (@cap-js/change-tracking)
+                         for the selected SO/line, the same way the Sales Order
+                         Detail page's Change History tab does, but scoped to a
+                         single line (or, with the scope filter, its header) and
+                         opened by pressing "View History" on either the Detail
+                         page's Items tab or the Item Detail page.
+
+                         The log is scoped by objectID, which the plugin builds
+                         from the @changelog identifiers declared on SalesOrders /
+                         SalesOrderItems: the HP Sales Order number alone for a
+                         header change, "<hpSalesOrder>, <lineId>" for a line
+                         change - mirroring the Purchase Order app's ViewHistory
+                         screen. Confirm these two strings against the actual
+                         @changelog annotations in your db model if the objectID
+                         format differs.
+
+                         Adapted 1:1 from the Purchase Order ViewHistory.view.xml
+                         (namespace/route params/labels swapped to Sales Order).
+  ===================================================================================*
+-->
+<mvc:View
+    controllerName="hpbuysell.otc.salesorder.ui.controller.ViewHistory"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    height="100%">
+
+    <f:DynamicPage
+        id="historyPage"
+        headerExpanded="true"
+        toggleHeaderOnTitleClick="true"
+        fitContent="true"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0">
+
+        <f:title>
+            <f:DynamicPageTitle id="historyTitle">
+                <f:navigationActions>
+                    <Button
+                        id="historyNavBack"
+                        type="Transparent"
+                        icon="sap-icon://nav-back"
+                        tooltip="{i18n>back}"
+                        press=".onNavBackPress" />
+                </f:navigationActions>
+                <f:breadcrumbs>
+                    <Breadcrumbs id="historyBreadcrumbs" currentLocationText="{i18n>viewHistory}">
+                        <Link id="historyCrumbOverview" text="{i18n>salesOrderOverview}" press=".onNavToOverview" />
+                        <Link id="historyCrumbLine" text="{view>/lineTitle}" press=".onNavToLine" />
+                    </Breadcrumbs>
+                </f:breadcrumbs>
+                <f:heading>
+                    <Title id="historyHeading" text="{view>/pageTitle}" level="H1" wrapping="true" />
+                </f:heading>
+                <f:snappedContent>
+                    <Text id="historySnapped" text="{view>/lineTitle}" />
+                </f:snappedContent>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <f:header>
+            <f:DynamicPageHeader id="historyHeader" pinnable="true">
+                <HBox id="historyFilterBox" wrap="Wrap" alignItems="End">
+                    <SearchField
+                        id="historySearch"
+                        width="20rem"
+                        placeholder="{i18n>searchHistoryPlaceholder}"
+                        search=".onHistorySearch"
+                        class="sapUiSmallMarginEnd sapUiTinyMarginBottom" />
+                    <VBox id="historyScopeBox" class="sapUiSmallMarginEnd">
+                        <Label id="lblHistScope" text="{i18n>changeScope}" />
+                        <Select id="selHistScope" selectedKey="ALL" change=".onScopeChange" width="14rem">
+                            <core:Item id="histScopeAll" key="ALL" text="{i18n>changeScopeAll}" />
+                            <core:Item id="histScopeLine" key="LINE" text="{i18n>changeScopeLine}" />
+                            <core:Item id="histScopeHeader" key="HEADER" text="{i18n>changeScopeHeader}" />
+                        </Select>
+                    </VBox>
+                </HBox>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <!-- ═══ Chronological audit trail ════════════════════════════════════ -->
+        <f:content>
+            <Table
+                id="historyTable"
+                inset="false"
+                sticky="ColumnHeaders,HeaderToolbar"
+                growing="true"
+                growingThreshold="50"
+                class="sapUiResponsiveContentPadding"
+                noDataText="{i18n>noDataHistory}"
+                items="{
+                    path: '/ChangeView',
+                    sorter: { path: 'createdAt', descending: true }
+                }">
+
+                <headerToolbar>
+                    <OverflowToolbar id="historyToolbar">
+                        <Title id="historyTableTitle" text="{view>/tableTitle}" level="H2" />
+                        <ToolbarSpacer id="historyToolbarSpacer" />
+                    </OverflowToolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column id="colHistField" minScreenWidth="Tablet" demandPopin="true">
+                        <header><Text id="hdrHistField" text="{i18n>fieldLabel}" /></header>
+                    </Column>
+                    <Column id="colHistOld" minScreenWidth="Tablet" demandPopin="true">
+                        <header><Text id="hdrHistOld" text="{i18n>oldValue}" /></header>
+                    </Column>
+                    <Column id="colHistNew" minScreenWidth="Tablet" demandPopin="true">
+                        <header><Text id="hdrHistNew" text="{i18n>newValue}" /></header>
+                    </Column>
+                    <Column id="colHistBy" minScreenWidth="Desktop" demandPopin="true">
+                        <header><Text id="hdrHistBy" text="{i18n>changedBy}" /></header>
+                    </Column>
+                    <Column id="colHistOn" minScreenWidth="Desktop" demandPopin="true">
+                        <header><Text id="hdrHistOn" text="{i18n>changedOn}" /></header>
+                    </Column>
+                    <Column id="colHistSource" minScreenWidth="Desktop" demandPopin="true">
+                        <header><Text id="hdrHistSource" text="{i18n>changedObject}" /></header>
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem id="historyRow" vAlign="Middle">
+                        <cells>
+                            <VBox id="histFieldBox">
+                                <Text id="txtHistLabel" text="{attributeLabel}" />
+                                <Text id="txtHistName" text="{attribute}" class="sapUiTinyText">
+                                    <layoutData><FlexItemData id="fldHistName" /></layoutData>
+                                </Text>
+                            </VBox>
+                            <Text id="txtHistOld" text="{path: 'valueChangedFromLabel', formatter: '.formatter.changeValue'}" />
+                            <ObjectStatus
+                                id="txtHistNew"
+                                text="{path: 'valueChangedToLabel', formatter: '.formatter.changeValue'}"
+                                state="{path: 'modification', formatter: '.formatter.modificationState'}"
+                                icon="{path: 'modification', formatter: '.formatter.modificationIcon'}" />
+                            <Text id="txtHistBy" text="{createdBy}" />
+                            <Text id="txtHistOn" text="{path: 'createdAt', formatter: '.formatter.dateTime'}" />
+                            <ObjectIdentifier
+                                id="txtHistSource"
+                                title="{objectID}"
+                                text="{path: 'entity', formatter: '.formatter.changeEntityText'}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </f:content>
+    </f:DynamicPage>
+</mvc:View>

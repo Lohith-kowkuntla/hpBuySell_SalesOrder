@@ -28,12 +28,12 @@ const EDITABLE_FIELDS = {
 const CANCELLED_LINE_STATUS_CODE = "CANC"; // real seeded LineStatuses/SalesOrderItems code
 const CANCELLABLE_LINE_STATUS_CODES = ["AACK", "OPEN", "CONF"]; // FDS: cancellable set for MVP
 
-const { SELECT, UPDATE, INSERT } = cds.ql;
+const { SELECT, UPDATE } = cds.ql;
 
 module.exports = cds.service.impl(async function (srv) {
 
 
-    const { SalesOrders, SalesOrderItems, SalesOrderItemChangeHistory } = srv.entities;
+    const { SalesOrders, SalesOrderItems } = srv.entities;
 
     // =========================================================================
     // Static Value Help - Special Deal Flag
@@ -483,7 +483,7 @@ module.exports = cds.service.impl(async function (srv) {
             return req.reject(400, `Invalid cancellation reason code '${reasonForCancellation}'`);
         }
 
-        const previousStatus = oExisting.lineStatus_code;
+        
 
         await UPDATE(SalesOrderItems)
             .set({
@@ -493,18 +493,7 @@ module.exports = cds.service.impl(async function (srv) {
             })
             .where({ salesOrder_hpSalesOrder, lineId });
 
-        await INSERT.into(SalesOrderItemChangeHistory).entries({
-            salesOrder_hpSalesOrder,
-            lineId,
-            changedOn: new Date().toISOString(),
-            changedBy: req.user.id,
-            fieldName: "lineStatus",
-            oldValue: previousStatus,
-            newValue: CANCELLED_LINE_STATUS_CODE,
-            operationType: "CANCEL",
-            approvalStatus: "N/A",
-            reasonForCancellation_code: reasonForCancellation
-        });
+      
 
         const ordchgPayload = buildCancelLineOrdchgPayload({
             hpSalesOrder: salesOrder_hpSalesOrder,
