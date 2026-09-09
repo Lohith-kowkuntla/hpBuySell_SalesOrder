@@ -1,0 +1,1124 @@
+@server=http://localhost:4004
+@username=alice
+@password=
+
+
+### Supplier
+# @name Supplier_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Supplier
+Authorization: Basic {{username}}:{{password}}
+
+
+### Supplier
+# @name Supplier_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Supplier
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "supplierid": "er-9308287",
+  "suppliername": "suppliername-9308287"
+}
+
+
+### Supplier
+# @name Supplier_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Supplier/er-9308287
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "supplierid": "er-9308287",
+  "suppliername": "suppliername-9308287"
+}
+
+
+### Supplier
+# @name Supplier_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Supplier/er-9308287
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### Customer
+# @name Customer_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Customer
+Authorization: Basic {{username}}:{{password}}
+
+
+### Customer
+# @name Customer_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Customer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerid": "er-4318754",
+  "customername": "customername-4318754"
+}
+
+
+### Customer
+# @name Customer_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Customer/er-4318754
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerid": "er-4318754",
+  "customername": "customername-4318754"
+}
+
+
+### Customer
+# @name Customer_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Customer/er-4318754
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectVH
+# @name ProjectVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectVH
+# @name ProjectVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "H-10272976",
+  "wbsdescription": "wbsdescription-10272976"
+}
+
+
+### ProjectVH
+# @name ProjectVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectVH/H-10272976
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "H-10272976",
+  "wbsdescription": "wbsdescription-10272976"
+}
+
+
+### ProjectVH
+# @name ProjectVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectVH/H-10272976
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### MaterialVH
+# @name MaterialVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/MaterialVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### MaterialVH
+# @name MaterialVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/MaterialVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "materialnumber": "aterialVH-17806213",
+  "materialdescription": "materialdescription-17806213"
+}
+
+
+### MaterialVH
+# @name MaterialVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/MaterialVH/aterialVH-17806213
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "materialnumber": "aterialVH-17806213",
+  "materialdescription": "materialdescription-17806213"
+}
+
+
+### MaterialVH
+# @name MaterialVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/MaterialVH/aterialVH-17806213
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### PlantVH
+# @name PlantVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/PlantVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### PlantVH
+# @name PlantVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/PlantVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "plant": "H-10100430",
+  "plantname": "e-10100430"
+}
+
+
+### PlantVH
+# @name PlantVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/PlantVH/H-10100430
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "plant": "H-10100430",
+  "plantname": "e-10100430"
+}
+
+
+### PlantVH
+# @name PlantVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/PlantVH/H-10100430
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### StorageLocationVH
+# @name StorageLocationVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/StorageLocationVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### StorageLocationVH
+# @name StorageLocationVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/StorageLocationVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "storagelocation": "1100",
+  "plant": "H-31511100",
+  "storagelocationname": "1100"
+}
+
+
+### StorageLocationVH
+# @name StorageLocationVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/StorageLocationVH(storagelocation='1100',plant='H-31511100')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "storagelocation": "1100",
+  "plant": "H-31511100",
+  "storagelocationname": "1100"
+}
+
+
+### StorageLocationVH
+# @name StorageLocationVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/StorageLocationVH(storagelocation='1100',plant='H-31511100')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### BusinessModelVH
+# @name BusinessModelVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BusinessModelVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### BusinessModelVH
+# @name BusinessModelVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BusinessModelVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "businessmodel": "VH-7931556",
+  "businessmodeldescription": "on-7931556"
+}
+
+
+### BusinessModelVH
+# @name BusinessModelVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BusinessModelVH/VH-7931556
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "businessmodel": "VH-7931556",
+  "businessmodeldescription": "on-7931556"
+}
+
+
+### BusinessModelVH
+# @name BusinessModelVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BusinessModelVH/VH-7931556
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### Project
+# @name Project_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Project
+Authorization: Basic {{username}}:{{password}}
+
+
+### Project
+# @name Project_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Project
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbsElement": "t-15175579",
+  "salesDocument": "t-15175579",
+  "customer": "t-15175579",
+  "supplierCode": "t-15175579",
+  "hpPartNumber": "Project-15175579",
+  "EDIBTPMigrationStartDate": "2023-01-09",
+  "wbsDescription": "wbsDescription-15175579",
+  "purchasingDocumentNumber": "r-15175579",
+  "customerDescription": "customerDescription-15175579",
+  "companyCode": "5579",
+  "supplierDescription": "supplierDescription-15175579",
+  "materialDescription": "materialDescription-15175579",
+  "shipTo": "o-15175579",
+  "customerPartNumber": "customerPartNumber-15175579",
+  "supplierPartNumber": "supplierPartNumber-15175579",
+  "purchasingOrganization": "5579",
+  "salesOrganization": "5579",
+  "carrierSo": "o-15175579",
+  "carrierPo": "o-15175579",
+  "termsOfPayment": "5579",
+  "toleranceKey": "9",
+  "incotermsSoTermsOfDelivery": "579",
+  "incotermsSoDeliveryPlace": "otermsSoDeliveryPlace-15175579",
+  "incotermsPoTermsOfDelivery": "579",
+  "incotermsPoDeliveryPlace": "otermsPoDeliveryPlace-15175579",
+  "billTo": "o-15175579",
+  "payer": "r-15175579",
+  "soReqBlock": "79",
+  "soPoAutomation": "79",
+  "inboundProcessingMethod": "9",
+  "contractDocumentItem": "5579",
+  "businessModel": "l-15175579",
+  "shippingMethodSales": "s-15175579",
+  "countryKey": "579",
+  "reasonForRejectionOfSalesDocument": "79",
+  "minimumOrderQuantity": 3362396119.166,
+  "multipleOrderQuantityMarcBstrf": 158620275.858,
+  "transitTime": 56578,
+  "projectPlannedStartDate": "2022-05-05",
+  "projectPlannedFinishDate": "2005-01-27",
+  "outboundProcessingMethod": "9",
+  "poBlanketIndicator": "5579",
+  "soBlanketIndicator": "5579",
+  "unitOfWeight": "579",
+  "ediPoOutIndicator": false,
+  "sourceListRecordValidFrom": "2007-12-28",
+  "sourceListRecordValidTo": "2000-09-28",
+  "preferredSupplier": "9",
+  "purchasingGroup": "579",
+  "shippingType": "79",
+  "currencyKey": "75579",
+  "termsOfPaymentKey": "5579",
+  "shipFromCode": "e-15175579",
+  "legalContractNumber": "legalContractNumber-15175579",
+  "startOfValidityPeriod": "2020-04-06T00:00:00.000Z",
+  "htsFromAndEccnAreRequired": "9",
+  "priceUnit": 427,
+  "materialPoText": "materialPoText-15175579",
+  "incoTermRevisionPurchasing": "nPurchasing-15175579",
+  "generalItemText": "generalItemText-15175579",
+  "businessArea": "5579",
+  "storageLocation": "5579",
+  "hpRmaCoordinator": "r-15175579",
+  "plant": "t-15175579",
+  "accountNumberOfSupplier": "r-15175579",
+  "packingList": "9",
+  "invoiceForCustomsPurposes": "9",
+  "hpIsEor": "9",
+  "hpIsIor": "9",
+  "salesGroup": "5579",
+  "netValueOfTheSalesDocumentInDocumentCurrency": "75579",
+  "customerNumber": "customerNumber-15175579",
+  "documentDate": "2010-03-31",
+  "soPricingPolicy": "79",
+  "unlimitedToleranceForOutboundGi": "9",
+  "incoTermRevisionSales": "579",
+  "hpSalesOrganization": "5579",
+  "salesUnit": "579"
+}
+
+
+### Project
+# @name Project_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Project(wbsElement='t-15175579',salesDocument='t-15175579',customer='t-15175579',supplierCode='t-15175579',hpPartNumber='Project-15175579')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbsElement": "t-15175579",
+  "salesDocument": "t-15175579",
+  "customer": "t-15175579",
+  "supplierCode": "t-15175579",
+  "hpPartNumber": "Project-15175579",
+  "EDIBTPMigrationStartDate": "2023-01-09",
+  "wbsDescription": "wbsDescription-15175579",
+  "purchasingDocumentNumber": "r-15175579",
+  "customerDescription": "customerDescription-15175579",
+  "companyCode": "5579",
+  "supplierDescription": "supplierDescription-15175579",
+  "materialDescription": "materialDescription-15175579",
+  "shipTo": "o-15175579",
+  "customerPartNumber": "customerPartNumber-15175579",
+  "supplierPartNumber": "supplierPartNumber-15175579",
+  "purchasingOrganization": "5579",
+  "salesOrganization": "5579",
+  "carrierSo": "o-15175579",
+  "carrierPo": "o-15175579",
+  "termsOfPayment": "5579",
+  "toleranceKey": "9",
+  "incotermsSoTermsOfDelivery": "579",
+  "incotermsSoDeliveryPlace": "otermsSoDeliveryPlace-15175579",
+  "incotermsPoTermsOfDelivery": "579",
+  "incotermsPoDeliveryPlace": "otermsPoDeliveryPlace-15175579",
+  "billTo": "o-15175579",
+  "payer": "r-15175579",
+  "soReqBlock": "79",
+  "soPoAutomation": "79",
+  "inboundProcessingMethod": "9",
+  "contractDocumentItem": "5579",
+  "businessModel": "l-15175579",
+  "shippingMethodSales": "s-15175579",
+  "countryKey": "579",
+  "reasonForRejectionOfSalesDocument": "79",
+  "minimumOrderQuantity": 3362396119.166,
+  "multipleOrderQuantityMarcBstrf": 158620275.858,
+  "transitTime": 56578,
+  "projectPlannedStartDate": "2022-05-05",
+  "projectPlannedFinishDate": "2005-01-27",
+  "outboundProcessingMethod": "9",
+  "poBlanketIndicator": "5579",
+  "soBlanketIndicator": "5579",
+  "unitOfWeight": "579",
+  "ediPoOutIndicator": false,
+  "sourceListRecordValidFrom": "2007-12-28",
+  "sourceListRecordValidTo": "2000-09-28",
+  "preferredSupplier": "9",
+  "purchasingGroup": "579",
+  "shippingType": "79",
+  "currencyKey": "75579",
+  "termsOfPaymentKey": "5579",
+  "shipFromCode": "e-15175579",
+  "legalContractNumber": "legalContractNumber-15175579",
+  "startOfValidityPeriod": "2020-04-06T00:00:00.000Z",
+  "htsFromAndEccnAreRequired": "9",
+  "priceUnit": 427,
+  "materialPoText": "materialPoText-15175579",
+  "incoTermRevisionPurchasing": "nPurchasing-15175579",
+  "generalItemText": "generalItemText-15175579",
+  "businessArea": "5579",
+  "storageLocation": "5579",
+  "hpRmaCoordinator": "r-15175579",
+  "plant": "t-15175579",
+  "accountNumberOfSupplier": "r-15175579",
+  "packingList": "9",
+  "invoiceForCustomsPurposes": "9",
+  "hpIsEor": "9",
+  "hpIsIor": "9",
+  "salesGroup": "5579",
+  "netValueOfTheSalesDocumentInDocumentCurrency": "75579",
+  "customerNumber": "customerNumber-15175579",
+  "documentDate": "2010-03-31",
+  "soPricingPolicy": "79",
+  "unlimitedToleranceForOutboundGi": "9",
+  "incoTermRevisionSales": "579",
+  "hpSalesOrganization": "5579",
+  "salesUnit": "579"
+}
+
+
+### Project
+# @name Project_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Project(wbsElement='t-15175579',salesDocument='t-15175579',customer='t-15175579',supplierCode='t-15175579',hpPartNumber='Project-15175579')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### Buyer
+# @name Buyer_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Buyer
+Authorization: Basic {{username}}:{{password}}
+
+
+### Buyer
+# @name Buyer_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Buyer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "searchterm1": "er-4228903",
+  "buyername": "buyername-4228903"
+}
+
+
+### Buyer
+# @name Buyer_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Buyer/er-4228903
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "searchterm1": "er-4228903",
+  "buyername": "buyername-4228903"
+}
+
+
+### Buyer
+# @name Buyer_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/Buyer/er-4228903
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### CompanyCode
+# @name CompanyCode_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCode
+Authorization: Basic {{username}}:{{password}}
+
+
+### CompanyCode
+# @name CompanyCode_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCode
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "companycode": "3279",
+  "companycodedescription": "companycodedescription-10343279"
+}
+
+
+### CompanyCode
+# @name CompanyCode_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCode/3279
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "companycode": "3279",
+  "companycodedescription": "companycodedescription-10343279"
+}
+
+
+### CompanyCode
+# @name CompanyCode_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCode/3279
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### SupplierVH
+# @name SupplierVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### SupplierVH
+# @name SupplierVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "supplierid": "H-23170229",
+  "suppliername": "suppliername-23170229"
+}
+
+
+### SupplierVH
+# @name SupplierVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierVH/H-23170229
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "supplierid": "H-23170229",
+  "suppliername": "suppliername-23170229"
+}
+
+
+### SupplierVH
+# @name SupplierVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierVH/H-23170229
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### CustomerVH
+# @name CustomerVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### CustomerVH
+# @name CustomerVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerid": "H-21075745",
+  "customername": "customername-21075745"
+}
+
+
+### CustomerVH
+# @name CustomerVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerVH/H-21075745
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerid": "H-21075745",
+  "customername": "customername-21075745"
+}
+
+
+### CustomerVH
+# @name CustomerVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerVH/H-21075745
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### CompanyCodeVH
+# @name CompanyCodeVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCodeVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### CompanyCodeVH
+# @name CompanyCodeVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCodeVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "companycode": "0066",
+  "companyname": "companyname-10080066"
+}
+
+
+### CompanyCodeVH
+# @name CompanyCodeVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCodeVH/0066
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "companycode": "0066",
+  "companyname": "companyname-10080066"
+}
+
+
+### CompanyCodeVH
+# @name CompanyCodeVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CompanyCodeVH/0066
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### BuyerVH
+# @name BuyerVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BuyerVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### BuyerVH
+# @name BuyerVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BuyerVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "buyercode": "165",
+  "buyername": "165"
+}
+
+
+### BuyerVH
+# @name BuyerVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BuyerVH/165
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "buyercode": "165",
+  "buyername": "165"
+}
+
+
+### BuyerVH
+# @name BuyerVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/BuyerVH/165
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### RmaCoordinatorVH
+# @name RmaCoordinatorVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/RmaCoordinatorVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### RmaCoordinatorVH
+# @name RmaCoordinatorVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/RmaCoordinatorVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "rmacode": "H-28658751",
+  "rmaname": "e-28658751"
+}
+
+
+### RmaCoordinatorVH
+# @name RmaCoordinatorVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/RmaCoordinatorVH/H-28658751
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "rmacode": "H-28658751",
+  "rmaname": "e-28658751"
+}
+
+
+### RmaCoordinatorVH
+# @name RmaCoordinatorVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/RmaCoordinatorVH/H-28658751
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### IBStatusVH
+# @name IBStatusVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/IBStatusVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### IBStatusVH
+# @name IBStatusVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/IBStatusVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "ibstatus": "2",
+  "ibstatusdescription": "2"
+}
+
+
+### IBStatusVH
+# @name IBStatusVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/IBStatusVH/2
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "ibstatus": "2",
+  "ibstatusdescription": "2"
+}
+
+
+### IBStatusVH
+# @name IBStatusVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/IBStatusVH/2
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### OBStatusVH
+# @name OBStatusVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/OBStatusVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### OBStatusVH
+# @name OBStatusVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/OBStatusVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "obstatus": "1",
+  "obstatusdescription": "1"
+}
+
+
+### OBStatusVH
+# @name OBStatusVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/OBStatusVH/1
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "obstatus": "1",
+  "obstatusdescription": "1"
+}
+
+
+### OBStatusVH
+# @name OBStatusVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/OBStatusVH/1
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### CustomerPartners
+# @name CustomerPartners_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerPartners
+Authorization: Basic {{username}}:{{password}}
+
+
+### CustomerPartners
+# @name CustomerPartners_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerPartners
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnercode": "s-30011338",
+  "partnerfunction": "partnerfunction-30011338",
+  "partnerfunctiondescription": "partnerfunctiondescription-30011338",
+  "parentcustomercode": "e-30011338",
+  "salesorg": "1338",
+  "parza": "338"
+}
+
+
+### CustomerPartners
+# @name CustomerPartners_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerPartners/s-30011338
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnercode": "s-30011338",
+  "partnerfunction": "partnerfunction-30011338",
+  "partnerfunctiondescription": "partnerfunctiondescription-30011338",
+  "parentcustomercode": "e-30011338",
+  "salesorg": "1338",
+  "parza": "338"
+}
+
+
+### CustomerPartners
+# @name CustomerPartners_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/CustomerPartners/s-30011338
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### SupplierPartners
+# @name SupplierPartners_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierPartners
+Authorization: Basic {{username}}:{{password}}
+
+
+### SupplierPartners
+# @name SupplierPartners_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierPartners
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnersupplierid": "s-12433156",
+  "partnerfunction": "n-12433156",
+  "supplier_supplierid": "d-12433156",
+  "purchasingorg": "3156",
+  "parza": "156"
+}
+
+
+### SupplierPartners
+# @name SupplierPartners_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierPartners/s-12433156
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnersupplierid": "s-12433156",
+  "partnerfunction": "n-12433156",
+  "supplier_supplierid": "d-12433156",
+  "purchasingorg": "3156",
+  "parza": "156"
+}
+
+
+### SupplierPartners
+# @name SupplierPartners_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/SupplierPartners/s-12433156
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectUAMVH
+# @name ProjectUAMVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectUAMVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectUAMVH
+# @name ProjectUAMVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectUAMVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "VH-3586859",
+  "customer": "VH-3586859",
+  "suppliercode": "VH-3586859",
+  "companycode": "6859",
+  "wbsdescription": "wbsdescription-3586859"
+}
+
+
+### ProjectUAMVH
+# @name ProjectUAMVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectUAMVH(wbselement='VH-3586859',customer='VH-3586859',suppliercode='VH-3586859')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "VH-3586859",
+  "customer": "VH-3586859",
+  "suppliercode": "VH-3586859",
+  "companycode": "6859",
+  "wbsdescription": "wbsdescription-3586859"
+}
+
+
+### ProjectUAMVH
+# @name ProjectUAMVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectUAMVH(wbselement='VH-3586859',customer='VH-3586859',suppliercode='VH-3586859')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectCompanyVH
+# @name ProjectCompanyVH_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectCompanyVH
+Authorization: Basic {{username}}:{{password}}
+
+
+### ProjectCompanyVH
+# @name ProjectCompanyVH_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectCompanyVH
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "VH-9285057",
+  "companycode": "5057",
+  "wbsdescription": "wbsdescription-9285057"
+}
+
+
+### ProjectCompanyVH
+# @name ProjectCompanyVH_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectCompanyVH(wbselement='VH-9285057',companycode='5057')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbselement": "VH-9285057",
+  "companycode": "5057",
+  "wbsdescription": "wbsdescription-9285057"
+}
+
+
+### ProjectCompanyVH
+# @name ProjectCompanyVH_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/ProjectCompanyVH(wbselement='VH-9285057',companycode='5057')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### User
+# @name User_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/User
+Authorization: Basic {{username}}:{{password}}
+
+
+### User
+# @name User_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/User
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "email": "User-6301423",
+  "firstName": "firstName-6301423",
+  "lastName": "lastName-6301423",
+  "userName": "userName-6301423",
+  "userType": "userType-6301423",
+  "userGroupIndicator": "userGroupIndicator-6301423"
+}
+
+
+### User
+# @name User_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/User/User-6301423
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "email": "User-6301423",
+  "firstName": "firstName-6301423",
+  "lastName": "lastName-6301423",
+  "userName": "userName-6301423",
+  "userType": "userType-6301423",
+  "userGroupIndicator": "userGroupIndicator-6301423"
+}
+
+
+### User
+# @name User_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/User/User-6301423
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserGroup
+# @name UserGroup_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserGroup
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserGroup
+# @name UserGroup_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserGroup
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "user_email": "UserGroup-107928",
+  "groupid": "UserGroup-107928",
+  "groupname": "groupname-107928"
+}
+
+
+### UserGroup
+# @name UserGroup_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserGroup(user_email='UserGroup-107928',groupid='UserGroup-107928')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "user_email": "UserGroup-107928",
+  "groupid": "UserGroup-107928",
+  "groupname": "groupname-107928"
+}
+
+
+### UserGroup
+# @name UserGroup_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserGroup(user_email='UserGroup-107928',groupid='UserGroup-107928')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserProjects
+# @name UserProjects_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserProjects
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserProjects
+# @name UserProjects_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserProjects
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "projectid": "serProjects-18593466",
+  "id": "UserProjects-18593466",
+  "partner_id": "partner_id-18593466",
+  "projectname": "projectname-18593466"
+}
+
+
+### UserProjects
+# @name UserProjects_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserProjects(projectid='serProjects-18593466',id='UserProjects-18593466')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "projectid": "serProjects-18593466",
+  "id": "UserProjects-18593466",
+  "partner_id": "partner_id-18593466",
+  "projectname": "projectname-18593466"
+}
+
+
+### UserProjects
+# @name UserProjects_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserProjects(projectid='serProjects-18593466',id='UserProjects-18593466')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserPartners
+# @name UserPartners_GET
+GET {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserPartners
+Authorization: Basic {{username}}:{{password}}
+
+
+### UserPartners
+# @name UserPartners_POST
+POST {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserPartners
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnerid": "serPartners-14676076",
+  "id": "UserPartners-14676076",
+  "partnername": "partnername-14676076",
+  "partnertype": "6",
+  "user_email": "user_email-14676076"
+}
+
+
+### UserPartners
+# @name UserPartners_PATCH
+PATCH {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserPartners(partnerid='serPartners-14676076',id='UserPartners-14676076')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "partnerid": "serPartners-14676076",
+  "id": "UserPartners-14676076",
+  "partnername": "partnername-14676076",
+  "partnertype": "6",
+  "user_email": "user_email-14676076"
+}
+
+
+### UserPartners
+# @name UserPartners_DELETE
+DELETE {{server}}/odata/v4/hpbuysell-mdm-common-srv-dest/UserPartners(partnerid='serPartners-14676076',id='UserPartners-14676076')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}

@@ -1,0 +1,1081 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0"
+    xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="CommonMDMService"
+            xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="SupplierVH" EntityType="CommonMDMService.SupplierVH"/>
+                <EntitySet Name="CustomerVH" EntityType="CommonMDMService.CustomerVH"/>
+                <EntitySet Name="ProjectVH" EntityType="CommonMDMService.ProjectVH"/>
+                <EntitySet Name="CompanyCodeVH" EntityType="CommonMDMService.CompanyCodeVH"/>
+                <EntitySet Name="MaterialVH" EntityType="CommonMDMService.MaterialVH"/>
+                <EntitySet Name="PlantVH" EntityType="CommonMDMService.PlantVH"/>
+                <EntitySet Name="StorageLocationVH" EntityType="CommonMDMService.StorageLocationVH"/>
+                <EntitySet Name="BusinessModelVH" EntityType="CommonMDMService.BusinessModelVH"/>
+                <EntitySet Name="BuyerVH" EntityType="CommonMDMService.BuyerVH"/>
+                <EntitySet Name="RmaCoordinatorVH" EntityType="CommonMDMService.RmaCoordinatorVH"/>
+                <EntitySet Name="IBStatusVH" EntityType="CommonMDMService.IBStatusVH"/>
+                <EntitySet Name="OBStatusVH" EntityType="CommonMDMService.OBStatusVH"/>
+                <EntitySet Name="CustomerPartners" EntityType="CommonMDMService.CustomerPartners"/>
+                <EntitySet Name="SupplierPartners" EntityType="CommonMDMService.SupplierPartners"/>
+                <EntitySet Name="Customer" EntityType="CommonMDMService.Customer"/>
+                <EntitySet Name="Supplier" EntityType="CommonMDMService.Supplier"/>
+                <EntitySet Name="Project" EntityType="CommonMDMService.Project"/>
+                <EntitySet Name="ProjectUAMVH" EntityType="CommonMDMService.ProjectUAMVH"/>
+                <EntitySet Name="ProjectCompanyVH" EntityType="CommonMDMService.ProjectCompanyVH"/>
+                <EntitySet Name="User" EntityType="CommonMDMService.User"/>
+                <EntitySet Name="UserGroup" EntityType="CommonMDMService.UserGroup"/>
+                <EntitySet Name="UserProjects" EntityType="CommonMDMService.UserProjects"/>
+                <EntitySet Name="UserPartners" EntityType="CommonMDMService.UserPartners"/>
+                <EntitySet Name="Buyer" EntityType="CommonMDMService.Buyer"/>
+                <EntitySet Name="CompanyCode" EntityType="CommonMDMService.CompanyCode"/>
+            </EntityContainer>
+            <EntityType Name="SupplierVH">
+                <Key>
+                    <PropertyRef Name="supplierid"/>
+                </Key>
+                <Property Name="supplierid" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="suppliername" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="CustomerVH">
+                <Key>
+                    <PropertyRef Name="customerid"/>
+                </Key>
+                <Property Name="customerid" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="customername" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="ProjectVH">
+                <Key>
+                    <PropertyRef Name="wbselement"/>
+                </Key>
+                <Property Name="wbselement" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="wbsdescription" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="CompanyCodeVH">
+                <Key>
+                    <PropertyRef Name="companycode"/>
+                </Key>
+                <Property Name="companycode" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="companyname" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="MaterialVH">
+                <Key>
+                    <PropertyRef Name="materialnumber"/>
+                </Key>
+                <Property Name="materialnumber" Type="Edm.String" MaxLength="18" Nullable="false"/>
+                <Property Name="materialdescription" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="PlantVH">
+                <Key>
+                    <PropertyRef Name="plant"/>
+                </Key>
+                <Property Name="plant" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="plantname" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="StorageLocationVH">
+                <Key>
+                    <PropertyRef Name="storagelocation"/>
+                    <PropertyRef Name="plant"/>
+                </Key>
+                <Property Name="storagelocation" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="plant" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="storagelocationname" Type="Edm.String" MaxLength="4"/>
+            </EntityType>
+            <EntityType Name="BusinessModelVH">
+                <Key>
+                    <PropertyRef Name="businessmodel"/>
+                </Key>
+                <Property Name="businessmodel" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="businessmodeldescription" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="BuyerVH">
+                <Key>
+                    <PropertyRef Name="buyercode"/>
+                </Key>
+                <Property Name="buyercode" Type="Edm.String" MaxLength="3" Nullable="false"/>
+                <Property Name="buyername" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="RmaCoordinatorVH">
+                <Key>
+                    <PropertyRef Name="rmacode"/>
+                </Key>
+                <Property Name="rmacode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="rmaname" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="IBStatusVH">
+                <Key>
+                    <PropertyRef Name="ibstatus"/>
+                </Key>
+                <Property Name="ibstatus" Type="Edm.String" MaxLength="1" Nullable="false"/>
+                <Property Name="ibstatusdescription" Type="Edm.String" MaxLength="1"/>
+            </EntityType>
+            <EntityType Name="OBStatusVH">
+                <Key>
+                    <PropertyRef Name="obstatus"/>
+                </Key>
+                <Property Name="obstatus" Type="Edm.String" MaxLength="1" Nullable="false"/>
+                <Property Name="obstatusdescription" Type="Edm.String" MaxLength="1"/>
+            </EntityType>
+            <EntityType Name="CustomerPartners">
+                <Key>
+                    <PropertyRef Name="partnercode"/>
+                </Key>
+                <Property Name="partnercode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="partnerfunction" Type="Edm.String" MaxLength="255"/>
+                <Property Name="partnerfunctiondescription" Type="Edm.String" MaxLength="35"/>
+                <Property Name="parentcustomercode" Type="Edm.String" MaxLength="10"/>
+                <Property Name="salesorg" Type="Edm.String" MaxLength="4"/>
+                <Property Name="parza" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="SupplierPartners">
+                <Key>
+                    <PropertyRef Name="partnersupplierid"/>
+                </Key>
+                <Property Name="partnersupplierid" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="partnerfunction" Type="Edm.String" MaxLength="10"/>
+                <Property Name="supplier_supplierid" Type="Edm.String" MaxLength="10"/>
+                <Property Name="purchasingorg" Type="Edm.String" MaxLength="4"/>
+                <Property Name="parza" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="Customer">
+                <Key>
+                    <PropertyRef Name="customerid"/>
+                </Key>
+                <Property Name="customerid" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="customername" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="Supplier">
+                <Key>
+                    <PropertyRef Name="supplierid"/>
+                </Key>
+                <Property Name="supplierid" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="suppliername" Type="Edm.String" MaxLength="35"/>
+            </EntityType>
+            <EntityType Name="Project">
+                <Key>
+                    <PropertyRef Name="wbsElement"/>
+                    <PropertyRef Name="salesDocument"/>
+                    <PropertyRef Name="customer"/>
+                    <PropertyRef Name="supplierCode"/>
+                    <PropertyRef Name="hpPartNumber"/>
+                </Key>
+                <Property Name="wbsElement" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="salesDocument" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="customer" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="supplierCode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="hpPartNumber" Type="Edm.String" MaxLength="18" Nullable="false"/>
+                <Property Name="EDIBTPMigrationStartDate" Type="Edm.Date"/>
+                <Property Name="wbsDescription" Type="Edm.String" MaxLength="40"/>
+                <Property Name="purchasingDocumentNumber" Type="Edm.String" MaxLength="10"/>
+                <Property Name="customerDescription" Type="Edm.String" MaxLength="40"/>
+                <Property Name="companyCode" Type="Edm.String" MaxLength="4"/>
+                <Property Name="supplierDescription" Type="Edm.String" MaxLength="40"/>
+                <Property Name="materialDescription" Type="Edm.String" MaxLength="40"/>
+                <Property Name="shipTo" Type="Edm.String" MaxLength="10"/>
+                <Property Name="customerPartNumber" Type="Edm.String" MaxLength="35"/>
+                <Property Name="supplierPartNumber" Type="Edm.String" MaxLength="35"/>
+                <Property Name="purchasingOrganization" Type="Edm.String" MaxLength="4"/>
+                <Property Name="salesOrganization" Type="Edm.String" MaxLength="4"/>
+                <Property Name="carrierSo" Type="Edm.String" MaxLength="10"/>
+                <Property Name="carrierPo" Type="Edm.String" MaxLength="10"/>
+                <Property Name="termsOfPayment" Type="Edm.String" MaxLength="4"/>
+                <Property Name="toleranceKey" Type="Edm.String" MaxLength="1"/>
+                <Property Name="incotermsSoTermsOfDelivery" Type="Edm.String" MaxLength="3"/>
+                <Property Name="incotermsSoDeliveryPlace" Type="Edm.String" MaxLength="30"/>
+                <Property Name="incotermsPoTermsOfDelivery" Type="Edm.String" MaxLength="3"/>
+                <Property Name="incotermsPoDeliveryPlace" Type="Edm.String" MaxLength="30"/>
+                <Property Name="billTo" Type="Edm.String" MaxLength="10"/>
+                <Property Name="payer" Type="Edm.String" MaxLength="10"/>
+                <Property Name="soReqBlock" Type="Edm.String" MaxLength="2"/>
+                <Property Name="soPoAutomation" Type="Edm.String" MaxLength="2"/>
+                <Property Name="inboundProcessingMethod" Type="Edm.String" MaxLength="1"/>
+                <Property Name="contractDocumentItem" Type="Edm.String" MaxLength="4"/>
+                <Property Name="businessModel" Type="Edm.String" MaxLength="10"/>
+                <Property Name="shippingMethodSales" Type="Edm.String" MaxLength="10"/>
+                <Property Name="countryKey" Type="Edm.String" MaxLength="3"/>
+                <Property Name="reasonForRejectionOfSalesDocument" Type="Edm.String" MaxLength="2"/>
+                <Property Name="minimumOrderQuantity" Type="Edm.Decimal" Precision="13" Scale="3"/>
+                <Property Name="multipleOrderQuantityMarcBstrf" Type="Edm.Decimal" Precision="13" Scale="3"/>
+                <Property Name="transitTime" Type="Edm.Decimal" Precision="5" Scale="0"/>
+                <Property Name="projectPlannedStartDate" Type="Edm.Date"/>
+                <Property Name="projectPlannedFinishDate" Type="Edm.Date"/>
+                <Property Name="outboundProcessingMethod" Type="Edm.String" MaxLength="1"/>
+                <Property Name="poBlanketIndicator" Type="Edm.String" MaxLength="4"/>
+                <Property Name="soBlanketIndicator" Type="Edm.String" MaxLength="4"/>
+                <Property Name="unitOfWeight" Type="Edm.String" MaxLength="3"/>
+                <Property Name="ediPoOutIndicator" Type="Edm.Boolean"/>
+                <Property Name="sourceListRecordValidFrom" Type="Edm.Date"/>
+                <Property Name="sourceListRecordValidTo" Type="Edm.Date"/>
+                <Property Name="preferredSupplier" Type="Edm.String" MaxLength="1"/>
+                <Property Name="purchasingGroup" Type="Edm.String" MaxLength="3"/>
+                <Property Name="shippingType" Type="Edm.String" MaxLength="2"/>
+                <Property Name="currencyKey" Type="Edm.String" MaxLength="5"/>
+                <Property Name="termsOfPaymentKey" Type="Edm.String" MaxLength="4"/>
+                <Property Name="shipFromCode" Type="Edm.String" MaxLength="10"/>
+                <Property Name="legalContractNumber" Type="Edm.String" MaxLength="40"/>
+                <Property Name="startOfValidityPeriod" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="htsFromAndEccnAreRequired" Type="Edm.String" MaxLength="1"/>
+                <Property Name="priceUnit" Type="Edm.Decimal" Precision="5" Scale="0"/>
+                <Property Name="materialPoText" Type="Edm.String" MaxLength="50"/>
+                <Property Name="incoTermRevisionPurchasing" Type="Edm.String" MaxLength="20"/>
+                <Property Name="generalItemText" Type="Edm.String" MaxLength="50"/>
+                <Property Name="businessArea" Type="Edm.String" MaxLength="4"/>
+                <Property Name="storageLocation" Type="Edm.String" MaxLength="4"/>
+                <Property Name="hpRmaCoordinator" Type="Edm.String" MaxLength="10"/>
+                <Property Name="plant" Type="Edm.String" MaxLength="10"/>
+                <Property Name="accountNumberOfSupplier" Type="Edm.String" MaxLength="10"/>
+                <Property Name="packingList" Type="Edm.String" MaxLength="1"/>
+                <Property Name="invoiceForCustomsPurposes" Type="Edm.String" MaxLength="1"/>
+                <Property Name="hpIsEor" Type="Edm.String" MaxLength="1"/>
+                <Property Name="hpIsIor" Type="Edm.String" MaxLength="1"/>
+                <Property Name="salesGroup" Type="Edm.String" MaxLength="4"/>
+                <Property Name="netValueOfTheSalesDocumentInDocumentCurrency" Type="Edm.String" MaxLength="5"/>
+                <Property Name="customerNumber" Type="Edm.String" MaxLength="40"/>
+                <Property Name="documentDate" Type="Edm.Date"/>
+                <Property Name="soPricingPolicy" Type="Edm.String" MaxLength="2"/>
+                <Property Name="unlimitedToleranceForOutboundGi" Type="Edm.String" MaxLength="1"/>
+                <Property Name="incoTermRevisionSales" Type="Edm.String" MaxLength="3"/>
+                <Property Name="hpSalesOrganization" Type="Edm.String" MaxLength="4"/>
+                <Property Name="salesUnit" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="ProjectUAMVH">
+                <Key>
+                    <PropertyRef Name="wbselement"/>
+                    <PropertyRef Name="customer"/>
+                    <PropertyRef Name="suppliercode"/>
+                </Key>
+                <Property Name="wbselement" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="customer" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="suppliercode" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="companycode" Type="Edm.String" MaxLength="4"/>
+                <Property Name="wbsdescription" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="ProjectCompanyVH">
+                <Key>
+                    <PropertyRef Name="wbselement"/>
+                    <PropertyRef Name="companycode"/>
+                </Key>
+                <Property Name="wbselement" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="companycode" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="wbsdescription" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <EntityType Name="User">
+                <Key>
+                    <PropertyRef Name="email"/>
+                </Key>
+                <Property Name="email" Type="Edm.String" MaxLength="241" Nullable="false"/>
+                <Property Name="firstName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="lastName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="userName" Type="Edm.String" MaxLength="100"/>
+                <Property Name="userType" Type="Edm.String" MaxLength="50"/>
+                <Property Name="userGroupIndicator" Type="Edm.String" MaxLength="50"/>
+            </EntityType>
+            <EntityType Name="UserGroup">
+                <Key>
+                    <PropertyRef Name="user_email"/>
+                    <PropertyRef Name="groupid"/>
+                </Key>
+                <Property Name="user_email" Type="Edm.String" MaxLength="241" Nullable="false"/>
+                <Property Name="groupid" Type="Edm.String" MaxLength="255" Nullable="false"/>
+                <Property Name="groupname" Type="Edm.String" MaxLength="255"/>
+            </EntityType>
+            <EntityType Name="UserProjects">
+                <Key>
+                    <PropertyRef Name="projectid"/>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="projectid" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="id" Type="Edm.String" MaxLength="36" Nullable="false"/>
+                <Property Name="partner_id" Type="Edm.String" MaxLength="36"/>
+                <Property Name="projectname" Type="Edm.String" MaxLength="100"/>
+            </EntityType>
+            <EntityType Name="UserPartners">
+                <Key>
+                    <PropertyRef Name="partnerid"/>
+                    <PropertyRef Name="id"/>
+                </Key>
+                <Property Name="partnerid" Type="Edm.String" MaxLength="20" Nullable="false"/>
+                <Property Name="id" Type="Edm.String" MaxLength="36" Nullable="false"/>
+                <Property Name="partnername" Type="Edm.String" MaxLength="100"/>
+                <Property Name="partnertype" Type="Edm.String" MaxLength="1"/>
+                <Property Name="user_email" Type="Edm.String" MaxLength="241"/>
+            </EntityType>
+            <EntityType Name="Buyer">
+                <Key>
+                    <PropertyRef Name="searchterm1"/>
+                </Key>
+                <Property Name="searchterm1" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="buyername" Type="Edm.String" MaxLength="512"/>
+            </EntityType>
+            <EntityType Name="CompanyCode">
+                <Key>
+                    <PropertyRef Name="companycode"/>
+                </Key>
+                <Property Name="companycode" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="companycodedescription" Type="Edm.String" MaxLength="40"/>
+            </EntityType>
+            <Annotations Target="CommonMDMService.SupplierVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>supplierid</PropertyPath>
+                        <PropertyPath>suppliername</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="supplierid"/>
+                            <PropertyValue Property="Label" String="common.label.supplierId"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/SupplierVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.SupplierVH/supplierid">
+                <Annotation Term="Common.Label" String="common.label.supplierId"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.SupplierVH/suppliername">
+                <Annotation Term="Common.Label" String="common.label.supplierName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CustomerVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>customerid</PropertyPath>
+                        <PropertyPath>customername</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="customerid"/>
+                            <PropertyValue Property="Label" String="common.label.customerId"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="customername"/>
+                            <PropertyValue Property="Label" String="common.label.customerName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/CustomerVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CustomerVH/customerid">
+                <Annotation Term="Common.Label" String="common.label.customerId"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CustomerVH/customername">
+                <Annotation Term="Common.Label" String="common.label.customerName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.ProjectVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>wbselement</PropertyPath>
+                        <PropertyPath>wbsdescription</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="wbselement"/>
+                            <PropertyValue Property="Label" String="common.label.wbsElement"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="wbsdescription"/>
+                            <PropertyValue Property="Label" String="common.label.wbsDescription"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/ProjectVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.ProjectVH/wbselement">
+                <Annotation Term="Common.Label" String="common.label.wbsElement"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.ProjectVH/wbsdescription">
+                <Annotation Term="Common.Label" String="common.label.wbsDescription"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CompanyCodeVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>companycode</PropertyPath>
+                        <PropertyPath>companyname</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="companycode"/>
+                            <PropertyValue Property="Label" String="common.label.companyCode"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="companyname"/>
+                            <PropertyValue Property="Label" String="common.label.companyName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/CompanyCodeVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CompanyCodeVH/companycode">
+                <Annotation Term="Common.Label" String="common.label.companyCode"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.CompanyCodeVH/companyname">
+                <Annotation Term="Common.Label" String="common.label.companyName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.MaterialVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>materialnumber</PropertyPath>
+                        <PropertyPath>materialdescription</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="materialnumber"/>
+                            <PropertyValue Property="Label" String="common.label.materialNumber"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="materialdescription"/>
+                            <PropertyValue Property="Label" String="common.label.materialDescription"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/MaterialVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.MaterialVH/materialnumber">
+                <Annotation Term="Common.Label" String="common.label.materialNumber"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.MaterialVH/materialdescription">
+                <Annotation Term="Common.Label" String="common.label.materialDescription"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.PlantVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>plant</PropertyPath>
+                        <PropertyPath>plantname</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="plant"/>
+                            <PropertyValue Property="Label" String="common.label.plant"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="plantname"/>
+                            <PropertyValue Property="Label" String="common.label.plantName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/PlantVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.PlantVH/plant">
+                <Annotation Term="Common.Label" String="common.label.plant"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.PlantVH/plantname">
+                <Annotation Term="Common.Label" String="common.label.plantName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.StorageLocationVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>storagelocation</PropertyPath>
+                        <PropertyPath>plant</PropertyPath>
+                        <PropertyPath>storagelocationname</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="storagelocation"/>
+                            <PropertyValue Property="Label" String="common.label.storageLocation"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="plant"/>
+                            <PropertyValue Property="Label" String="common.label.plant"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="storagelocationname"/>
+                            <PropertyValue Property="Label" String="common.label.storageLocationName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/StorageLocationVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.StorageLocationVH/storagelocation">
+                <Annotation Term="Common.Label" String="common.label.storageLocation"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.StorageLocationVH/plant">
+                <Annotation Term="Common.Label" String="common.label.plant"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.StorageLocationVH/storagelocationname">
+                <Annotation Term="Common.Label" String="common.label.storageLocationName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BusinessModelVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>businessmodel</PropertyPath>
+                        <PropertyPath>businessmodeldescription</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="businessmodel"/>
+                            <PropertyValue Property="Label" String="common.label.businessModel"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="businessmodeldescription"/>
+                            <PropertyValue Property="Label" String="common.label.businessModelDescription"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/BusinessModelVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BusinessModelVH/businessmodel">
+                <Annotation Term="Common.Label" String="common.label.businessModel"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BusinessModelVH/businessmodeldescription">
+                <Annotation Term="Common.Label" String="common.label.businessModelDescription"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BuyerVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>buyercode</PropertyPath>
+                        <PropertyPath>buyername</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="buyercode"/>
+                            <PropertyValue Property="Label" String="common.label.buyerCode"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="buyername"/>
+                            <PropertyValue Property="Label" String="common.label.buyerName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/BuyerVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BuyerVH/buyercode">
+                <Annotation Term="Common.Label" String="common.label.buyerCode"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.BuyerVH/buyername">
+                <Annotation Term="Common.Label" String="common.label.buyerName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.RmaCoordinatorVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>rmacode</PropertyPath>
+                        <PropertyPath>rmaname</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="rmacode"/>
+                            <PropertyValue Property="Label" String="common.label.rmaCode"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="rmaname"/>
+                            <PropertyValue Property="Label" String="common.label.rmaName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/RmaCoordinatorVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.RmaCoordinatorVH/rmacode">
+                <Annotation Term="Common.Label" String="common.label.rmaCode"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.RmaCoordinatorVH/rmaname">
+                <Annotation Term="Common.Label" String="common.label.rmaName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.IBStatusVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>ibstatus</PropertyPath>
+                        <PropertyPath>ibstatusdescription</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ibstatus"/>
+                            <PropertyValue Property="Label" String="common.label.ibStatus"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="ibstatusdescription"/>
+                            <PropertyValue Property="Label" String="common.label.ibStatusDescription"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/IBStatusVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.IBStatusVH/ibstatus">
+                <Annotation Term="Common.Label" String="common.label.ibStatus"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.IBStatusVH/ibstatusdescription">
+                <Annotation Term="Common.Label" String="common.label.ibStatusDescription"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.OBStatusVH">
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>obstatus</PropertyPath>
+                        <PropertyPath>obstatusdescription</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="obstatus"/>
+                            <PropertyValue Property="Label" String="common.label.obStatus"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="obstatusdescription"/>
+                            <PropertyValue Property="Label" String="common.label.obStatusDescription"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/OBStatusVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.OBStatusVH/obstatus">
+                <Annotation Term="Common.Label" String="common.label.obStatus"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.OBStatusVH/obstatusdescription">
+                <Annotation Term="Common.Label" String="common.label.obStatusDescription"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/CustomerPartners">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/SupplierPartners">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Customer">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Supplier">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Project">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/ProjectUAMVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/ProjectCompanyVH">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/User">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/UserGroup">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/UserProjects">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/UserPartners">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Buyer">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/CompanyCode">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

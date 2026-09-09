@@ -5,7 +5,10 @@
     "@cap-js-community/odata-v2-adapter": "^1.16.1",
     "@cap-js/change-tracking": "^2.2.2",
     "@sap/cds": "^9",
-    "@sap/xssec": "^4"
+    "@sap/xssec": "^4",
+    "@sap-cloud-sdk/connectivity": "^4",
+    "@sap-cloud-sdk/http-client": "^4",
+    "@sap-cloud-sdk/resilience": "^4"
   },
   "devDependencies": {
     "@cap-js/sqlite": "^2.4",
@@ -27,6 +30,16 @@
       },
       "[production]": {
         "auth": "xsuaa"
+      },
+      "hpbuysell_mdm_common_srv_dest": {
+        "kind": "odata",
+        "model": "srv/external/hpbuysell_mdm_common_srv_dest",
+          "credentials": {
+            "destination": "hpbuysell-mdm-common-srv-dest",
+            "path": "/odata/v4/common/"
+        },
+        "csrf": true,
+        "csrfInBatch": true
       }
     }
   },

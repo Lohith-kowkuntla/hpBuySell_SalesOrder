@@ -1,0 +1,1557 @@
+@server=http://localhost:4004
+@username=alice
+@password=
+
+
+### SalesOrders
+# @name SalesOrders_GET
+GET {{server}}/odata/v4/salesorder/SalesOrders
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrders
+# @name SalesOrders_POST
+POST {{server}}/odata/v4/salesorder/SalesOrders
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrder": "s-23251151",
+  "customerOrder": "stomerOrder-23251151",
+  "customerOrderDate": "2002-08-09",
+  "soOrderDate": "2023-08-18",
+  "soRequisitionCreationDateTime": "2015-11-17T00:00:00.000Z",
+  "salesOrderStatus": {
+    "code": "1332"
+  },
+  "salesOrderType": {
+    "code": "7426"
+  },
+  "salesOrderOrigin": {
+    "code": "s-31569911"
+  },
+  "businessModel": "l-23251151",
+  "businessUnit": "businessUnit-23251151",
+  "blanketIndicator": false,
+  "contractNumber": "r-23251151",
+  "contractDate": "2016-04-23",
+  "wbsProjectCode": "wbsProjectCode-23251151",
+  "wbsProjectCodeDescription": "wbsProjectCodeDescription-23251151",
+  "hpCompanyCode": "1151",
+  "hpCompanyDescription": "mpanyDescription-23251151",
+  "hpSalesOrganization": "1151",
+  "hpPlant": "1151",
+  "hpBuyerCode": "e-23251151",
+  "hpBuyerName": "hpBuyerName-23251151",
+  "customerCode": "e-23251151",
+  "customerDescription": "tomerDescription-23251151",
+  "shipTo": "shipTo-23251151",
+  "otherShipTo": "o-23251151",
+  "billTo": "billTo-23251151",
+  "payer": "payer-23251151",
+  "paymentTerms": "paymentTerms-23251151",
+  "lspAddress": "lspAddress-23251151",
+  "customerNotesToHp": "customerNotesToHp-23251151",
+  "hpNotesToCustomer": "hpNotesToCustomer-23251151",
+  "hpNotesToCustomerProcessingInd": false,
+  "simpleChangeProcessingInd": false,
+  "acknowledgements": [
+    {
+      "ID": "25113310-dcd4-4ea7-a3d5-505447733160",
+      "mediaType": "mediaType-25113310",
+      "fileName": "fileName-25113310",
+      "version": 23,
+      "isLatest": true,
+      "ackType": "ackType-25113310",
+      "receivedAt": "2017-10-26T00:00:00.000Z",
+      "createdAt": "2022-10-14T00:00:00.000Z",
+      "createdBy": "createdBy.ey9jy@example.org",
+      "modifiedAt": "2015-06-18T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ey9jy@example.net"
+    },
+    {
+      "ID": "25113311-f84d-4b57-ae03-8c7533952660",
+      "mediaType": "mediaType-25113311",
+      "fileName": "fileName-25113311",
+      "version": 45,
+      "isLatest": false,
+      "ackType": "ackType-25113311",
+      "receivedAt": "2004-11-26T00:00:00.000Z",
+      "createdAt": "2013-06-19T00:00:00.000Z",
+      "createdBy": "createdBy.ey9jz@example.org",
+      "modifiedAt": "2001-01-11T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ey9jz@example.com"
+    }
+  ],
+  "items": [
+    {
+      "lineId": "564059",
+      "fromLine": "564059",
+      "customerLineId": "Id-1564059",
+      "lineStatus": {
+        "code": "2503"
+      },
+      "hpPartNumber": "hpPartNumber-1564059",
+      "hpPartDescription": "hpPartDescription-1564059",
+      "customerPartNumber": "customerPartNumber-1564059",
+      "quantity": 243812888718.07,
+      "quantityUnit": "059",
+      "balanceQuantity": 2565245088.845,
+      "totalShippedQuantity": 8868906907.852,
+      "totalInvoicedQuantity": 7051712869.371,
+      "totalDeliveredQuantity": 642872770.795,
+      "confirmedLineId": "564059",
+      "confirmedQuantity": 1277210367.188,
+      "confirmedReceiptDate": "2001-08-17",
+      "plannedReceiptDate": "2010-03-05",
+      "originalPlannedReceiptDate": "2012-11-25",
+      "salesPrice": 540169095933.381,
+      "salesPriceUnit": 4048,
+      "salesPriceCurrency": "64059",
+      "lineAmount": 9948566464830.6,
+      "lineAmountCurrency": "64059",
+      "specialDealFlagSo": false,
+      "specialPriceIndicatorSo": false,
+      "specialPriceIndicatorPo": "4059",
+      "reasonForCancellation": {
+        "code": "14"
+      },
+      "carrierSo": "So-1564059",
+      "otherCarrierSo": "So-1564059",
+      "shippingPoint": "4059",
+      "storageLocation": "storageLocation-1564059",
+      "termsOfDelivery": "termsOfDelivery-1564059",
+      "deliveryPlace": "deliveryPlace-1564059",
+      "incotermsRevision": "on-1564059",
+      "transitTime": "059",
+      "endSupplier": "er-1564059",
+      "gtsHold": false,
+      "hpPurchaseOrder": "er-1564059",
+      "hpPoLineItem": "64059",
+      "soRequisitionNumber": "er-1564059",
+      "soAckOutOrigin": "in-1564059",
+      "soChangeInOrigin": "in-1564059",
+      "customerNotesToHp": "customerNotesToHp-1564059",
+      "hpNotesToCustomer": "hpNotesToCustomer-1564059",
+      "hpBacklogNotes": "hpBacklogNotes-1564059",
+      "simpleChangeProcessingInd": false,
+      "salesPriceProcessingInd": false,
+      "salesPriceUnitProcessingInd": false,
+      "specialDealFlagSoProcessingInd": false,
+      "reasonForCancellationProcessingInd": false,
+      "hpNotesToCustomerProcessingInd": false,
+      "hpBacklogNotesProcessingInd": false,
+      "createdAt": "2009-10-03T00:00:00.000Z",
+      "createdBy": "createdBy.xiu3@example.com",
+      "modifiedAt": "2022-01-14T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.xiu3@example.com"
+    },
+    {
+      "lineId": "564060",
+      "fromLine": "564060",
+      "customerLineId": "Id-1564060",
+      "lineStatus": {
+        "code": "2503"
+      },
+      "hpPartNumber": "hpPartNumber-1564060",
+      "hpPartDescription": "hpPartDescription-1564060",
+      "customerPartNumber": "customerPartNumber-1564060",
+      "quantity": 361742756353.006,
+      "quantityUnit": "060",
+      "balanceQuantity": 4947294418.441,
+      "totalShippedQuantity": 7507924326.639,
+      "totalInvoicedQuantity": 6245782766.448,
+      "totalDeliveredQuantity": 4183378351.873,
+      "confirmedLineId": "564060",
+      "confirmedQuantity": 875259775.19,
+      "confirmedReceiptDate": "2019-04-02",
+      "plannedReceiptDate": "2021-09-04",
+      "originalPlannedReceiptDate": "2022-06-21",
+      "salesPrice": 614120557766.838,
+      "salesPriceUnit": 47105,
+      "salesPriceCurrency": "64060",
+      "lineAmount": 7240621191649.99,
+      "lineAmountCurrency": "64060",
+      "specialDealFlagSo": true,
+      "specialPriceIndicatorSo": true,
+      "specialPriceIndicatorPo": "4060",
+      "reasonForCancellation": {
+        "code": "14"
+      },
+      "carrierSo": "So-1564060",
+      "otherCarrierSo": "So-1564060",
+      "shippingPoint": "4060",
+      "storageLocation": "storageLocation-1564060",
+      "termsOfDelivery": "termsOfDelivery-1564060",
+      "deliveryPlace": "deliveryPlace-1564060",
+      "incotermsRevision": "on-1564060",
+      "transitTime": "060",
+      "endSupplier": "er-1564060",
+      "gtsHold": true,
+      "hpPurchaseOrder": "er-1564060",
+      "hpPoLineItem": "64060",
+      "soRequisitionNumber": "er-1564060",
+      "soAckOutOrigin": "in-1564060",
+      "soChangeInOrigin": "in-1564060",
+      "customerNotesToHp": "customerNotesToHp-1564060",
+      "hpNotesToCustomer": "hpNotesToCustomer-1564060",
+      "hpBacklogNotes": "hpBacklogNotes-1564060",
+      "simpleChangeProcessingInd": true,
+      "salesPriceProcessingInd": true,
+      "salesPriceUnitProcessingInd": true,
+      "specialDealFlagSoProcessingInd": true,
+      "reasonForCancellationProcessingInd": true,
+      "hpNotesToCustomerProcessingInd": true,
+      "hpBacklogNotesProcessingInd": true,
+      "createdAt": "2008-06-13T00:00:00.000Z",
+      "createdBy": "createdBy.xiu4@example.net",
+      "modifiedAt": "2020-09-21T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.xiu4@example.net"
+    }
+  ],
+  "createdAt": "2019-03-05T00:00:00.000Z",
+  "createdBy": "createdBy.ducpb@example.com",
+  "modifiedAt": "2022-09-11T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ducpb@example.com"
+}
+
+
+### SalesOrders
+# @name SalesOrders_PATCH
+PATCH {{server}}/odata/v4/salesorder/SalesOrders/s-23251151
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrder": "s-23251151",
+  "customerOrder": "stomerOrder-23251151",
+  "customerOrderDate": "2002-08-09",
+  "soOrderDate": "2023-08-18",
+  "soRequisitionCreationDateTime": "2015-11-17T00:00:00.000Z",
+  "salesOrderStatus": {
+    "code": "1332"
+  },
+  "salesOrderType": {
+    "code": "7426"
+  },
+  "salesOrderOrigin": {
+    "code": "s-31569911"
+  },
+  "businessModel": "l-23251151",
+  "businessUnit": "businessUnit-23251151",
+  "blanketIndicator": false,
+  "contractNumber": "r-23251151",
+  "contractDate": "2016-04-23",
+  "wbsProjectCode": "wbsProjectCode-23251151",
+  "wbsProjectCodeDescription": "wbsProjectCodeDescription-23251151",
+  "hpCompanyCode": "1151",
+  "hpCompanyDescription": "mpanyDescription-23251151",
+  "hpSalesOrganization": "1151",
+  "hpPlant": "1151",
+  "hpBuyerCode": "e-23251151",
+  "hpBuyerName": "hpBuyerName-23251151",
+  "customerCode": "e-23251151",
+  "customerDescription": "tomerDescription-23251151",
+  "shipTo": "shipTo-23251151",
+  "otherShipTo": "o-23251151",
+  "billTo": "billTo-23251151",
+  "payer": "payer-23251151",
+  "paymentTerms": "paymentTerms-23251151",
+  "lspAddress": "lspAddress-23251151",
+  "customerNotesToHp": "customerNotesToHp-23251151",
+  "hpNotesToCustomer": "hpNotesToCustomer-23251151",
+  "hpNotesToCustomerProcessingInd": false,
+  "simpleChangeProcessingInd": false,
+  "acknowledgements": [
+    {
+      "ID": "25113310-dcd4-4ea7-a3d5-505447733160",
+      "mediaType": "mediaType-25113310",
+      "fileName": "fileName-25113310",
+      "version": 23,
+      "isLatest": true,
+      "ackType": "ackType-25113310",
+      "receivedAt": "2017-10-26T00:00:00.000Z",
+      "createdAt": "2022-10-14T00:00:00.000Z",
+      "createdBy": "createdBy.ey9jy@example.org",
+      "modifiedAt": "2015-06-18T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ey9jy@example.net"
+    },
+    {
+      "ID": "25113311-f84d-4b57-ae03-8c7533952660",
+      "mediaType": "mediaType-25113311",
+      "fileName": "fileName-25113311",
+      "version": 45,
+      "isLatest": false,
+      "ackType": "ackType-25113311",
+      "receivedAt": "2004-11-26T00:00:00.000Z",
+      "createdAt": "2013-06-19T00:00:00.000Z",
+      "createdBy": "createdBy.ey9jz@example.org",
+      "modifiedAt": "2001-01-11T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.ey9jz@example.com"
+    }
+  ],
+  "items": [
+    {
+      "lineId": "564059",
+      "fromLine": "564059",
+      "customerLineId": "Id-1564059",
+      "lineStatus": {
+        "code": "2503"
+      },
+      "hpPartNumber": "hpPartNumber-1564059",
+      "hpPartDescription": "hpPartDescription-1564059",
+      "customerPartNumber": "customerPartNumber-1564059",
+      "quantity": 243812888718.07,
+      "quantityUnit": "059",
+      "balanceQuantity": 2565245088.845,
+      "totalShippedQuantity": 8868906907.852,
+      "totalInvoicedQuantity": 7051712869.371,
+      "totalDeliveredQuantity": 642872770.795,
+      "confirmedLineId": "564059",
+      "confirmedQuantity": 1277210367.188,
+      "confirmedReceiptDate": "2001-08-17",
+      "plannedReceiptDate": "2010-03-05",
+      "originalPlannedReceiptDate": "2012-11-25",
+      "salesPrice": 540169095933.381,
+      "salesPriceUnit": 4048,
+      "salesPriceCurrency": "64059",
+      "lineAmount": 9948566464830.6,
+      "lineAmountCurrency": "64059",
+      "specialDealFlagSo": false,
+      "specialPriceIndicatorSo": false,
+      "specialPriceIndicatorPo": "4059",
+      "reasonForCancellation": {
+        "code": "14"
+      },
+      "carrierSo": "So-1564059",
+      "otherCarrierSo": "So-1564059",
+      "shippingPoint": "4059",
+      "storageLocation": "storageLocation-1564059",
+      "termsOfDelivery": "termsOfDelivery-1564059",
+      "deliveryPlace": "deliveryPlace-1564059",
+      "incotermsRevision": "on-1564059",
+      "transitTime": "059",
+      "endSupplier": "er-1564059",
+      "gtsHold": false,
+      "hpPurchaseOrder": "er-1564059",
+      "hpPoLineItem": "64059",
+      "soRequisitionNumber": "er-1564059",
+      "soAckOutOrigin": "in-1564059",
+      "soChangeInOrigin": "in-1564059",
+      "customerNotesToHp": "customerNotesToHp-1564059",
+      "hpNotesToCustomer": "hpNotesToCustomer-1564059",
+      "hpBacklogNotes": "hpBacklogNotes-1564059",
+      "simpleChangeProcessingInd": false,
+      "salesPriceProcessingInd": false,
+      "salesPriceUnitProcessingInd": false,
+      "specialDealFlagSoProcessingInd": false,
+      "reasonForCancellationProcessingInd": false,
+      "hpNotesToCustomerProcessingInd": false,
+      "hpBacklogNotesProcessingInd": false,
+      "createdAt": "2009-10-03T00:00:00.000Z",
+      "createdBy": "createdBy.xiu3@example.com",
+      "modifiedAt": "2022-01-14T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.xiu3@example.com"
+    },
+    {
+      "lineId": "564060",
+      "fromLine": "564060",
+      "customerLineId": "Id-1564060",
+      "lineStatus": {
+        "code": "2503"
+      },
+      "hpPartNumber": "hpPartNumber-1564060",
+      "hpPartDescription": "hpPartDescription-1564060",
+      "customerPartNumber": "customerPartNumber-1564060",
+      "quantity": 361742756353.006,
+      "quantityUnit": "060",
+      "balanceQuantity": 4947294418.441,
+      "totalShippedQuantity": 7507924326.639,
+      "totalInvoicedQuantity": 6245782766.448,
+      "totalDeliveredQuantity": 4183378351.873,
+      "confirmedLineId": "564060",
+      "confirmedQuantity": 875259775.19,
+      "confirmedReceiptDate": "2019-04-02",
+      "plannedReceiptDate": "2021-09-04",
+      "originalPlannedReceiptDate": "2022-06-21",
+      "salesPrice": 614120557766.838,
+      "salesPriceUnit": 47105,
+      "salesPriceCurrency": "64060",
+      "lineAmount": 7240621191649.99,
+      "lineAmountCurrency": "64060",
+      "specialDealFlagSo": true,
+      "specialPriceIndicatorSo": true,
+      "specialPriceIndicatorPo": "4060",
+      "reasonForCancellation": {
+        "code": "14"
+      },
+      "carrierSo": "So-1564060",
+      "otherCarrierSo": "So-1564060",
+      "shippingPoint": "4060",
+      "storageLocation": "storageLocation-1564060",
+      "termsOfDelivery": "termsOfDelivery-1564060",
+      "deliveryPlace": "deliveryPlace-1564060",
+      "incotermsRevision": "on-1564060",
+      "transitTime": "060",
+      "endSupplier": "er-1564060",
+      "gtsHold": true,
+      "hpPurchaseOrder": "er-1564060",
+      "hpPoLineItem": "64060",
+      "soRequisitionNumber": "er-1564060",
+      "soAckOutOrigin": "in-1564060",
+      "soChangeInOrigin": "in-1564060",
+      "customerNotesToHp": "customerNotesToHp-1564060",
+      "hpNotesToCustomer": "hpNotesToCustomer-1564060",
+      "hpBacklogNotes": "hpBacklogNotes-1564060",
+      "simpleChangeProcessingInd": true,
+      "salesPriceProcessingInd": true,
+      "salesPriceUnitProcessingInd": true,
+      "specialDealFlagSoProcessingInd": true,
+      "reasonForCancellationProcessingInd": true,
+      "hpNotesToCustomerProcessingInd": true,
+      "hpBacklogNotesProcessingInd": true,
+      "createdAt": "2008-06-13T00:00:00.000Z",
+      "createdBy": "createdBy.xiu4@example.net",
+      "modifiedAt": "2020-09-21T00:00:00.000Z",
+      "modifiedBy": "modifiedBy.xiu4@example.net"
+    }
+  ],
+  "createdAt": "2019-03-05T00:00:00.000Z",
+  "createdBy": "createdBy.ducpb@example.com",
+  "modifiedAt": "2022-09-11T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ducpb@example.com"
+}
+
+
+### SalesOrders
+# @name SalesOrders_DELETE
+DELETE {{server}}/odata/v4/salesorder/SalesOrders/s-23251151
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderStatuses
+# @name SalesOrderStatuses_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderStatuses
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderTypes
+# @name SalesOrderTypes_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderTypes
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderOrigins
+# @name SalesOrderOrigins_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderOrigins
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderAcknowledgements
+# @name SalesOrderAcknowledgements_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderAcknowledgements
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderAcknowledgements
+# @name SalesOrderAcknowledgements_POST
+POST {{server}}/odata/v4/salesorder/SalesOrderAcknowledgements
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "ID": "25113310-dcd4-4ea7-a3d5-505447733160",
+  "mediaType": "mediaType-25113310",
+  "fileName": "fileName-25113310",
+  "version": 23,
+  "isLatest": true,
+  "ackType": "ackType-25113310",
+  "receivedAt": "2017-10-26T00:00:00.000Z",
+  "createdAt": "2022-10-14T00:00:00.000Z",
+  "createdBy": "createdBy.ey9jy@example.org",
+  "modifiedAt": "2015-06-18T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ey9jy@example.net"
+}
+
+
+### SalesOrderAcknowledgements
+# @name SalesOrderAcknowledgements_PATCH
+PATCH {{server}}/odata/v4/salesorder/SalesOrderAcknowledgements/25113310-dcd4-4ea7-a3d5-505447733160
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "ID": "25113310-dcd4-4ea7-a3d5-505447733160",
+  "mediaType": "mediaType-25113310",
+  "fileName": "fileName-25113310",
+  "version": 23,
+  "isLatest": true,
+  "ackType": "ackType-25113310",
+  "receivedAt": "2017-10-26T00:00:00.000Z",
+  "createdAt": "2022-10-14T00:00:00.000Z",
+  "createdBy": "createdBy.ey9jy@example.org",
+  "modifiedAt": "2015-06-18T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.ey9jy@example.net"
+}
+
+
+### SalesOrderAcknowledgements
+# @name SalesOrderAcknowledgements_DELETE
+DELETE {{server}}/odata/v4/salesorder/SalesOrderAcknowledgements/25113310-dcd4-4ea7-a3d5-505447733160
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderItems
+# @name SalesOrderItems_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderItems
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderItems
+# @name SalesOrderItems_POST
+POST {{server}}/odata/v4/salesorder/SalesOrderItems
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "lineId": "564059",
+  "fromLine": "564059",
+  "customerLineId": "Id-1564059",
+  "lineStatus": {
+    "code": "2503"
+  },
+  "hpPartNumber": "hpPartNumber-1564059",
+  "hpPartDescription": "hpPartDescription-1564059",
+  "customerPartNumber": "customerPartNumber-1564059",
+  "quantity": 243812888718.07,
+  "quantityUnit": "059",
+  "balanceQuantity": 2565245088.845,
+  "totalShippedQuantity": 8868906907.852,
+  "totalInvoicedQuantity": 7051712869.371,
+  "totalDeliveredQuantity": 642872770.795,
+  "confirmedLineId": "564059",
+  "confirmedQuantity": 1277210367.188,
+  "confirmedReceiptDate": "2001-08-17",
+  "plannedReceiptDate": "2010-03-05",
+  "originalPlannedReceiptDate": "2012-11-25",
+  "salesPrice": 540169095933.381,
+  "salesPriceUnit": 4048,
+  "salesPriceCurrency": "64059",
+  "lineAmount": 9948566464830.6,
+  "lineAmountCurrency": "64059",
+  "specialDealFlagSo": false,
+  "specialPriceIndicatorSo": false,
+  "specialPriceIndicatorPo": "4059",
+  "reasonForCancellation": {
+    "code": "14"
+  },
+  "carrierSo": "So-1564059",
+  "otherCarrierSo": "So-1564059",
+  "shippingPoint": "4059",
+  "storageLocation": "storageLocation-1564059",
+  "termsOfDelivery": "termsOfDelivery-1564059",
+  "deliveryPlace": "deliveryPlace-1564059",
+  "incotermsRevision": "on-1564059",
+  "transitTime": "059",
+  "endSupplier": "er-1564059",
+  "gtsHold": false,
+  "hpPurchaseOrder": "er-1564059",
+  "hpPoLineItem": "64059",
+  "soRequisitionNumber": "er-1564059",
+  "soAckOutOrigin": "in-1564059",
+  "soChangeInOrigin": "in-1564059",
+  "customerNotesToHp": "customerNotesToHp-1564059",
+  "hpNotesToCustomer": "hpNotesToCustomer-1564059",
+  "hpBacklogNotes": "hpBacklogNotes-1564059",
+  "simpleChangeProcessingInd": false,
+  "salesPriceProcessingInd": false,
+  "salesPriceUnitProcessingInd": false,
+  "specialDealFlagSoProcessingInd": false,
+  "reasonForCancellationProcessingInd": false,
+  "hpNotesToCustomerProcessingInd": false,
+  "hpBacklogNotesProcessingInd": false,
+  "createdAt": "2009-10-03T00:00:00.000Z",
+  "createdBy": "createdBy.xiu3@example.com",
+  "modifiedAt": "2022-01-14T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.xiu3@example.com"
+}
+
+
+### SalesOrderItems
+# @name SalesOrderItems_PATCH
+PATCH {{server}}/odata/v4/salesorder/SalesOrderItems(salesOrder=[object Object],lineId='564059')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "lineId": "564059",
+  "fromLine": "564059",
+  "customerLineId": "Id-1564059",
+  "lineStatus": {
+    "code": "2503"
+  },
+  "hpPartNumber": "hpPartNumber-1564059",
+  "hpPartDescription": "hpPartDescription-1564059",
+  "customerPartNumber": "customerPartNumber-1564059",
+  "quantity": 243812888718.07,
+  "quantityUnit": "059",
+  "balanceQuantity": 2565245088.845,
+  "totalShippedQuantity": 8868906907.852,
+  "totalInvoicedQuantity": 7051712869.371,
+  "totalDeliveredQuantity": 642872770.795,
+  "confirmedLineId": "564059",
+  "confirmedQuantity": 1277210367.188,
+  "confirmedReceiptDate": "2001-08-17",
+  "plannedReceiptDate": "2010-03-05",
+  "originalPlannedReceiptDate": "2012-11-25",
+  "salesPrice": 540169095933.381,
+  "salesPriceUnit": 4048,
+  "salesPriceCurrency": "64059",
+  "lineAmount": 9948566464830.6,
+  "lineAmountCurrency": "64059",
+  "specialDealFlagSo": false,
+  "specialPriceIndicatorSo": false,
+  "specialPriceIndicatorPo": "4059",
+  "reasonForCancellation": {
+    "code": "14"
+  },
+  "carrierSo": "So-1564059",
+  "otherCarrierSo": "So-1564059",
+  "shippingPoint": "4059",
+  "storageLocation": "storageLocation-1564059",
+  "termsOfDelivery": "termsOfDelivery-1564059",
+  "deliveryPlace": "deliveryPlace-1564059",
+  "incotermsRevision": "on-1564059",
+  "transitTime": "059",
+  "endSupplier": "er-1564059",
+  "gtsHold": false,
+  "hpPurchaseOrder": "er-1564059",
+  "hpPoLineItem": "64059",
+  "soRequisitionNumber": "er-1564059",
+  "soAckOutOrigin": "in-1564059",
+  "soChangeInOrigin": "in-1564059",
+  "customerNotesToHp": "customerNotesToHp-1564059",
+  "hpNotesToCustomer": "hpNotesToCustomer-1564059",
+  "hpBacklogNotes": "hpBacklogNotes-1564059",
+  "simpleChangeProcessingInd": false,
+  "salesPriceProcessingInd": false,
+  "salesPriceUnitProcessingInd": false,
+  "specialDealFlagSoProcessingInd": false,
+  "reasonForCancellationProcessingInd": false,
+  "hpNotesToCustomerProcessingInd": false,
+  "hpBacklogNotesProcessingInd": false,
+  "createdAt": "2009-10-03T00:00:00.000Z",
+  "createdBy": "createdBy.xiu3@example.com",
+  "modifiedAt": "2022-01-14T00:00:00.000Z",
+  "modifiedBy": "modifiedBy.xiu3@example.com"
+}
+
+
+### SalesOrderItems
+# @name SalesOrderItems_DELETE
+DELETE {{server}}/odata/v4/salesorder/SalesOrderItems(salesOrder=[object Object],lineId='564059')
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### LineStatuses
+# @name LineStatuses_GET
+GET {{server}}/odata/v4/salesorder/LineStatuses
+Authorization: Basic {{username}}:{{password}}
+
+
+### CancellationReasons
+# @name CancellationReasons_GET
+GET {{server}}/odata/v4/salesorder/CancellationReasons
+Authorization: Basic {{username}}:{{password}}
+
+
+### ChangeView
+# @name ChangeView_GET
+GET {{server}}/odata/v4/salesorder/ChangeView
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderSearchExport
+# @name SalesOrderSearchExport_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderSearchExport
+Authorization: Basic {{username}}:{{password}}
+
+
+### SalesOrderScheduleSummary
+# @name SalesOrderScheduleSummary_GET
+GET {{server}}/odata/v4/salesorder/SalesOrderScheduleSummary
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_OrderStatus
+# @name VH_OrderStatus_GET
+GET {{server}}/odata/v4/salesorder/VH_OrderStatus
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_LineStatus
+# @name VH_LineStatus_GET
+GET {{server}}/odata/v4/salesorder/VH_LineStatus
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrderType
+# @name VH_SalesOrderType_GET
+GET {{server}}/odata/v4/salesorder/VH_SalesOrderType
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrderOrigin
+# @name VH_SalesOrderOrigin_GET
+GET {{server}}/odata/v4/salesorder/VH_SalesOrderOrigin
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_ReasonForCancellation
+# @name VH_ReasonForCancellation_GET
+GET {{server}}/odata/v4/salesorder/VH_ReasonForCancellation
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BusinessModel
+# @name VH_BusinessModel_GET
+GET {{server}}/odata/v4/salesorder/VH_BusinessModel
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrderNumber
+# @name VH_SalesOrderNumber_GET
+GET {{server}}/odata/v4/salesorder/VH_SalesOrderNumber
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrderNumber
+# @name VH_SalesOrderNumber_POST
+POST {{server}}/odata/v4/salesorder/VH_SalesOrderNumber
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrder": "er-2311896",
+  "customerDescription": "stomerDescription-2311896"
+}
+
+
+### VH_SalesOrderNumber
+# @name VH_SalesOrderNumber_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_SalesOrderNumber/er-2311896
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrder": "er-2311896",
+  "customerDescription": "stomerDescription-2311896"
+}
+
+
+### VH_SalesOrderNumber
+# @name VH_SalesOrderNumber_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_SalesOrderNumber/er-2311896
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Customer
+# @name VH_Customer_GET
+GET {{server}}/odata/v4/salesorder/VH_Customer
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Customer
+# @name VH_Customer_POST
+POST {{server}}/odata/v4/salesorder/VH_Customer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerCode": "r-21082778",
+  "customerDescription": "tomerDescription-21082778"
+}
+
+
+### VH_Customer
+# @name VH_Customer_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_Customer/r-21082778
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerCode": "r-21082778",
+  "customerDescription": "tomerDescription-21082778"
+}
+
+
+### VH_Customer
+# @name VH_Customer_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_Customer/r-21082778
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CustomerOrder
+# @name VH_CustomerOrder_GET
+GET {{server}}/odata/v4/salesorder/VH_CustomerOrder
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CustomerOrder
+# @name VH_CustomerOrder_POST
+POST {{server}}/odata/v4/salesorder/VH_CustomerOrder
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerOrder": "stomerOrder-13100662"
+}
+
+
+### VH_CustomerOrder
+# @name VH_CustomerOrder_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_CustomerOrder/stomerOrder-13100662
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerOrder": "stomerOrder-13100662"
+}
+
+
+### VH_CustomerOrder
+# @name VH_CustomerOrder_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_CustomerOrder/stomerOrder-13100662
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Buyer
+# @name VH_Buyer_GET
+GET {{server}}/odata/v4/salesorder/VH_Buyer
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Buyer
+# @name VH_Buyer_POST
+POST {{server}}/odata/v4/salesorder/VH_Buyer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpBuyerCode": "er-7805589",
+  "hpBuyerName": "hpBuyerName-7805589"
+}
+
+
+### VH_Buyer
+# @name VH_Buyer_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_Buyer/er-7805589
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpBuyerCode": "er-7805589",
+  "hpBuyerName": "hpBuyerName-7805589"
+}
+
+
+### VH_Buyer
+# @name VH_Buyer_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_Buyer/er-7805589
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CompanyCode
+# @name VH_CompanyCode_GET
+GET {{server}}/odata/v4/salesorder/VH_CompanyCode
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CompanyCode
+# @name VH_CompanyCode_POST
+POST {{server}}/odata/v4/salesorder/VH_CompanyCode
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpCompanyCode": "8542",
+  "hpCompanyDescription": "ompanyDescription-5128542"
+}
+
+
+### VH_CompanyCode
+# @name VH_CompanyCode_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_CompanyCode/8542
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpCompanyCode": "8542",
+  "hpCompanyDescription": "ompanyDescription-5128542"
+}
+
+
+### VH_CompanyCode
+# @name VH_CompanyCode_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_CompanyCode/8542
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrganization
+# @name VH_SalesOrganization_GET
+GET {{server}}/odata/v4/salesorder/VH_SalesOrganization
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SalesOrganization
+# @name VH_SalesOrganization_POST
+POST {{server}}/odata/v4/salesorder/VH_SalesOrganization
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrganization": "0744"
+}
+
+
+### VH_SalesOrganization
+# @name VH_SalesOrganization_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_SalesOrganization/0744
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrganization": "0744"
+}
+
+
+### VH_SalesOrganization
+# @name VH_SalesOrganization_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_SalesOrganization/0744
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Plant
+# @name VH_Plant_GET
+GET {{server}}/odata/v4/salesorder/VH_Plant
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Plant
+# @name VH_Plant_POST
+POST {{server}}/odata/v4/salesorder/VH_Plant
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpPlant": "1685"
+}
+
+
+### VH_Plant
+# @name VH_Plant_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_Plant/1685
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpPlant": "1685"
+}
+
+
+### VH_Plant
+# @name VH_Plant_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_Plant/1685
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BusinessUnit
+# @name VH_BusinessUnit_GET
+GET {{server}}/odata/v4/salesorder/VH_BusinessUnit
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BusinessUnit
+# @name VH_BusinessUnit_POST
+POST {{server}}/odata/v4/salesorder/VH_BusinessUnit
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "businessUnit": "VH_BusinessUnit-15948121"
+}
+
+
+### VH_BusinessUnit
+# @name VH_BusinessUnit_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_BusinessUnit/VH_BusinessUnit-15948121
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "businessUnit": "VH_BusinessUnit-15948121"
+}
+
+
+### VH_BusinessUnit
+# @name VH_BusinessUnit_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_BusinessUnit/VH_BusinessUnit-15948121
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_WbsProject
+# @name VH_WbsProject_GET
+GET {{server}}/odata/v4/salesorder/VH_WbsProject
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_WbsProject
+# @name VH_WbsProject_POST
+POST {{server}}/odata/v4/salesorder/VH_WbsProject
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbsProjectCode": "VH_WbsProject-9892675",
+  "wbsProjectCodeDescription": "wbsProjectCodeDescription-9892675"
+}
+
+
+### VH_WbsProject
+# @name VH_WbsProject_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_WbsProject/VH_WbsProject-9892675
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "wbsProjectCode": "VH_WbsProject-9892675",
+  "wbsProjectCodeDescription": "wbsProjectCodeDescription-9892675"
+}
+
+
+### VH_WbsProject
+# @name VH_WbsProject_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_WbsProject/VH_WbsProject-9892675
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_ShipTo
+# @name VH_ShipTo_GET
+GET {{server}}/odata/v4/salesorder/VH_ShipTo
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_ShipTo
+# @name VH_ShipTo_POST
+POST {{server}}/odata/v4/salesorder/VH_ShipTo
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "shipTo": "VH_ShipTo-3333239"
+}
+
+
+### VH_ShipTo
+# @name VH_ShipTo_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_ShipTo/VH_ShipTo-3333239
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "shipTo": "VH_ShipTo-3333239"
+}
+
+
+### VH_ShipTo
+# @name VH_ShipTo_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_ShipTo/VH_ShipTo-3333239
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BillTo
+# @name VH_BillTo_GET
+GET {{server}}/odata/v4/salesorder/VH_BillTo
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BillTo
+# @name VH_BillTo_POST
+POST {{server}}/odata/v4/salesorder/VH_BillTo
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "billTo": "VH_BillTo-26029379"
+}
+
+
+### VH_BillTo
+# @name VH_BillTo_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_BillTo/VH_BillTo-26029379
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "billTo": "VH_BillTo-26029379"
+}
+
+
+### VH_BillTo
+# @name VH_BillTo_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_BillTo/VH_BillTo-26029379
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Payer
+# @name VH_Payer_GET
+GET {{server}}/odata/v4/salesorder/VH_Payer
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_Payer
+# @name VH_Payer_POST
+POST {{server}}/odata/v4/salesorder/VH_Payer
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "payer": "VH_Payer-16743157"
+}
+
+
+### VH_Payer
+# @name VH_Payer_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_Payer/VH_Payer-16743157
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "payer": "VH_Payer-16743157"
+}
+
+
+### VH_Payer
+# @name VH_Payer_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_Payer/VH_Payer-16743157
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_OtherShipTo
+# @name VH_OtherShipTo_GET
+GET {{server}}/odata/v4/salesorder/VH_OtherShipTo
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_OtherShipTo
+# @name VH_OtherShipTo_POST
+POST {{server}}/odata/v4/salesorder/VH_OtherShipTo
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "otherShipTo": "o-18180052"
+}
+
+
+### VH_OtherShipTo
+# @name VH_OtherShipTo_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_OtherShipTo/o-18180052
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "otherShipTo": "o-18180052"
+}
+
+
+### VH_OtherShipTo
+# @name VH_OtherShipTo_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_OtherShipTo/o-18180052
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_PaymentTerms
+# @name VH_PaymentTerms_GET
+GET {{server}}/odata/v4/salesorder/VH_PaymentTerms
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_PaymentTerms
+# @name VH_PaymentTerms_POST
+POST {{server}}/odata/v4/salesorder/VH_PaymentTerms
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "paymentTerms": "VH_PaymentTerms-876171"
+}
+
+
+### VH_PaymentTerms
+# @name VH_PaymentTerms_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_PaymentTerms/VH_PaymentTerms-876171
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "paymentTerms": "VH_PaymentTerms-876171"
+}
+
+
+### VH_PaymentTerms
+# @name VH_PaymentTerms_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_PaymentTerms/VH_PaymentTerms-876171
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_HpPartNumber
+# @name VH_HpPartNumber_GET
+GET {{server}}/odata/v4/salesorder/VH_HpPartNumber
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_HpPartNumber
+# @name VH_HpPartNumber_POST
+POST {{server}}/odata/v4/salesorder/VH_HpPartNumber
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpPartNumber": "VH_HpPartNumber-9553134",
+  "hpPartDescription": "hpPartDescription-9553134"
+}
+
+
+### VH_HpPartNumber
+# @name VH_HpPartNumber_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_HpPartNumber/VH_HpPartNumber-9553134
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpPartNumber": "VH_HpPartNumber-9553134",
+  "hpPartDescription": "hpPartDescription-9553134"
+}
+
+
+### VH_HpPartNumber
+# @name VH_HpPartNumber_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_HpPartNumber/VH_HpPartNumber-9553134
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CustomerPart
+# @name VH_CustomerPart_GET
+GET {{server}}/odata/v4/salesorder/VH_CustomerPart
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_CustomerPart
+# @name VH_CustomerPart_POST
+POST {{server}}/odata/v4/salesorder/VH_CustomerPart
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerPartNumber": "VH_CustomerPart-213240",
+  "hpPartNumber": "hpPartNumber-213240",
+  "hpPartDescription": "hpPartDescription-213240"
+}
+
+
+### VH_CustomerPart
+# @name VH_CustomerPart_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_CustomerPart/VH_CustomerPart-213240
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "customerPartNumber": "VH_CustomerPart-213240",
+  "hpPartNumber": "hpPartNumber-213240",
+  "hpPartDescription": "hpPartDescription-213240"
+}
+
+
+### VH_CustomerPart
+# @name VH_CustomerPart_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_CustomerPart/VH_CustomerPart-213240
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_StorageLocation
+# @name VH_StorageLocation_GET
+GET {{server}}/odata/v4/salesorder/VH_StorageLocation
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_StorageLocation
+# @name VH_StorageLocation_POST
+POST {{server}}/odata/v4/salesorder/VH_StorageLocation
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "storageLocation": "VH_StorageLocation-452637"
+}
+
+
+### VH_StorageLocation
+# @name VH_StorageLocation_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_StorageLocation/VH_StorageLocation-452637
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "storageLocation": "VH_StorageLocation-452637"
+}
+
+
+### VH_StorageLocation
+# @name VH_StorageLocation_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_StorageLocation/VH_StorageLocation-452637
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_EndSupplier
+# @name VH_EndSupplier_GET
+GET {{server}}/odata/v4/salesorder/VH_EndSupplier
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_EndSupplier
+# @name VH_EndSupplier_POST
+POST {{server}}/odata/v4/salesorder/VH_EndSupplier
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "endSupplier": "r-23134638"
+}
+
+
+### VH_EndSupplier
+# @name VH_EndSupplier_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_EndSupplier/r-23134638
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "endSupplier": "r-23134638"
+}
+
+
+### VH_EndSupplier
+# @name VH_EndSupplier_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_EndSupplier/r-23134638
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SoAckOutOrigin
+# @name VH_SoAckOutOrigin_GET
+GET {{server}}/odata/v4/salesorder/VH_SoAckOutOrigin
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SoAckOutOrigin
+# @name VH_SoAckOutOrigin_POST
+POST {{server}}/odata/v4/salesorder/VH_SoAckOutOrigin
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "soAckOutOrigin": "n-24647993"
+}
+
+
+### VH_SoAckOutOrigin
+# @name VH_SoAckOutOrigin_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_SoAckOutOrigin/n-24647993
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "soAckOutOrigin": "n-24647993"
+}
+
+
+### VH_SoAckOutOrigin
+# @name VH_SoAckOutOrigin_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_SoAckOutOrigin/n-24647993
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SoChangeInOrigin
+# @name VH_SoChangeInOrigin_GET
+GET {{server}}/odata/v4/salesorder/VH_SoChangeInOrigin
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SoChangeInOrigin
+# @name VH_SoChangeInOrigin_POST
+POST {{server}}/odata/v4/salesorder/VH_SoChangeInOrigin
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "soChangeInOrigin": "n-23626449"
+}
+
+
+### VH_SoChangeInOrigin
+# @name VH_SoChangeInOrigin_PATCH
+PATCH {{server}}/odata/v4/salesorder/VH_SoChangeInOrigin/n-23626449
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "soChangeInOrigin": "n-23626449"
+}
+
+
+### VH_SoChangeInOrigin
+# @name VH_SoChangeInOrigin_DELETE
+DELETE {{server}}/odata/v4/salesorder/VH_SoChangeInOrigin/n-23626449
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_SpecialDealFlag
+# @name VH_SpecialDealFlag_GET
+GET {{server}}/odata/v4/salesorder/VH_SpecialDealFlag
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_GtsHold
+# @name VH_GtsHold_GET
+GET {{server}}/odata/v4/salesorder/VH_GtsHold
+Authorization: Basic {{username}}:{{password}}
+
+
+### VH_BlanketIndicator
+# @name VH_BlanketIndicator_GET
+GET {{server}}/odata/v4/salesorder/VH_BlanketIndicator
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_Supplier
+# @name MDM_Supplier_GET
+GET {{server}}/odata/v4/salesorder/MDM_Supplier
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_Customer
+# @name MDM_Customer_GET
+GET {{server}}/odata/v4/salesorder/MDM_Customer
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_Project
+# @name MDM_Project_GET
+GET {{server}}/odata/v4/salesorder/MDM_Project
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_Material
+# @name MDM_Material_GET
+GET {{server}}/odata/v4/salesorder/MDM_Material
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_Plant
+# @name MDM_Plant_GET
+GET {{server}}/odata/v4/salesorder/MDM_Plant
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_StorageLocation
+# @name MDM_StorageLocation_GET
+GET {{server}}/odata/v4/salesorder/MDM_StorageLocation
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_BusinessModel
+# @name MDM_BusinessModel_GET
+GET {{server}}/odata/v4/salesorder/MDM_BusinessModel
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_SupplierMaster
+# @name MDM_SupplierMaster_GET
+GET {{server}}/odata/v4/salesorder/MDM_SupplierMaster
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_CustomerMaster
+# @name MDM_CustomerMaster_GET
+GET {{server}}/odata/v4/salesorder/MDM_CustomerMaster
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_ProjectMaster
+# @name MDM_ProjectMaster_GET
+GET {{server}}/odata/v4/salesorder/MDM_ProjectMaster
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_BuyerMaster
+# @name MDM_BuyerMaster_GET
+GET {{server}}/odata/v4/salesorder/MDM_BuyerMaster
+Authorization: Basic {{username}}:{{password}}
+
+
+### MDM_CompanyCodeMaster
+# @name MDM_CompanyCodeMaster_GET
+GET {{server}}/odata/v4/salesorder/MDM_CompanyCodeMaster
+Authorization: Basic {{username}}:{{password}}
+
+
+### updateSalesOrderItem
+# @name updateSalesOrderItem_POST
+POST {{server}}/odata/v4/salesorder/updateSalesOrderItem
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "salesOrder": "r-11034601",
+  "lineID": "034601",
+  "salesPrice": 386203936785.018,
+  "salesPriceUnit": "601",
+  "specialDealFlagSo": false,
+  "hpNotesToCustomer": "hpNotesToCustomer-11034601",
+  "hpBacklogNotes": "hpBacklogNotes-11034601"
+}
+
+
+### updateSalesOrderHeader
+# @name updateSalesOrderHeader_POST
+POST {{server}}/odata/v4/salesorder/updateSalesOrderHeader
+Content-Type: application/json
+Authorization: Basic {{username}}:{{password}}
+
+{
+  "hpSalesOrder": "r-16681992",
+  "hpNotesToCustomer": "hpNotesToCustomer-16681992"
+}
