@@ -9,8 +9,16 @@
 //---------------------------------------------------------------------------------*
 
 const cds = require("@sap/cds");
+
 const { buildCancelLineOrdchgPayload } =
     require("./integration/ordchg");
+
+
+const {
+    MDM_SERVICE_NAME,
+    MAPPINGS: MDM_DESCRIPTIONS,
+    resolveDescriptions
+} = require("./utils/mdmDescriptionResolver");
 
 
 // ============================================================================
@@ -302,7 +310,7 @@ async function updateHeaderSalesOrderStatus(
     if (
         existingHeader &&
         existingHeader.salesOrderStatus_code ===
-            headerStatus
+        headerStatus
     ) {
 
         return headerStatus;
@@ -339,6 +347,8 @@ async function updateHeaderSalesOrderStatus(
 
 module.exports = cds.service.impl(
     async function (srv) {
+
+
 
         const {
             SalesOrders,
@@ -575,7 +585,7 @@ module.exports = cds.service.impl(
                             if (
                                 !dbHeader ||
                                 dbHeader.salesOrderStatus_code !==
-                                    headerStatus
+                                headerStatus
                             ) {
 
                                 await UPDATE(SalesOrders)
@@ -650,7 +660,7 @@ module.exports = cds.service.impl(
 
             const mapping =
                 FIELD_PROCESSING_FLAGS[
-                    entityName
+                entityName
                 ] || {};
 
 
@@ -703,7 +713,7 @@ module.exports = cds.service.impl(
 
             const mapping =
                 FIELD_PROCESSING_FLAGS[
-                    entityName
+                entityName
                 ] || {};
 
 
@@ -737,7 +747,7 @@ module.exports = cds.service.impl(
 
             const mapping =
                 FIELD_PROCESSING_FLAGS[
-                    entityName
+                entityName
                 ] || {};
 
 
@@ -889,7 +899,7 @@ module.exports = cds.service.impl(
                 if (
                     entityName &&
                     EDITABLE_FIELDS[
-                        entityName
+                    entityName
                     ]
                 ) {
 
@@ -900,7 +910,7 @@ module.exports = cds.service.impl(
 
                             fields:
                                 EDITABLE_FIELDS[
-                                    entityName
+                                entityName
                                 ]
                         }
                     ];
@@ -1712,6 +1722,16 @@ module.exports = cds.service.impl(
             }
         );
 
+        // calling  mdmDescriptionResolver.js for field mapping
+
+        this.after("READ", "SalesOrders", async (rows) => {
+            await resolveDescriptions(
+                rows,
+                MDM_DESCRIPTIONS.SalesOrder
+            );
+        });
+
 
     }
+
 );
