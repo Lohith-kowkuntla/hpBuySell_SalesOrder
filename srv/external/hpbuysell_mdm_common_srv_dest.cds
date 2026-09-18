@@ -1,4 +1,4 @@
-/* checksum : bddbcd903b917c98ae90114fd098a2b5 */
+/* checksum : bdee641e975ffd763d1142e7aa739d92 */
 @cds.external : true
 service hpbuysell_mdm_common_srv_dest {
   @cds.external : true
@@ -504,6 +504,8 @@ service hpbuysell_mdm_common_srv_dest {
   entity Buyer {
     key searchterm1 : String(10) not null;
     buyername : String(512);
+    buyername2 : String(512);
+    email : String(512);
   };
 
   @cds.external : true
@@ -514,6 +516,117 @@ service hpbuysell_mdm_common_srv_dest {
   entity CompanyCode {
     key companycode : String(4) not null;
     companycodedescription : String(40);
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity Alert {
+    key alertId : Integer not null;
+    description : String(120);
+    category : String(255);
+    isActive : Boolean;
+    subscriptionTypeCode : String(10);
+    isDefault : Boolean;
+    flexField1 : String(255);
+    flexField2 : String(255);
+    flexField3 : String(255);
+    flexField4 : String(255);
+    flexField5 : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    createdAt : Timestamp;
+    createdBy : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    modifiedAt : Timestamp;
+    modifiedBy : String(255);
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity AlertAllowedProfile {
+    key alertId : Integer not null;
+    key userGroupIndicator : String(2) not null;
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity AlertSubscriptionType {
+    key code : String(10) not null;
+    description : String(100);
+    defaultSubscribed : Boolean;
+    canUnsubscribe : Boolean;
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity Subscription {
+    key ID : String(36) not null;
+    userId : String(256);
+    alert_alertId : Integer;
+    active : Boolean;
+    flexField1 : String(255);
+    flexField2 : String(255);
+    flexField3 : String(255);
+    flexField4 : String(255);
+    flexField5 : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    createdAt : Timestamp;
+    createdBy : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    modifiedAt : Timestamp;
+    modifiedBy : String(255);
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity SubscriptionFilter {
+    key ID : String(36) not null;
+    subscription_ID : String(36);
+    fieldCode : String(255);
+    value : String(40);
+    valueText : String(120);
+    flexField1 : String(255);
+    flexField2 : String(255);
+    flexField3 : String(255);
+    flexField4 : String(255);
+    flexField5 : String(255);
+  };
+
+  @cds.external : true
+  @cds.persistence.skip : true
+  @Capabilities.DeleteRestrictions.Deletable : false
+  @Capabilities.InsertRestrictions.Insertable : false
+  @Capabilities.UpdateRestrictions.Updatable : false
+  entity UserProfile {
+    key ID : String(36) not null;
+    userId : String(256);
+    userGroupIndicator : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    createdAt : Timestamp;
+    createdBy : String(255);
+    @odata.Precision : 7
+    @odata.Type : 'Edm.DateTimeOffset'
+    modifiedAt : Timestamp;
+    modifiedBy : String(255);
   };
 };
 

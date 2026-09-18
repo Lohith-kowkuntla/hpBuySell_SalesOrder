@@ -8,16 +8,22 @@
 // Namespace        : hpbuysell.otc.salesorder
 //---------------------------------------------------------------------------------*
 
+"use strict";
+
 const cds = require("@sap/cds");
 
 const { buildCancelLineOrdchgPayload } =
     require("./integration/ordchg");
 
+const {
+    registerUserScope
+} = require("./utils/userScope");
 
 const {
     MDM_SERVICE_NAME,
     MAPPINGS: MDM_DESCRIPTIONS,
-    resolveDescriptions
+    resolveDescriptions,
+    resolveProjectDetails
 } = require("./utils/mdmDescriptionResolver");
 
 
@@ -44,14 +50,6 @@ const EDITABLE_FIELDS = {
 
 // ============================================================================
 // FIELD-LEVEL PROCESSING INDICATORS
-// ============================================================================
-//
-// true  = field change is currently being processed
-// false = field change has been acknowledged/completed
-//
-// IMPORTANT:
-// These fields are NOT included in EDITABLE_FIELDS because they are
-// system-controlled fields.
 // ============================================================================
 
 const FIELD_PROCESSING_FLAGS = {
@@ -95,69 +93,29 @@ const CANCELLABLE_LINE_STATUS_CODES = [
     "CONF"
 ];
 
-
 const { SELECT, UPDATE } = cds.ql;
 
 
 // ============================================================================
 // HEADER SALES ORDER STATUS PRIORITY - FDS 7.6
 // ============================================================================
-//
-// Header Sales Order Status is derived from ALL line item statuses.
-//
-// FDS order:
-//
-//   1  Open
-//   2  Awaiting Acknowledgement
-//   3  Confirmed
-//   4  Change Processing
-//   5  Partially Shipped
-//   6  Shipped
-//   7  Delivered
-//   8  Invoiced
-//   9  Cancelled
-//
-// IMPORTANT:
-// Do NOT use LineStatuses.priority for this calculation.
-//
-// The current CSV contains:
-//
-// AACK, OPEN, CONF, CHPR, PSHP, SHIP, DLVD, INVD, CANC
-//
-// There is NO PEND/Pending Cancellation code in the current CSV.
-// Therefore PEND is intentionally NOT included here.
-// ============================================================================
 
 const HEADER_STATUS_PRIORITY = [
 
-    "OPEN",   // Priority 1 - Open
-    "AACK",   // Priority 2 - Awaiting Acknowledgement
-    "CONF",   // Priority 3 - Confirmed
-    "CHPR",   // Priority 4 - Change Processing
-    "PSHP",   // Priority 5 - Partially Shipped
-    "SHIP",   // Priority 6 - Shipped
-    "DLVD",   // Priority 7 - Delivered
-    "INVD",   // Priority 8 - Invoiced
-    "CANC"    // Priority 9 - Cancelled
+    "OPEN",
+    "AACK",
+    "CONF",
+    "CHPR",
+    "PSHP",
+    "SHIP",
+    "DLVD",
+    "INVD",
+    "CANC"
 ];
 
 
 // ============================================================================
 // DERIVE HEADER SALES ORDER STATUS
-// ============================================================================
-//
-// Reads ALL line statuses for a Sales Order.
-//
-// Example:
-//
-//   Line 10 -> CONF
-//   Line 20 -> OPEN
-//   Line 30 -> CANC
-//
-// Header -> OPEN
-//
-// because OPEN has the highest FDS header priority.
-//
 // ============================================================================
 
 async function deriveHeaderSalesOrderStatus(
@@ -168,11 +126,6 @@ async function deriveHeaderSalesOrderStatus(
     if (!salesOrderId) {
         return null;
     }
-
-
-    // ------------------------------------------------------------------------
-    // Read all line statuses belonging to this Sales Order
-    // ------------------------------------------------------------------------
 
     const lineItems =
         await SELECT
@@ -185,20 +138,9 @@ async function deriveHeaderSalesOrderStatus(
                 "lineStatus_code"
             );
 
-
-    // ------------------------------------------------------------------------
-    // No line items
-    // ------------------------------------------------------------------------
-
     if (!lineItems.length) {
-
         return null;
     }
-
-
-    // ------------------------------------------------------------------------
-    // Get unique line status codes
-    // ------------------------------------------------------------------------
 
     const lineStatusCodes =
         new Set(
@@ -209,13 +151,6 @@ async function deriveHeaderSalesOrderStatus(
                 )
                 .filter(Boolean)
         );
-
-
-    // ------------------------------------------------------------------------
-    // Apply FDS priority
-    //
-    // The first status found wins.
-    // ------------------------------------------------------------------------
 
     for (
         const statusCode
@@ -232,27 +167,12 @@ async function deriveHeaderSalesOrderStatus(
         }
     }
 
-
-    // ------------------------------------------------------------------------
-    // No recognized status
-    // ------------------------------------------------------------------------
-
     return null;
 }
 
 
 // ============================================================================
 // UPDATE DERIVED HEADER SALES ORDER STATUS
-// ============================================================================
-//
-// Updates:
-//
-// SalesOrders.salesOrderStatus_code
-//
-// based on:
-//
-// SalesOrderItems.lineStatus_code
-//
 // ============================================================================
 
 async function updateHeaderSalesOrderStatus(
@@ -265,31 +185,15 @@ async function updateHeaderSalesOrderStatus(
         return null;
     }
 
-
-    // ------------------------------------------------------------------------
-    // Derive header status from all lines
-    // ------------------------------------------------------------------------
-
     const headerStatus =
         await deriveHeaderSalesOrderStatus(
             salesOrderId,
             SalesOrderItems
         );
 
-
-    // ------------------------------------------------------------------------
-    // No status available
-    // ------------------------------------------------------------------------
-
     if (!headerStatus) {
-
         return null;
     }
-
-
-    // ------------------------------------------------------------------------
-    // Read current header status
-    // ------------------------------------------------------------------------
 
     const existingHeader =
         await SELECT.one
@@ -302,11 +206,6 @@ async function updateHeaderSalesOrderStatus(
                 "salesOrderStatus_code"
             );
 
-
-    // ------------------------------------------------------------------------
-    // Avoid unnecessary UPDATE
-    // ------------------------------------------------------------------------
-
     if (
         existingHeader &&
         existingHeader.salesOrderStatus_code ===
@@ -315,11 +214,6 @@ async function updateHeaderSalesOrderStatus(
 
         return headerStatus;
     }
-
-
-    // ------------------------------------------------------------------------
-    // Update Header Sales Order Status
-    // ------------------------------------------------------------------------
 
     await UPDATE(SalesOrders)
         .set({
@@ -331,11 +225,9 @@ async function updateHeaderSalesOrderStatus(
                 salesOrderId
         });
 
-
     console.log(
         `[SO STATUS] ${salesOrderId} -> ${headerStatus}`
     );
-
 
     return headerStatus;
 }
@@ -348,12 +240,82 @@ async function updateHeaderSalesOrderStatus(
 module.exports = cds.service.impl(
     async function (srv) {
 
-
-
         const {
             SalesOrders,
             SalesOrderItems
         } = srv.entities;
+
+
+        // -------------------------------------------------------------
+        // User scope authorization
+        // -------------------------------------------------------------
+
+        registerUserScope(srv);
+
+
+        // =====================================================================
+        // MDM COMMON SERVICE
+        // =====================================================================
+        //
+        // These are @cds.persistence.skip projections in srv.cds.
+        //
+        // They MUST have explicit READ handlers because CAP cannot serve
+        // @cds.persistence.skip entities generically.
+        //
+        // The query is forwarded to the remote MDM Common Service through:
+        //
+        //     hpbuysell_mdm_common_srv_dest
+        //
+        // =====================================================================
+
+        const MDM_PROJECTIONS = [
+
+            "MDM_Supplier",
+            "MDM_Customer",
+            "MDM_Project",
+            "MDM_Material",
+            "MDM_Plant",
+            "MDM_StorageLocation",
+            "MDM_BusinessModel",
+
+            "MDM_SupplierMaster",
+            "MDM_CustomerMaster",
+            "MDM_ProjectMaster",
+            "MDM_BuyerMaster",
+            "MDM_CompanyCodeMaster",
+
+            // -------------------------------------------------------------
+            // User Scope
+            // -------------------------------------------------------------
+
+            "MDM_User",
+            "MDM_UserGroup",
+            "MDM_UserPartners",
+            "MDM_UserProjects"
+        ];
+
+
+        for (
+            const projection
+            of MDM_PROJECTIONS
+        ) {
+
+            srv.on(
+                "READ",
+                projection,
+                async (req) => {
+
+                    const mdm =
+                        await cds.connect.to(
+                            MDM_SERVICE_NAME
+                        );
+
+                    return mdm.run(
+                        req.query
+                    );
+                }
+            );
+        }
 
 
         // =====================================================================
@@ -431,24 +393,6 @@ module.exports = cds.service.impl(
         // =====================================================================
         // DERIVE HEADER STATUS WHEN SALES ORDER IS READ
         // =====================================================================
-        //
-        // This is important for existing Sales Orders.
-        //
-        // Example:
-        //
-        // Existing DB data:
-        //
-        // Sales Order 0005000010
-        //   Line 000010 -> AACK
-        //   Line 000020 -> AACK
-        //
-        // If salesOrderStatus_code is currently NULL, this logic derives:
-        //
-        //   Header -> AACK
-        //
-        // and persists it in SalesOrders.
-        //
-        // =====================================================================
 
         srv.after(
             "READ",
@@ -459,11 +403,6 @@ module.exports = cds.service.impl(
                     return;
                 }
 
-
-                // -------------------------------------------------------------
-                // Normalize single/multiple READ result
-                // -------------------------------------------------------------
-
                 const salesOrders =
                     Array.isArray(data)
                         ? data
@@ -471,7 +410,7 @@ module.exports = cds.service.impl(
 
 
                 // -------------------------------------------------------------
-                // Derive status for each Sales Order
+                // Calculate header status
                 // -------------------------------------------------------------
 
                 await Promise.all(
@@ -484,71 +423,27 @@ module.exports = cds.service.impl(
                                 return;
                             }
 
-
                             const headerStatus =
                                 await deriveHeaderSalesOrderStatus(
                                     salesOrder.hpSalesOrder,
                                     SalesOrderItems
                                 );
 
-
                             if (!headerStatus) {
                                 return;
                             }
 
-
-                            // -------------------------------------------------
-                            // Always expose calculated value to UI
-                            // -------------------------------------------------
-
+                            // Expose calculated status to UI
                             salesOrder.salesOrderStatus_code =
                                 headerStatus;
-
-
-                            // -------------------------------------------------
-                            // Persist only when DB value is different
-                            // -------------------------------------------------
-
-                            if (
-                                salesOrder.salesOrderStatus_code !==
-                                headerStatus
-                            ) {
-
-                                await UPDATE(SalesOrders)
-                                    .set({
-                                        salesOrderStatus_code:
-                                            headerStatus
-                                    })
-                                    .where({
-                                        hpSalesOrder:
-                                            salesOrder.hpSalesOrder
-                                    });
-
-                                return;
-                            }
-
-
-                            // -------------------------------------------------
-                            // IMPORTANT:
-                            // Since we assigned the calculated value above,
-                            // the comparison above will always be equal.
-                            //
-                            // Therefore persistence is handled below using
-                            // a separate DB read.
-                            // -------------------------------------------------
                         }
                     )
                 );
 
 
-                // ----------------------------------------------------------------
-                // Persist derived values correctly
-                // ----------------------------------------------------------------
-                //
-                // The UI already receives the calculated value above.
-                // This second pass makes sure the database is also synchronized.
-                //
-                // ----------------------------------------------------------------
+                // -------------------------------------------------------------
+                // Synchronize calculated status with DB
+                // -------------------------------------------------------------
 
                 await Promise.all(
                     salesOrders.map(
@@ -560,15 +455,12 @@ module.exports = cds.service.impl(
                                 return;
                             }
 
-
                             const headerStatus =
                                 salesOrder.salesOrderStatus_code;
-
 
                             if (!headerStatus) {
                                 return;
                             }
-
 
                             const dbHeader =
                                 await SELECT.one
@@ -580,7 +472,6 @@ module.exports = cds.service.impl(
                                     .columns(
                                         "salesOrderStatus_code"
                                     );
-
 
                             if (
                                 !dbHeader ||
@@ -597,7 +488,6 @@ module.exports = cds.service.impl(
                                         hpSalesOrder:
                                             salesOrder.hpSalesOrder
                                     });
-
 
                                 console.log(
                                     `[SO STATUS] READ recalculation: ` +
@@ -631,7 +521,6 @@ module.exports = cds.service.impl(
                 );
             }
 
-
             if (
                 newValue === null ||
                 newValue === undefined
@@ -639,7 +528,6 @@ module.exports = cds.service.impl(
 
                 return true;
             }
-
 
             return (
                 String(oldValue) !==
@@ -663,9 +551,7 @@ module.exports = cds.service.impl(
                 entityName
                 ] || {};
 
-
             const changedFields = [];
-
 
             for (
                 const field
@@ -682,7 +568,6 @@ module.exports = cds.service.impl(
                     continue;
                 }
 
-
                 if (
                     isDifferent(
                         oldData[field],
@@ -695,7 +580,6 @@ module.exports = cds.service.impl(
                     );
                 }
             }
-
 
             return changedFields;
         }
@@ -716,7 +600,6 @@ module.exports = cds.service.impl(
                 entityName
                 ] || {};
 
-
             for (
                 const field
                 of changedFields
@@ -724,7 +607,6 @@ module.exports = cds.service.impl(
 
                 const processingFlag =
                     mapping[field];
-
 
                 if (processingFlag) {
 
@@ -750,7 +632,6 @@ module.exports = cds.service.impl(
                 entityName
                 ] || {};
 
-
             for (
                 const field
                 of acknowledgedFields
@@ -758,7 +639,6 @@ module.exports = cds.service.impl(
 
                 const processingFlag =
                     mapping[field];
-
 
                 if (processingFlag) {
 
@@ -782,7 +662,6 @@ module.exports = cds.service.impl(
                     hpNotesToCustomer
                 } = req.data;
 
-
                 if (!hpSalesOrder) {
 
                     return req.reject(
@@ -791,14 +670,12 @@ module.exports = cds.service.impl(
                     );
                 }
 
-
                 const oExisting =
                     await SELECT.one
                         .from(SalesOrders)
                         .where({
                             hpSalesOrder
                         });
-
 
                 if (!oExisting) {
 
@@ -807,7 +684,6 @@ module.exports = cds.service.impl(
                         `Sales Order ${hpSalesOrder} not found`
                     );
                 }
-
 
                 if (
                     hpNotesToCustomer ===
@@ -820,14 +696,12 @@ module.exports = cds.service.impl(
                     );
                 }
 
-
                 const changedFields =
                     getChangedFields(
                         oExisting,
                         req.data,
                         "SalesOrders"
                     );
-
 
                 if (
                     changedFields.length === 0
@@ -839,13 +713,11 @@ module.exports = cds.service.impl(
                     );
                 }
 
-
                 const oUpdate = {
 
                     hpNotesToCustomer:
                         hpNotesToCustomer
                 };
-
 
                 setProcessingFlags(
                     oUpdate,
@@ -853,17 +725,14 @@ module.exports = cds.service.impl(
                     changedFields
                 );
 
-
                 oUpdate.simpleChangeProcessingInd =
                     true;
-
 
                 await UPDATE(SalesOrders)
                     .set(oUpdate)
                     .where({
                         hpSalesOrder
                     });
-
 
                 return {
 
@@ -895,7 +764,6 @@ module.exports = cds.service.impl(
                     entityName
                 } = req.data;
 
-
                 if (
                     entityName &&
                     EDITABLE_FIELDS[
@@ -915,7 +783,6 @@ module.exports = cds.service.impl(
                         }
                     ];
                 }
-
 
                 return Object.entries(
                     EDITABLE_FIELDS
@@ -967,7 +834,6 @@ module.exports = cds.service.impl(
                     req.target.keys || {}
                 );
 
-
             const managedFields = [
                 "createdAt",
                 "createdBy",
@@ -975,9 +841,7 @@ module.exports = cds.service.impl(
                 "modifiedBy"
             ];
 
-
             const rejected = [];
-
 
             Object.keys(req.data)
                 .forEach(
@@ -995,7 +859,6 @@ module.exports = cds.service.impl(
                             return;
                         }
 
-
                         if (
                             !allowedFields.includes(
                                 field
@@ -1010,7 +873,6 @@ module.exports = cds.service.impl(
                         }
                     }
                 );
-
 
             if (rejected.length) {
 
@@ -1042,7 +904,6 @@ module.exports = cds.service.impl(
                 lineId
             } = req.data;
 
-
             if (
                 !salesOrder_hpSalesOrder ||
                 !lineId
@@ -1050,7 +911,6 @@ module.exports = cds.service.impl(
 
                 return;
             }
-
 
             const existing =
                 await SELECT.one
@@ -1062,7 +922,6 @@ module.exports = cds.service.impl(
                     .columns(
                         "lineStatus_code"
                     );
-
 
             if (
                 existing?.lineStatus_code ===
@@ -1098,7 +957,6 @@ module.exports = cds.service.impl(
                 specialDealFlagSo
             } = req.data;
 
-
             if (
                 salesPrice !== undefined
             ) {
@@ -1113,7 +971,6 @@ module.exports = cds.service.impl(
                     );
                 }
 
-
                 if (
                     !salesPriceUnit
                 ) {
@@ -1124,7 +981,6 @@ module.exports = cds.service.impl(
                     );
                 }
             }
-
 
             if (
                 specialDealFlagSo === true &&
@@ -1181,7 +1037,6 @@ module.exports = cds.service.impl(
                     hpBacklogNotes
                 } = req.data;
 
-
                 if (!salesOrder) {
 
                     return req.reject(
@@ -1190,7 +1045,6 @@ module.exports = cds.service.impl(
                     );
                 }
 
-
                 if (!lineID) {
 
                     return req.reject(
@@ -1198,7 +1052,6 @@ module.exports = cds.service.impl(
                         "Line ID is required"
                     );
                 }
-
 
                 const oExisting =
                     await SELECT.one
@@ -1212,7 +1065,6 @@ module.exports = cds.service.impl(
                                 lineID
                         });
 
-
                 if (!oExisting) {
 
                     return req.reject(
@@ -1220,7 +1072,6 @@ module.exports = cds.service.impl(
                         `Sales Order ${salesOrder}, Line ${lineID} not found`
                     );
                 }
-
 
                 if (
                     oExisting.lineStatus_code ===
@@ -1232,7 +1083,6 @@ module.exports = cds.service.impl(
                         "Cannot update a cancelled line item"
                     );
                 }
-
 
                 const oUpdate = {};
 
@@ -1512,14 +1362,11 @@ module.exports = cds.service.impl(
                 const key =
                     req.params[0] || {};
 
-
                 const salesOrder_hpSalesOrder =
                     key.salesOrder_hpSalesOrder;
 
-
                 const lineId =
                     key.lineId;
-
 
                 const {
                     reasonForCancellation
@@ -1722,16 +1569,81 @@ module.exports = cds.service.impl(
             }
         );
 
-        // calling  mdmDescriptionResolver.js for field mapping
 
-        this.after("READ", "SalesOrders", async (rows) => {
-            await resolveDescriptions(
-                rows,
-                MDM_DESCRIPTIONS.SalesOrder
-            );
-        });
+        // =====================================================================
+        // MDM DESCRIPTION + PROJECT DETAIL RESOLUTION
+        // =====================================================================
+        //
+        // Description mappings:
+        //
+        // wbsProjectCode
+        //      -> MDM ProjectVH.wbselement
+        //      -> wbsProjectCodeDescription
+        //
+        // hpCompanyCode
+        //      -> MDM CompanyCode.companycode
+        //      -> hpCompanyDescription
+        //
+        // customerCode
+        //      -> MDM Customer.customerid
+        //      -> customerDescription
+        //
+        // hpBuyerCode
+        //      -> MDM Buyer.searchterm1
+        //      -> hpBuyerName
+        //
+        // Project details:
+        //
+        // wbsProjectCode
+        //      -> MDM Project.wbsElement
+        //
+        // customerNumber
+        //      -> contractNumber
+        //
+        // documentDate
+        //      -> contractDate
+        //
+        // businessModel
+        //      -> businessModel
+        //
+        // termsOfPayment
+        //      -> paymentTerms
+        //
+        // transitTime
+        //      -> item.transitTime
+        //
+        // =====================================================================
 
+        srv.after(
+            "READ",
+            SalesOrders,
+            async (rows) => {
 
+                if (!rows) {
+                    return;
+                }
+
+                // Resolve descriptions:
+                // PROJECT
+                // COMPANY_CODE
+                // CUSTOMER
+                // BUYER
+                await resolveDescriptions(
+                    rows,
+                    MDM_DESCRIPTIONS.SalesOrder,
+                    { fill: true }
+                );
+
+                // Resolve project details:
+                // customerNumber
+                // documentDate
+                // businessModel
+                // termsOfPayment
+                // transitTime
+                await resolveProjectDetails(
+                    rows
+                );
+            }
+        );
     }
-
 );

@@ -739,86 +739,129 @@ entity SalesOrderSearchExport as
     @requires: 'authenticated-user'
     function getUserInfo()                                        returns UserInfoResult;
 
+    // ==========================================================================
+// MDM Common Service
+// ==========================================================================
+//
+// These entities are NOT persisted in the Sales Order application.
+// They are projections onto the MDM Common Service and are forwarded by
+// the service implementation to:
+//
+//     hpbuysell_mdm_common_srv_dest
+//
+// Do NOT remove @cds.persistence.skip.
+// Do NOT create database tables for these entities.
+// ==========================================================================
 
-    // ------------------------ COMMON SERVICE -------------------------------
-    
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_Supplier              as projection on mdm.Supplier;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_Supplier
+    as projection on mdm.Supplier;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_Customer              as projection on mdm.Customer;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_Project               as projection on mdm.ProjectVH;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_Customer
+    as projection on mdm.Customer;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_Material              as projection on mdm.MaterialVH;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_Plant                 as projection on mdm.PlantVH;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_Project
+    as projection on mdm.ProjectVH;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_StorageLocation       as projection on mdm.StorageLocationVH;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_BusinessModel         as projection on mdm.BusinessModelVH;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_Material
+    as projection on mdm.MaterialVH;
 
-    /*
-     * The full master records behind the three value helps above, for the cases that
-     * need more than a code and its name - the supplier and customer masters, and the
-     * project master with the whole trading relationship on it.
-     */
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_SupplierMaster        as projection on mdm.Supplier;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_CustomerMaster        as projection on mdm.Customer;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_Plant
+    as projection on mdm.PlantVH;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_ProjectMaster         as projection on mdm.Project;
 
-    /*
-     * The buyer and company code masters, published since the metadata reload of
-     * 2026-09-03.
-     *
-     * There is no MDM_Buyer or MDM_CompanyCode beside them: BuyerVH and
-     * CompanyCodeVH return the code repeated back as its own description - F98 is
-     * named "F98", DE33 is named "DE33" - so nothing on this service reads either
-     * any more. The masters are the only buyer and company code source, here as in
-     * srv/utils/mdmDescriptionResolver.js and srv/utils/mdmValueHelps.js.
-     *
-     * Their shapes are the masters' own, not the value helps' - the buyer master is
-     * keyed on searchterm1, and the company code master names its text
-     * companycodedescription.
-     */
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_BuyerMaster           as projection on mdm.Buyer;
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_StorageLocation
+    as projection on mdm.StorageLocationVH;
 
-    @readonly
-    @cds.persistence.skip
-    @cds.redirection.target: false
-    entity MDM_CompanyCodeMaster     as projection on mdm.CompanyCode;
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_BusinessModel
+    as projection on mdm.BusinessModelVH;
+
+
+// ==========================================================================
+// MDM Master entities
+// ==========================================================================
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_SupplierMaster
+    as projection on mdm.Supplier;
+
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_CustomerMaster
+    as projection on mdm.Customer;
+
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_ProjectMaster
+    as projection on mdm.Project;
+
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_BuyerMaster
+    as projection on mdm.Buyer;
+
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_CompanyCodeMaster
+    as projection on mdm.CompanyCode;
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_User
+    as projection on mdm.User;
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_UserGroup
+    as projection on mdm.UserGroup;
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_UserPartners
+    as projection on mdm.UserPartners;
+
+@readonly
+@cds.persistence.skip
+@cds.redirection.target: false
+entity MDM_UserProjects
+    as projection on mdm.UserProjects;
 
 }

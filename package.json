@@ -1,6 +1,7 @@
 {
   "name": "hpbuysell-otc-salesorder",
   "version": "1.0.0",
+
   "dependencies": {
     "@cap-js-community/odata-v2-adapter": "^1.16.1",
     "@cap-js/change-tracking": "^2.2.2",
@@ -10,17 +11,30 @@
     "@sap-cloud-sdk/http-client": "^4",
     "@sap-cloud-sdk/resilience": "^4"
   },
+
   "devDependencies": {
     "@cap-js/sqlite": "^2.4",
     "@sap/cds-dk": "^9.9.1",
     "cds-plugin-ui5": "^0.17.0"
   },
+
   "scripts": {
     "start": "cds-serve",
-    "watch-salesorder.ui": "cds watch --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "watch-salesorder.ui": "cds watch --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-users": "cds watch --profile users --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
+
   "private": true,
+
   "cds": {
+    "hpbuysell": {
+      "userScope": {
+        "ttl": 60000,
+        "devEmail": null,
+        "mockUsers": "mock/mdm-users.json"
+      }
+    },
+
     "requires": {
       "db": {
         "kind": "sqlite",
@@ -28,21 +42,95 @@
           "url": "db.sqlite"
         }
       },
+
+      "[users]": {
+  "auth": {
+    "kind": "mocked",
+    "login_required": true,
+    "users": {
+      "buyer@hp.example": {
+        "roles": [
+          "SalesOrderViewer",
+          "SalesOrderManage"
+        ],
+        "attr": {
+          "email": "buyer@hp.example"
+        }
+      },
+
+      "customer.jabil@example.com": {
+        "roles": [
+          "SalesOrderViewer"
+        ],
+        "attr": {
+          "email": "customer.jabil@example.com"
+        }
+      },
+
+      "customer.sms@example.com": {
+        "roles": [
+          "SalesOrderViewer"
+        ],
+        "attr": {
+          "email": "customer.sms@example.com"
+        }
+      },
+
+      "customer.foxconn@example.com": {
+        "roles": [
+          "SalesOrderViewer"
+        ],
+        "attr": {
+          "email": "customer.foxconn@example.com"
+        }
+      },
+
+      "customer.flextronics@example.com": {
+        "roles": [
+          "SalesOrderViewer"
+        ],
+        "attr": {
+          "email": "customer.flextronics@example.com"
+        }
+      },
+
+      "customer.honhai@example.com": {
+        "roles": [
+          "SalesOrderViewer"
+        ],
+        "attr": {
+          "email": "customer.honhai@example.com"
+        }
+      }
+    }
+  }
+},
+
+     
       "[production]": {
         "auth": "xsuaa"
       },
+
       "hpbuysell_mdm_common_srv_dest": {
         "kind": "odata",
         "model": "srv/external/hpbuysell_mdm_common_srv_dest",
+        "credentials": {
+          "destination": "hpbuysell-mdm-common-srv-dest",
+          "path": "/odata/v4/common/"
+        },
+        "csrf": true,
+        "csrfInBatch": true,
+
+        "[production]": {
           "credentials": {
             "destination": "hpbuysell-mdm-common-srv-dest",
             "path": "/odata/v4/common/"
-        },
-        "csrf": true,
-        "csrfInBatch": true
+          }
+        }
       }
     }
   },
+
   "workspaces": [
     "app/*"
   ]

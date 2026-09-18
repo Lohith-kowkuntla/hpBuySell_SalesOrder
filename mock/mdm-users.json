@@ -1,0 +1,172 @@
+{
+  "User": [
+    {
+      "email": "buyer@hp.example",
+      "firstName": "HP",
+      "lastName": "Buyer",
+      "userName": "buyer@hp.example",
+      "userGroupIndicator": "HP"
+    },
+    {
+      "email": "customer.jabil@example.com",
+      "firstName": "Jabil",
+      "lastName": "Customer",
+      "userName": "customer.jabil@example.com",
+      "userGroupIndicator": "C"
+    },
+    {
+      "email": "customer.sms@example.com",
+      "firstName": "SMS",
+      "lastName": "Customer",
+      "userName": "customer.sms@example.com",
+      "userGroupIndicator": "C"
+    },
+    {
+      "email": "customer.foxconn@example.com",
+      "firstName": "Foxconn",
+      "lastName": "Customer",
+      "userName": "customer.foxconn@example.com",
+      "userGroupIndicator": "C"
+    },
+    {
+      "email": "customer.flextronics@example.com",
+      "firstName": "Flextronics",
+      "lastName": "Customer",
+      "userName": "customer.flextronics@example.com",
+      "userGroupIndicator": "C"
+    },
+    {
+      "email": "customer.honhai@example.com",
+      "firstName": "Hon Hai",
+      "lastName": "Customer",
+      "userName": "customer.honhai@example.com",
+      "userGroupIndicator": "C"
+    }
+  ],
+
+  "UserGroup": [
+    {
+      "user_email": "buyer@hp.example",
+      "groupid": "HP_BUYSELL_BUYER_GRP",
+      "groupname": "HP_BUYSELL_BUYER_GRP"
+    },
+    {
+      "user_email": "customer.jabil@example.com",
+      "groupid": "HP_BUYSELL_CUSTOMER_GRP",
+      "groupname": "HP_BUYSELL_CUSTOMER_GRP"
+    },
+    {
+      "user_email": "customer.sms@example.com",
+      "groupid": "HP_BUYSELL_CUSTOMER_GRP",
+      "groupname": "HP_BUYSELL_CUSTOMER_GRP"
+    },
+    {
+      "user_email": "customer.foxconn@example.com",
+      "groupid": "HP_BUYSELL_CUSTOMER_GRP",
+      "groupname": "HP_BUYSELL_CUSTOMER_GRP"
+    },
+    {
+      "user_email": "customer.flextronics@example.com",
+      "groupid": "HP_BUYSELL_CUSTOMER_GRP",
+      "groupname": "HP_BUYSELL_CUSTOMER_GRP"
+    },
+    {
+      "user_email": "customer.honhai@example.com",
+      "groupid": "HP_BUYSELL_CUSTOMER_GRP",
+      "groupname": "HP_BUYSELL_CUSTOMER_GRP"
+    }
+  ],
+
+  "UserPartners": [
+    {
+      "id": "up-jabil",
+      "user_email": "customer.jabil@example.com",
+      "partnerid": "0265000176",
+      "partnername": "Jabil Luxembourg Manufacturing",
+      "partnertype": "C"
+    },
+    {
+      "id": "up-sms",
+      "user_email": "customer.sms@example.com",
+      "partnerid": "0260003196",
+      "partnername": "SMS INFOCOMM GLOBAL SERVICES",
+      "partnertype": "C"
+    },
+    {
+      "id": "up-foxconn",
+      "user_email": "customer.foxconn@example.com",
+      "partnerid": "0260003199",
+      "partnername": "FOXCONN EUROPEAN MANUFACTURING",
+      "partnertype": "C"
+    },
+    {
+      "id": "up-flextronics",
+      "user_email": "customer.flextronics@example.com",
+      "partnerid": "0260003195",
+      "partnername": "Flextronics International",
+      "partnertype": "C"
+    },
+    {
+      "id": "up-honhai",
+      "user_email": "customer.honhai@example.com",
+      "partnerid": "0260003194",
+      "partnername": "Hon Hai Precision Industry",
+      "partnertype": "C"
+    }
+  ],
+
+  "UserProjects": [
+    {
+      "id": "project-jabil-1",
+      "partner_id": "up-jabil",
+      "projectid": "W-1000007",
+      "projectname": "W-1000007"
+    },
+    {
+      "id": "project-jabil-2",
+      "partner_id": "up-jabil",
+      "projectid": "W-2000475",
+      "projectname": "W-2000475"
+    },
+
+    {
+      "id": "project-sms-1",
+      "partner_id": "up-sms",
+      "projectid": "W-7000110",
+      "projectname": "W-7000110"
+    },
+    {
+      "id": "project-sms-2",
+      "partner_id": "up-sms",
+      "projectid": "W-7000114",
+      "projectname": "W-7000114"
+    },
+
+    {
+      "id": "project-foxconn-1",
+      "partner_id": "up-foxconn",
+      "projectid": "W-7000111",
+      "projectname": "W-7000111"
+    },
+
+    {
+      "id": "project-flextronics-1",
+      "partner_id": "up-flextronics",
+      "projectid": "W-0000102",
+      "projectname": "W-0000102"
+    },
+    {
+      "id": "project-flextronics-2",
+      "partner_id": "up-flextronics",
+      "projectid": "W-1000007",
+      "projectname": "W-1000007"
+    },
+
+    {
+      "id": "project-honhai-1",
+      "partner_id": "up-honhai",
+      "projectid": "W-0000104",
+      "projectname": "W-0000104"
+    }
+  ]
+}
