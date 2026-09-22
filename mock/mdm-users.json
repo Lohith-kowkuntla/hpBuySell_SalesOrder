@@ -81,8 +81,8 @@
     {
       "id": "up-jabil",
       "user_email": "customer.jabil@example.com",
-      "partnerid": "0265000176",
-      "partnername": "Jabil Luxembourg Manufacturing",
+      "partnerid": "0260003194",
+      "partnername": "Hon Hai Precision Industry",
       "partnertype": "C"
     },
     {
@@ -117,56 +117,22 @@
 
   "UserProjects": [
     {
-      "id": "project-jabil-1",
-      "partner_id": "up-jabil",
-      "projectid": "W-1000007",
-      "projectname": "W-1000007"
-    },
-    {
-      "id": "project-jabil-2",
-      "partner_id": "up-jabil",
+      "id": "project-honhai-1",
+      "partner_id": "up-honhai",
       "projectid": "W-2000475",
-      "projectname": "W-2000475"
+      "projectname": "Personal Systems Direct"
     },
-
-    {
-      "id": "project-sms-1",
-      "partner_id": "up-sms",
-      "projectid": "W-7000110",
-      "projectname": "W-7000110"
-    },
-    {
-      "id": "project-sms-2",
-      "partner_id": "up-sms",
-      "projectid": "W-7000114",
-      "projectname": "W-7000114"
-    },
-
     {
       "id": "project-foxconn-1",
       "partner_id": "up-foxconn",
-      "projectid": "W-7000111",
-      "projectname": "W-7000111"
-    },
-
-    {
-      "id": "project-flextronics-1",
-      "partner_id": "up-flextronics",
-      "projectid": "W-0000102",
-      "projectname": "W-0000102"
+      "projectid": "W-7100014",
+      "projectname": "VMI Services Project"
     },
     {
-      "id": "project-flextronics-2",
-      "partner_id": "up-flextronics",
-      "projectid": "W-1000007",
-      "projectname": "W-1000007"
-    },
-
-    {
-      "id": "project-honhai-1",
-      "partner_id": "up-honhai",
-      "projectid": "W-0000104",
-      "projectname": "W-0000104"
-    }
+  "id": "project-jabil-1",
+  "partner_id": "up-jabil",
+  "projectid": "W-2000475",
+  "projectname": "Personal Systems Direct"
+}
   ]
 }

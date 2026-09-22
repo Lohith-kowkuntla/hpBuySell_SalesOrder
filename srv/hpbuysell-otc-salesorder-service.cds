@@ -4,6 +4,7 @@ using {hpbuysell_mdm_common_srv_dest as mdm} from './external/hpbuysell_mdm_comm
 
 @path    : 'salesorder'
 @requires: 'authenticated-user'
+
 service HpBuySellOtcSalesOrderService {
 
     // ==========================================================================
@@ -76,13 +77,13 @@ service HpBuySellOtcSalesOrderService {
     // =========================================================================
 
     @requires: 'SalesOrderManage'
-    action updateSalesOrderItem(salesOrder: String(10),
-                                lineID: String(6),
-                                salesPrice: Decimal(15, 3),
-                                salesPriceUnit: String(3),
-                                specialDealFlagSo: Boolean,
-                                hpNotesToCustomer: String(1000),
-                                hpBacklogNotes: String(1000)) returns UpdateResult;
+    action   updateSalesOrderItem(salesOrder: String(10),
+                                  lineID: String(6),
+                                  salesPrice: Decimal(15, 3),
+                                  salesPriceUnit: String(3),
+                                  specialDealFlagSo: Boolean,
+                                  hpNotesToCustomer: String(1000),
+                                  hpBacklogNotes: String(1000))      returns UpdateResult;
 
 
     @readonly
@@ -97,124 +98,122 @@ service HpBuySellOtcSalesOrderService {
 
 
     // =========================================================================
-// Sales Order Header Update
-// =========================================================================
+    // Sales Order Header Update
+    // =========================================================================
 
-@requires: 'SalesOrderManage'
-action updateSalesOrderHeader(hpSalesOrder: String(10),
-                              hpNotesToCustomer: String(1000)) returns UpdateResult;
+    @requires: 'SalesOrderManage'
+    action   updateSalesOrderHeader(hpSalesOrder: String(10),
+                                    hpNotesToCustomer: String(1000)) returns UpdateResult;
 
 
-                              
     entity SalesOrderAcknowledgements as projection on db.SalesOrderAcknowledgements;
 
-  
- // ==========================================================================
-// Reporting — UI exports (FDS 3.13 / slide 53)
-// Available read-only to both roles.
-// ==========================================================================
 
-/**
- * Flat header + item projection backing the Search UI export.
- * Covers the fields carried in the PS4 -> BTP mapping sheet.
- *
- * The export is a normal service projection over SalesOrderItems.
- * Header fields are flattened through the SalesOrders association.
- */
+    // ==========================================================================
+    // Reporting — UI exports (FDS 3.13 / slide 53)
+    // Available read-only to both roles.
+    // ==========================================================================
 
-@readonly
-@title                 : '{i18n>SalesOrderSearchExport}'
-@cds.redirection.target: false
-@restrict: [{
-    grant: ['READ'],
-    to: [
-        'SalesOrderManage',
-        'SalesOrderViewer'
-    ]
-}]
-entity SalesOrderSearchExport as
-    projection on db.SalesOrderItems {
+    /**
+     * Flat header + item projection backing the Search UI export.
+     * Covers the fields carried in the PS4 -> BTP mapping sheet.
+     *
+     * The export is a normal service projection over SalesOrderItems.
+     * Header fields are flattened through the SalesOrders association.
+     */
 
-        key salesOrder.hpSalesOrder                  as hpSalesOrder,
-            salesOrder.customerOrder                 as customerOrder,
-            salesOrder.soOrderDate                   as soOrderDate,
-            salesOrder.wbsProjectCode                as wbsProjectCode,
-            salesOrder.wbsProjectCodeDescription     as wbsProjectCodeDescription,
-            salesOrder.salesOrderStatus.code         as salesOrderStatus,
-            salesOrder.contractNumber                as contractNumber,
-            salesOrder.businessModel                 as businessModel,
-            salesOrder.hpCompanyCode                 as hpCompanyCode,
-            salesOrder.hpCompanyDescription          as hpCompanyDescription,
-            salesOrder.customerCode                  as customerCode,
-            salesOrder.customerDescription           as customerDescription,
-            salesOrder.shipTo                        as shipTo,
-            salesOrder.billTo                        as billTo,
-            salesOrder.payer                         as payer,
-            salesOrder.otherShipTo                   as otherShipTo,
-            salesOrder.hpBuyerCode                   as hpBuyerCode,
-            salesOrder.hpBuyerName                   as hpBuyerName,
-            salesOrder.hpSalesOrganization           as hpSalesOrganization,
-            salesOrder.salesOrderOrigin.code         as salesOrderOrigin,
-            salesOrder.businessUnit                  as businessUnit,
-            salesOrder.paymentTerms                  as paymentTerms,
-            salesOrder.hpPlant                       as hpPlant,
-            salesOrder.customerNotesToHp             as headerCustomerNotesToHp,
-            salesOrder.hpNotesToCustomer             as headerHpNotesToCustomer,
-            salesOrder.contractDate                  as contractDate,
-            salesOrder.customerOrderDate              as customerOrderDate,
-            salesOrder.soRequisitionCreationDateTime as soRequisitionCreationDateTime,
-            salesOrder.blanketIndicator              as blanketIndicator,
-            salesOrder.lspAddress                    as lspAddress,
-            salesOrder.salesOrderType.code           as salesOrderType,
+    @readonly
+    @title                 : '{i18n>SalesOrderSearchExport}'
+    @cds.redirection.target: false
+    @restrict              : [{
+        grant: ['READ'],
+        to   : [
+            'SalesOrderManage',
+            'SalesOrderViewer'
+        ]
+    }]
+    entity SalesOrderSearchExport     as
+        projection on db.SalesOrderItems {
 
-        key lineId,
-            hpPartNumber,
-            hpPartDescription,
-            lineStatus.code                          as lineStatus,
-            customerPartNumber,
-            quantity,
-            quantityUnit,
-            plannedReceiptDate,
-            salesPrice,
-            salesPriceUnit,
-            salesPriceCurrency,
-            lineAmount,
-            lineAmountCurrency,
-            fromLine,
-            originalPlannedReceiptDate,
-            carrierSo,
-            otherCarrierSo,
-            soChangeInOrigin,
-            reasonForCancellation.code               as reasonForCancellation,
-            shippingPoint,
-            soAckOutOrigin,
-            storageLocation,
-            endSupplier,
-            hpNotesToCustomer,
-            customerNotesToHp,
-            specialDealFlagSo,
-            specialPriceIndicatorSo,
-            transitTime,
-            customerLineId,
-            gtsHold,
-            incotermsRevision,
-            termsOfDelivery,
-            deliveryPlace,
-            confirmedLineId,
-            confirmedQuantity,
-            confirmedReceiptDate,
-            totalInvoicedQuantity,
-            totalShippedQuantity,
-            totalDeliveredQuantity,
-            balanceQuantity,
-            soRequisitionNumber,
-            hpPurchaseOrder,
-            hpPoLineItem,
-            hpBacklogNotes
-    };
+            key salesOrder.hpSalesOrder                  as hpSalesOrder,
+                salesOrder.customerOrder                 as customerOrder,
+                salesOrder.soOrderDate                   as soOrderDate,
+                salesOrder.wbsProjectCode                as wbsProjectCode,
+                salesOrder.wbsProjectCodeDescription     as wbsProjectCodeDescription,
+                salesOrder.salesOrderStatus.code         as salesOrderStatus,
+                salesOrder.contractNumber                as contractNumber,
+                salesOrder.businessModel                 as businessModel,
+                salesOrder.hpCompanyCode                 as hpCompanyCode,
+                salesOrder.hpCompanyDescription          as hpCompanyDescription,
+                salesOrder.customerCode                  as customerCode,
+                salesOrder.customerDescription           as customerDescription,
+                salesOrder.shipTo                        as shipTo,
+                salesOrder.billTo                        as billTo,
+                salesOrder.payer                         as payer,
+                salesOrder.otherShipTo                   as otherShipTo,
+                salesOrder.hpBuyerCode                   as hpBuyerCode,
+                salesOrder.hpBuyerName                   as hpBuyerName,
+                salesOrder.hpSalesOrganization           as hpSalesOrganization,
+                salesOrder.salesOrderOrigin.code         as salesOrderOrigin,
+                salesOrder.businessUnit                  as businessUnit,
+                salesOrder.paymentTerms                  as paymentTerms,
+                salesOrder.hpPlant                       as hpPlant,
+                salesOrder.customerNotesToHp             as headerCustomerNotesToHp,
+                salesOrder.hpNotesToCustomer             as headerHpNotesToCustomer,
+                salesOrder.contractDate                  as contractDate,
+                salesOrder.customerOrderDate             as customerOrderDate,
+                salesOrder.soRequisitionCreationDateTime as soRequisitionCreationDateTime,
+                salesOrder.blanketIndicator              as blanketIndicator,
+                salesOrder.lspAddress                    as lspAddress,
+                salesOrder.salesOrderType.code           as salesOrderType,
 
-   
- 
+            key lineId,
+                hpPartNumber,
+                hpPartDescription,
+                lineStatus.code                          as lineStatus,
+                customerPartNumber,
+                quantity,
+                quantityUnit,
+                plannedReceiptDate,
+                salesPrice,
+                salesPriceUnit,
+                salesPriceCurrency,
+                lineAmount,
+                lineAmountCurrency,
+                fromLine,
+                originalPlannedReceiptDate,
+                carrierSo,
+                otherCarrierSo,
+                soChangeInOrigin,
+                reasonForCancellation.code               as reasonForCancellation,
+                shippingPoint,
+                soAckOutOrigin,
+                storageLocation,
+                endSupplier,
+                hpNotesToCustomer,
+                customerNotesToHp,
+                specialDealFlagSo,
+                specialPriceIndicatorSo,
+                transitTime,
+                customerLineId,
+                gtsHold,
+                incotermsRevision,
+                termsOfDelivery,
+                deliveryPlace,
+                confirmedLineId,
+                confirmedQuantity,
+                confirmedReceiptDate,
+                totalInvoicedQuantity,
+                totalShippedQuantity,
+                totalDeliveredQuantity,
+                balanceQuantity,
+                soRequisitionNumber,
+                hpPurchaseOrder,
+                hpPoLineItem,
+                hpBacklogNotes
+        };
+
+
     /** Schedule Summary screen — order counts per line status (FDS 3.13) */
     @readonly
     @title                 : '{i18n>SalesOrderScheduleSummary}'
@@ -301,7 +300,7 @@ entity SalesOrderSearchExport as
     // Action result
     // ==========================================================================
 
-    type UpdateResult     : {
+    type UpdateResult         : {
         @title: '{i18n>result.hpSalesOrder}'
         hpSalesOrder    : String(10);
 
@@ -723,7 +722,7 @@ entity SalesOrderSearchExport as
     };
 
     @requires: 'authenticated-user'
-    function getEditableFields(entityName: String)                returns array of EditableFieldsResult;
+    function getEditableFields(entityName: String)                   returns array of EditableFieldsResult;
 
     // ==========================================================================
     // Current-user role info — backs isHpBuyer in the Freestyle UI.
@@ -732,136 +731,127 @@ entity SalesOrderSearchExport as
     // ==========================================================================
 
     type UserInfoResult       : {
-        isHpBuyer : Boolean;
-        isViewer  : Boolean;
+        isHpBuyer      : Boolean;
+        isViewer       : Boolean;
+        isCustomerUser : Boolean;
+        visibleFilters : array of String;
     };
 
     @requires: 'authenticated-user'
-    function getUserInfo()                                        returns UserInfoResult;
+    function getUserInfo()                                           returns UserInfoResult;
 
     // ==========================================================================
-// MDM Common Service
-// ==========================================================================
-//
-// These entities are NOT persisted in the Sales Order application.
-// They are projections onto the MDM Common Service and are forwarded by
-// the service implementation to:
-//
-//     hpbuysell_mdm_common_srv_dest
-//
-// Do NOT remove @cds.persistence.skip.
-// Do NOT create database tables for these entities.
-// ==========================================================================
+    // MDM Common Service
+    // ==========================================================================
+    //
+    // These entities are NOT persisted in the Sales Order application.
+    // They are projections onto the MDM Common Service and are forwarded by
+    // the service implementation to:
+    //
+    //     hpbuysell_mdm_common_srv_dest
+    //
+    // Do NOT remove @cds.persistence.skip.
+    // Do NOT create database tables for these entities.
+    // ==========================================================================
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_Supplier
-    as projection on mdm.Supplier;
-
-
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_Customer
-    as projection on mdm.Customer;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_Supplier               as projection on mdm.Supplier;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_Project
-    as projection on mdm.ProjectVH;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_Customer               as projection on mdm.Customer;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_Material
-    as projection on mdm.MaterialVH;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_Project                as projection on mdm.ProjectVH;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_Plant
-    as projection on mdm.PlantVH;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_Material               as projection on mdm.MaterialVH;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_StorageLocation
-    as projection on mdm.StorageLocationVH;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_Plant                  as projection on mdm.PlantVH;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_BusinessModel
-    as projection on mdm.BusinessModelVH;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_StorageLocation        as projection on mdm.StorageLocationVH;
 
 
-// ==========================================================================
-// MDM Master entities
-// ==========================================================================
-
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_SupplierMaster
-    as projection on mdm.Supplier;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_BusinessModel          as projection on mdm.BusinessModelVH;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_CustomerMaster
-    as projection on mdm.Customer;
+    // ==========================================================================
+    // MDM Master entities
+    // ==========================================================================
+
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_SupplierMaster         as projection on mdm.Supplier;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_ProjectMaster
-    as projection on mdm.Project;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_CustomerMaster         as projection on mdm.Customer;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_BuyerMaster
-    as projection on mdm.Buyer;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_ProjectMaster          as projection on mdm.Project;
 
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_CompanyCodeMaster
-    as projection on mdm.CompanyCode;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_BuyerMaster            as projection on mdm.Buyer;
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_User
-    as projection on mdm.User;
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_UserGroup
-    as projection on mdm.UserGroup;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_CompanyCodeMaster      as projection on mdm.CompanyCode;
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_UserPartners
-    as projection on mdm.UserPartners;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_User                   as projection on mdm.User;
 
-@readonly
-@cds.persistence.skip
-@cds.redirection.target: false
-entity MDM_UserProjects
-    as projection on mdm.UserProjects;
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_UserGroup              as projection on mdm.UserGroup;
+
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_UserPartners           as projection on mdm.UserPartners;
+
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_UserProjects           as projection on mdm.UserProjects;
+
+       @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_BusinessModelVH           as projection on mdm.BusinessModelVH;
 
 }

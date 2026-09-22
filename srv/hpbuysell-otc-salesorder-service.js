@@ -16,8 +16,14 @@ const { buildCancelLineOrdchgPayload } =
     require("./integration/ordchg");
 
 const {
-    registerUserScope
+    registerUserScope,
+    loadUserScope,
+    getVisibleFilters
 } = require("./utils/userScope");
+
+const {
+    registerValueHelpScope
+} = require("./utils/valueHelpScope");
 
 const {
     MDM_SERVICE_NAME,
@@ -252,6 +258,22 @@ module.exports = cds.service.impl(
 
         registerUserScope(srv);
 
+        // -------------------------------------------------------------
+        // Value help authorization
+        // -------------------------------------------------------------
+        //
+        // Uses the same userScope.js authorization logic.
+        //
+        // Scoped VHs:
+        //   VH_Customer
+        //   VH_WbsProject
+        //   VH_Buyer
+        //   VH_CompanyCode
+        //
+        // -------------------------------------------------------------
+
+        registerValueHelpScope(srv);
+
 
         // =====================================================================
         // MDM COMMON SERVICE
@@ -291,7 +313,9 @@ module.exports = cds.service.impl(
             "MDM_User",
             "MDM_UserGroup",
             "MDM_UserPartners",
-            "MDM_UserProjects"
+            "MDM_UserProjects",
+            "MDM_BusinessModelVH"
+
         ];
 
 
@@ -999,24 +1023,25 @@ module.exports = cds.service.impl(
         // GET USER INFO
         // =====================================================================
 
-        srv.on(
-            "getUserInfo",
-            async (req) => {
+       srv.on("getUserInfo", async req => {
 
-                return {
+    const scope =
+        await loadUserScope(req);
 
-                    isHpBuyer:
-                        req.user.is(
-                            "SalesOrderManage"
-                        ),
+    return {
+        isHpBuyer:
+            req.user.is("SalesOrderManage"),
 
-                    isViewer:
-                        req.user.is(
-                            "SalesOrderViewer"
-                        )
-                };
-            }
-        );
+        isViewer:
+            req.user.is("SalesOrderViewer"),
+
+        isCustomerUser:
+            !!scope.customerUser,
+
+        visibleFilters:
+            getVisibleFilters(scope) || []
+    };
+});
 
 
         // =====================================================================

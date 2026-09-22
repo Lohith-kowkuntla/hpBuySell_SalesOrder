@@ -1,9 +1,9 @@
 @server=http://localhost:4004
-@username=alice
+@username=buyer@hp.example
 @password=
 
 
-### SalesOrders
+####
 # @name SalesOrders_GET
 GET {{server}}/odata/v4/salesorder/SalesOrders
 Authorization: Basic {{username}}:{{password}}

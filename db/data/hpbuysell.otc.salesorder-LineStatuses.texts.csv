@@ -1,1 +1,10 @@
 code,locale,name,descr
+AACK,en,Awaiting Acknowledgement,Line is awaiting acknowledgement from the supplier
+OPEN,en,Open,Line is open and has not yet been confirmed
+CONF,en,Confirmed,Line has been confirmed by the supplier
+CHPR,en,Change Processing,Line is undergoing simple change processing (Phase 2 - not yet reachable in MVP)
+PSHP,en,Partially Shipped,Line has been partially shipped
+SHIP,en,Shipped,Line has been fully shipped
+DLVD,en,Delivered,Line has been delivered
+INVD,en,Invoiced,Line has been invoiced
+CANC,en,Cancelled,Line has been cancelled

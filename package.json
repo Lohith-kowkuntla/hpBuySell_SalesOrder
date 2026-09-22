@@ -1,31 +1,32 @@
 {
   "name": "hpbuysell-otc-salesorder",
   "version": "1.0.0",
-
   "dependencies": {
     "@cap-js-community/odata-v2-adapter": "^1.16.1",
-    "@cap-js/change-tracking": "^2.2.2",
-    "@sap/cds": "^9",
-    "@sap/xssec": "^4",
+    "@cap-js/change-tracking": "^2.2.0",
+    "@cap-js/postgres": "^2.3.3",
     "@sap-cloud-sdk/connectivity": "^4",
     "@sap-cloud-sdk/http-client": "^4",
-    "@sap-cloud-sdk/resilience": "^4"
+    "@sap-cloud-sdk/resilience": "^4",
+    "@sap/cds": "^9.9.3",
+    "@sap/xssec": "^4"
   },
-
   "devDependencies": {
-    "@cap-js/sqlite": "^2.4",
-    "@sap/cds-dk": "^9.9.1",
-    "cds-plugin-ui5": "^0.17.0"
+    "@cap-js/sqlite": "^2.4.3",
+    "@sap/cds-dk": "^9.9.3",
+    "cds-plugin-ui5": "^0.17.0",
+    "mbt": "^1.2.49",
+    "rimraf": "^5.0.5"
   },
-
   "scripts": {
     "start": "cds-serve",
     "watch-salesorder.ui": "cds watch --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false",
-    "watch-users": "cds watch --profile users --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false"
+    "watch-users": "cds watch --profile users --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "undeploy": "cf undeploy hpbuysell-otc-salesorder --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
-
   "private": true,
-
   "cds": {
     "hpbuysell": {
       "userScope": {
@@ -34,103 +35,124 @@
         "mockUsers": "mock/mdm-users.json"
       }
     },
-
     "requires": {
+      "server": {
+        "body_parser": {
+          "limit": "10mb"
+        }
+      },
       "db": {
-        "kind": "sqlite",
-        "credentials": {
-          "url": "db.sqlite"
-        }
+  "kind": "sqlite",
+  "credentials": {
+    "database": "db.sqlite"
+  },
+  "[production]": {
+    "kind": "postgres",
+    "credentials": {
+      "schema": "hpbuysell_otc_salesorder",
+      "ssl": {
+        "rejectUnauthorized": false
       },
-
-      "[users]": {
-  "auth": {
-    "kind": "mocked",
-    "login_required": true,
-    "users": {
-      "buyer@hp.example": {
-        "roles": [
-          "SalesOrderViewer",
-          "SalesOrderManage"
-        ],
-        "attr": {
-          "email": "buyer@hp.example"
-        }
-      },
-
-      "customer.jabil@example.com": {
-        "roles": [
-          "SalesOrderViewer"
-        ],
-        "attr": {
-          "email": "customer.jabil@example.com"
-        }
-      },
-
-      "customer.sms@example.com": {
-        "roles": [
-          "SalesOrderViewer"
-        ],
-        "attr": {
-          "email": "customer.sms@example.com"
-        }
-      },
-
-      "customer.foxconn@example.com": {
-        "roles": [
-          "SalesOrderViewer"
-        ],
-        "attr": {
-          "email": "customer.foxconn@example.com"
-        }
-      },
-
-      "customer.flextronics@example.com": {
-        "roles": [
-          "SalesOrderViewer"
-        ],
-        "attr": {
-          "email": "customer.flextronics@example.com"
-        }
-      },
-
-      "customer.honhai@example.com": {
-        "roles": [
-          "SalesOrderViewer"
-        ],
-        "attr": {
-          "email": "customer.honhai@example.com"
-        }
+      "pool": {
+        "acquireTimeoutMillis": 30000
       }
     }
   }
 },
-
-     
+    
+      "[users]": {
+        "auth": {
+          "kind": "mocked",
+          "login_required": true,
+          "users": {
+            "buyer@hp.example": {
+              "roles": [
+                "SalesOrderViewer",
+                "SalesOrderManage"
+              ],
+              "attr": {
+                "email": "buyer@hp.example"
+              }
+            },
+            "customer.jabil@example.com": {
+              "roles": [
+                "SalesOrderViewer"
+              ],
+              "attr": {
+                "email": "customer.jabil@example.com"
+              }
+            },
+            "customer.sms@example.com": {
+              "roles": [
+                "SalesOrderViewer"
+              ],
+              "attr": {
+                "email": "customer.sms@example.com"
+              }
+            },
+            "customer.foxconn@example.com": {
+              "roles": [
+                "SalesOrderViewer"
+              ],
+              "attr": {
+                "email": "customer.foxconn@example.com"
+              }
+            },
+            "customer.flextronics@example.com": {
+              "roles": [
+                "SalesOrderViewer"
+              ],
+              "attr": {
+                "email": "customer.flextronics@example.com"
+              }
+            },
+            "customer.honhai@example.com": {
+              "roles": [
+                "SalesOrderViewer"
+              ],
+              "attr": {
+                "email": "customer.honhai@example.com"
+              }
+            }
+          }
+        }
+      },
       "[production]": {
         "auth": "xsuaa"
       },
-
+      "destinations": true,
+      "html5-repo": true,
       "hpbuysell_mdm_common_srv_dest": {
         "kind": "odata",
         "model": "srv/external/hpbuysell_mdm_common_srv_dest",
-        "credentials": {
-          "destination": "hpbuysell-mdm-common-srv-dest",
-          "path": "/odata/v4/common/"
+        "[development]": {
+          "credentials": {
+            "destination": "hpbuysell-mdm-common-srv-dest",
+            "path": "/odata/v4/common"
+          }
         },
-        "csrf": true,
-        "csrfInBatch": true,
-
+        "[hybrid]": {
+          "credentials": {
+            "destination": "hpbuysell-mdm-common-srv-dest",
+            "path": "/odata/v4/common"
+          }
+        },
         "[production]": {
           "credentials": {
             "destination": "hpbuysell-mdm-common-srv-dest",
-            "path": "/odata/v4/common/"
+            "path": "/odata/v4/common"
           }
-        }
+        },
+        "csrf": true,
+        "csrfInBatch": true
+      }
+    },
+    "migrations": {
+      "db": {
+        "schema_evolution": "auto"
       }
     }
   },
-
   "workspaces": [
     "app/*"
   ]

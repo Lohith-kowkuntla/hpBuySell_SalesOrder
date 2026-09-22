@@ -26,5 +26,5 @@ annotate so.SalesOrderItems with @changelog: [
     specialDealFlagSo     @changelog;
     hpNotesToCustomer     @changelog;
     hpBacklogNotes        @changelog;
-    reasonForCancellation @changelog       : [reasonForCancellation.description];
+    // reasonForCancellation @changelog       : [reasonForCancellation.description];
 }

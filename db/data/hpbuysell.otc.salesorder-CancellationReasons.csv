@@ -1,5 +1,5 @@
-code,name,descr
-ZG ,Customer Driven Cancellation ,Cancellation requested by the customer
-ZH ,Supplier Driven Cancellation ,Cancellation driven by the supplier
-ZI ,GPS Driven Cancellation ,Cancellation driven by GPS
-ZJ ,Close Short ,Line closed short against the remaining quantity
+code
+ZG
+ZH
+ZI
+ZJ

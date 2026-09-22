@@ -1,1 +1,4 @@
 code,locale,name,descr
+ZBLB,en,ZBLB,Buy-Sell order type ZBLB
+ZCBS,en,ZCBS,Buy-Sell order type ZCBS
+ZICB,en,ZICB,Buy-Sell order type ZICB

@@ -1,10 +1,10 @@
-code,priority,name,descr
-AACK,1,Awaiting Acknowledgement,Line is awaiting acknowledgement from the supplier
-OPEN,2,Open,Line is open and has not yet been confirmed
-CONF,3,Confirmed,Line has been confirmed by the supplier
-CHPR,4,Change Processing,Line is undergoing simple change processing (Phase 2 - not yet reachable in MVP)
-PSHP,5,Partially Shipped,Line has been partially shipped
-SHIP,6,Shipped,Line has been fully shipped
-DLVD,7,Delivered,Line has been delivered
-INVD,8,Invoiced,Line has been invoiced
-CANC,99,Cancelled,Line has been cancelled
+code,priority
+AACK,1
+OPEN,2
+CONF,3
+CHPR,4
+PSHP,5
+SHIP,6
+DLVD,7
+INVD,8
+CANC,99

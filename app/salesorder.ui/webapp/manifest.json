@@ -1,133 +1,146 @@
 {
-    "_version": "1.59.0",
-    "sap.app": {
-        "id": "hpbuysell.otc.salesorder.ui",
-        "type": "application",
-        "applicationVersion": {
-            "version": "1.0.0"
-        },
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "dataSources": {
-            "salesOrderService": {
-                "uri": "/odata/v2/salesorder/",
-                "type": "OData",
-                "settings": {
-                    "odataVersion": "2.0"
-                }
-            }
-        }
+  "_version": "1.59.0",
+  "sap.app": {
+    "id": "hpbuysell.otc.salesorder.ui",
+    "type": "application",
+    "applicationVersion": {
+      "version": "1.0.0"
     },
-    "sap.ui": {
-        "technology": "UI5",
-        "deviceTypes": {
-            "desktop": true,
-            "tablet": true,
-            "phone": true
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "dataSources": {
+      "salesOrderService": {
+        "uri": "/odata/v2/salesorder/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0"
         }
+      }
     },
-    "sap.ui5": {
-        "contentDensities": {
-            "compact": true,
-            "cozy": true
-        },
-        "flexEnabled": false,
-        "rootView": {
-            "viewName": "hpbuysell.otc.salesorder.ui.view.App",
-            "type": "XML",
-            "async": true,
-            "id": "salesOrderApp"
-        },
-        "dependencies": {
-            "minUI5Version": "1.120.0",
-            "libs": {
-                "sap.m": {},
-                "sap.ui.core": {},
-                "sap.ui.table": {},
-                "sap.ui.layout": {},
-                "sap.ui.comp": {},
-                "sap.f": {},
-                "sap.ui.export": {}
-            }
-        },
-        "models": {
-            "": {
-                "dataSource": "salesOrderService",
-                "preload": true,
-                "settings": {
-                    "defaultBindingMode": "TwoWay",
-                    "operationMode": "Server",
-                    "earlyRequests": true
-                }
-            },
-            "i18n": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleName": "hpbuysell.otc.salesorder.ui.i18n.i18n"
-                }
-            }
-        },
-        "routing": {
-            "config": {
-                "routerClass": "sap.m.routing.Router",
-                "type": "View",
-                "viewType": "XML",
-                "path": "hpbuysell.otc.salesorder.ui.view",
-                "controlId": "app",
-                "controlAggregation": "pages",
-                "async": true
-            },
-            "routes": [
-                {
-                    "pattern": "",
-                    "name": "salesOrderOverview",
-                    "target": "salesOrderOverview"
-                },
-                {
-                    "pattern": "salesorder/{salesOrder}",
-                    "name": "salesOrderDetail",
-                    "target": "salesOrderDetail"
-                },
-                {
-                    "pattern": "salesorder/{salesOrder}/item/{lineId}",
-                    "name": "salesOrderItemDetail",
-                    "target": "salesOrderItemDetail"
-                },
-                {
-                    "pattern": "salesorder/{salesOrder}/item/{lineId}/history",
-                    "name": "viewHistory",
-                    "target": "viewHistory"
-                }
-            ],
-            "targets": {
-                "salesOrderOverview": {
-                    "type": "View",
-                    "id": "salesOrderOverview",
-                    "name": "SalesOrderOverview"
-                },
-                "salesOrderDetail": {
-                    "type": "View",
-                    "id": "salesOrderDetail",
-                    "name": "SalesOrderDetail"
-                },
-                "salesOrderItemDetail": {
-                    "type": "View",
-                    "id": "salesOrderItemDetail",
-                    "name": "SalesOrderItemDetail"
-                },
-                "viewHistory": {
-                    "type": "View",
-                    "id": "viewHistory",
-                    "name": "ViewHistory"
-                }
-            }
-        },
-        "resources": {
-            "css": [
-                {
-                    "uri": "css/style.css"
-                }
-            ]
+    "crossNavigation": {
+      "inbounds": {
+        "Z_OTC_SALESORDER-manage": {
+          "semanticObject": "Z_OTC_SALESORDER",
+          "action": "manage",
+          "title": "{{Z_OTC_SALESORDER-manage.flpTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
         }
+      }
     }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "flexEnabled": false,
+    "rootView": {
+      "viewName": "hpbuysell.otc.salesorder.ui.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "salesOrderApp"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ui.table": {},
+        "sap.ui.layout": {},
+        "sap.ui.comp": {},
+        "sap.f": {},
+        "sap.ui.export": {}
+      }
+    },
+    "models": {
+      "": {
+        "dataSource": "salesOrderService",
+        "preload": true,
+        "settings": {
+          "defaultBindingMode": "TwoWay",
+          "operationMode": "Server",
+          "earlyRequests": true
+        }
+      },
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "hpbuysell.otc.salesorder.ui.i18n.i18n"
+        }
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "type": "View",
+        "viewType": "XML",
+        "path": "hpbuysell.otc.salesorder.ui.view",
+        "controlId": "app",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "salesOrderOverview",
+          "target": "salesOrderOverview"
+        },
+        {
+          "pattern": "salesorder/{salesOrder}",
+          "name": "salesOrderDetail",
+          "target": "salesOrderDetail"
+        },
+        {
+          "pattern": "salesorder/{salesOrder}/item/{lineId}",
+          "name": "salesOrderItemDetail",
+          "target": "salesOrderItemDetail"
+        },
+        {
+          "pattern": "salesorder/{salesOrder}/item/{lineId}/history",
+          "name": "viewHistory",
+          "target": "viewHistory"
+        }
+      ],
+      "targets": {
+        "salesOrderOverview": {
+          "type": "View",
+          "id": "salesOrderOverview",
+          "name": "SalesOrderOverview"
+        },
+        "salesOrderDetail": {
+          "type": "View",
+          "id": "salesOrderDetail",
+          "name": "SalesOrderDetail"
+        },
+        "salesOrderItemDetail": {
+          "type": "View",
+          "id": "salesOrderItemDetail",
+          "name": "SalesOrderItemDetail"
+        },
+        "viewHistory": {
+          "type": "View",
+          "id": "viewHistory",
+          "name": "ViewHistory"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    }
+  }
 }

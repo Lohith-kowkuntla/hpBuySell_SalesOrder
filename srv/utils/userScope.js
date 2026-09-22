@@ -232,8 +232,48 @@ const CUSTOMER_HIDDEN = {
     SalesOrderSearchExport: []
 };
 
-
 //-----------------------------------------------------------------------------------*
+// Customer-visible search filters
+//
+// Customer users can search only using fields explicitly exposed by the
+// Customer search-filter specification.
+//
+// HP / technical users can use all configured filters.
+//-----------------------------------------------------------------------------------*
+
+const CUSTOMER_VISIBLE_FILTERS = [
+
+    "hpSalesOrganization",
+
+    "customerCode",
+    "customerDescription",
+
+    "customerOrder",
+    "customerOrderDate",
+
+    "customerPartNumber",
+
+    "hpBuyerCode",
+    "hpBuyerName",
+
+    "hpCompanyCode",
+
+    "hpPartDescription",
+    "hpPartNumber",
+
+    "hpSalesOrder",
+
+    "lineId",
+
+    "lineStatus",
+
+    "salesOrderStatus",
+
+    "soOrderDate",
+
+    "wbsProjectCode"
+];
+// --------------------------------------------------------------------------------*
 // Clear scope cache
 //-----------------------------------------------------------------------------------*
 
@@ -2064,10 +2104,60 @@ function registerUserScope(srv) {
     );
 }
 
+function getVisibleFilters(scope) {
+
+    if (
+        !scope ||
+        scope.unrestricted
+    ) {
+        return null;
+    }
+
+    if (
+        scope.customerUser
+    ) {
+        return CUSTOMER_VISIBLE_FILTERS;
+    }
+
+    return [];
+}
 
 //-----------------------------------------------------------------------------------*
 // Exports
 //-----------------------------------------------------------------------------------*
+
+// module.exports = {
+
+//     registerUserScope,
+
+//     loadUserScope,
+
+//     applyScopeFilter,
+
+//     buildScopeExpression,
+
+//     assertReadableFilter,
+
+//     stripHiddenFields,
+
+//     assertBuyer,
+
+//     assertCustomerReadOnly,
+
+//     getEntityName,
+
+//     getUserEmail,
+
+//     isTechnical,
+
+//     clearCache,
+
+//     SCOPE_PATHS,
+
+//     CUSTOMER_HIDDEN,
+
+//     SCOPED_ENTITIES
+// };
 
 module.exports = {
 
@@ -2095,9 +2185,13 @@ module.exports = {
 
     clearCache,
 
+    getVisibleFilters,
+
     SCOPE_PATHS,
 
     CUSTOMER_HIDDEN,
+
+    CUSTOMER_VISIBLE_FILTERS,
 
     SCOPED_ENTITIES
 };

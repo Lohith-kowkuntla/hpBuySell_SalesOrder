@@ -1,0 +1,114 @@
+_schema-version: 3.3.0
+ID: hpbuysell-otc-salesorder
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+  deploy_mode: html5-repo
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+modules:
+  - name: hpbuysell-otc-salesorder-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: hpbuysell-otc-salesorder-auth
+      - name: hpbuysell-otc-salesorder-postgres
+      - name: hpbuysell-otc-salesorder-destination
+
+  - name: hpbuysell-otc-salesorder-postgres-deployer
+    type: nodejs
+    path: gen/pg
+    parameters:
+      buildpack: nodejs_buildpack
+      no-route: true
+      no-start: true
+      tasks:
+        - name: deploy-to-postgresql
+          command: npm start
+    requires:
+      - name: hpbuysell-otc-salesorder-postgres
+
+  - name: hpbuysell-otc-salesorder-app-deployer
+    type: com.sap.application.content
+    path: gen
+    build-parameters:
+      build-result: app/
+      requires:
+        - name: hpbuysellotcsalesordersalesorder.ui
+          artifacts:
+            - salesorder.ui.zip
+          target-path: app/
+    requires:
+      - name: hpbuysell-otc-salesorder-auth
+      - name: srv-api
+      - name: hpbuysell-otc-salesorder-html5-repo-host
+        parameters:
+          content-target: true
+          config:
+            HTML5Runtime_enabled: true
+
+  - name: hpbuysellotcsalesordersalesorder.ui
+    type: html5
+    path: app/salesorder.ui
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm ci
+        - npm run build
+      supported-platforms:
+        []
+
+resources:
+  - name: hpbuysell-otc-salesorder-auth
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: xsuaa
+      service-plan: application
+      path: ./xs-security.json
+      config:
+        xsappname: hpbuysell-otc-salesorder-${org}-${space}
+        tenant-mode: dedicated
+        oauth2-configuration:
+          credential-types:
+            - "binding-secret"
+            - "x509"
+        role-collections:
+          - name: 'SalesOrderManage (hpbuysell-otc-salesorder ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.SalesOrderManage'
+          - name: 'SalesOrderViewer (hpbuysell-otc-salesorder ${org}-${space})'
+            description: 'generated'
+            role-template-references:
+              - '$XSAPPNAME.SalesOrderViewer'
+  - name: hpbuysell-otc-salesorder-postgres
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: postgresql-db
+      service-plan: development
+  - name: hpbuysell-otc-salesorder-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-plan: lite
+
+  - name: hpbuysell-otc-salesorder-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
