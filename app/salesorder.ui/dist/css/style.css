@@ -1,0 +1,47 @@
+/* HP Buy-Sell Sales Order UI */
+.salesOrderStatus {
+    font-weight: 600;
+}
+
+.sapUiTableCell .sapMObjectStatus {
+    white-space: nowrap;
+}
+
+/* ============================================================
+   Sales Order - Overview
+   White background
+   ============================================================ */
+
+.salesOrderOverviewBackground {
+    background-color: #ffffff;
+}
+
+.salesOrderOverviewBackground .sapMScrollContScroll {
+    background-color: #ffffff;
+}
+
+.salesOrderOverviewContainer {
+    background-color: #ffffff;
+    min-height: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+.salesOrderOverviewContainer .sapUiLayoutGrid {
+    background-color: #ffffff;
+}
+
+.soDetailTabs {
+    background-color: #ffffff;
+}
+
+.soDetailTabs .sapMITBContainerContent {
+    background-color: #ffffff;
+}
+
+.soDetailTabs .sapMITBContent {
+    background-color: #ffffff;
+}
+
+

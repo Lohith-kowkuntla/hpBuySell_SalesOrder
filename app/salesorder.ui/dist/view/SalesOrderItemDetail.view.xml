@@ -1,0 +1,969 @@
+<mvc:View
+    controllerName="hpbuysell.otc.salesorder.ui.controller.SalesOrderItemDetail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:uxap="sap.uxap"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:l="sap.ui.layout"
+    height="100%">
+
+    <!-- ====================================================================== -->
+    <!-- SCREEN 3 - SALES ORDER ITEM DETAIL                                    -->
+    <!-- ====================================================================== -->
+
+    <Page
+        id="itemDetailPage"
+        title="{i18n>item}: {lineId}"
+        showNavButton="true"
+        navButtonPress=".onNavBackPress"
+        enableScrolling="true"
+        busy="{view>/busy}"
+        busyIndicatorDelay="0">
+
+        <!-- ================================================================== -->
+        <!-- ACTION BAR                                                         -->
+        <!-- ================================================================== -->
+
+        <subHeader>
+
+            <OverflowToolbar
+                id="itemActionBar"
+                visible="{= !!${view>/mode} }">
+
+                <Text
+                    id="itemActionPrompt"
+                    text="{view>/prompt}" />
+
+                <ToolbarSpacer
+                    id="itemActionSpacer" />
+
+                <!-- Save -->
+                <Button
+                    id="itemActionSave"
+                    text="{i18n>save}"
+                    type="Emphasized"
+                    visible="{= ${view>/mode} === 'EDIT' }"
+                    enabled="{= !${view>/actionBusy} }"
+                    press=".onSaveEdit" />
+
+                <!-- Confirm Cancellation -->
+                <Button
+                    id="itemActionConfirmCancel"
+                    text="{i18n>confirmCancellation}"
+                    type="Reject"
+                    visible="{= ${view>/mode} === 'CANCEL' }"
+                    enabled="{= !${view>/actionBusy} }"
+                    press=".onConfirmCancelLine" />
+
+                <!-- Reset -->
+                <Button
+                    id="itemActionReset"
+                    text="{i18n>reset}"
+                    icon="sap-icon://reset"
+                    type="Transparent"
+                    enabled="{= !${view>/actionBusy} }"
+                    press=".onExitMode" />
+
+            </OverflowToolbar>
+
+        </subHeader>
+
+
+        <!-- ================================================================== -->
+        <!-- CONTENT                                                            -->
+        <!-- ================================================================== -->
+
+        <content>
+
+            <!-- ============================================================== -->
+            <!-- FIORI OBJECT PAGE                                               -->
+            <!--                                                                  -->
+            <!-- useIconTabBar = false                                           -->
+            <!-- showAnchorBar = true                                            -->
+            <!--                                                                  -->
+            <!-- This gives:                                                     -->
+            <!--   1. Vertical sections                                          -->
+            <!--   2. Scrollable content                                         -->
+            <!--   3. Anchor navigation                                          -->
+            <!--   4. Active anchor changes while scrolling                     -->
+            <!-- ============================================================== -->
+
+            <uxap:ObjectPageLayout
+                id="itemObjectPageLayout"
+                showTitleInHeaderContent="true"
+                upperCaseAnchorBar="false"
+                useIconTabBar="false"
+                showAnchorBar="true"
+                enableLazyLoading="false"
+                preserveHeaderStateOnScroll="true"
+                headerContentPinnable="true"
+                alwaysShowContentHeader="false">
+
+
+                <!-- ========================================================== -->
+                <!-- HEADER TITLE                                                -->
+                <!-- ========================================================== -->
+
+              <uxap:headerTitle>
+
+    <uxap:ObjectPageDynamicHeaderTitle id="itemHeaderTitle">
+
+        <uxap:heading>
+            <Title
+                id="itemHeading"
+                text="{lineId} · {hpPartDescription}"
+                level="H1"
+                wrapping="true" />
+        </uxap:heading>
+
+        <uxap:snappedContent>
+            <l:HorizontalLayout id="itemSnappedLayout" allowWrapping="true">
+                <Text id="itemSnappedPartNumber" text="{hpPartNumber}" class="sapUiTinyMarginEnd" />
+            </l:HorizontalLayout>
+        </uxap:snappedContent>
+
+        <uxap:expandedContent>
+            <l:HorizontalLayout id="itemExpandedLayout" allowWrapping="true">
+                <Text id="itemExpandedSubtitle" text="{hpPartNumber}" class="sapUiTinyMarginEnd" />
+            </l:HorizontalLayout>
+        </uxap:expandedContent>
+
+        <uxap:actions>
+
+            <Button
+                id="itemActionEdit"
+                text="{i18n>actionEdit}"
+                type="Emphasized"
+                icon="sap-icon://edit"
+                visible="{= ${view>/canUpdate} &amp;&amp; !${view>/mode} }"
+                enabled="{= !${view>/actionBusy} }"
+                press=".onUpdateLine" />
+
+            <Button
+                id="itemActionCancel"
+                text="{i18n>actionCancel}"
+                type="Reject"
+                icon="sap-icon://sys-cancel"
+                visible="{= ${view>/canCancel} &amp;&amp; !${view>/mode} }"
+                enabled="{= !${view>/actionBusy} }"
+                press=".onCancelLine" />
+
+            <Button
+                id="itemHeaderHeaderLink"
+                text="{i18n>openSalesOrder}"
+                type="Transparent"
+                icon="sap-icon://sales-order"
+                visible="{= !${view>/mode} }"
+                press=".onNavToHeader" />
+
+        </uxap:actions>
+
+    </uxap:ObjectPageDynamicHeaderTitle>
+
+</uxap:headerTitle>
+
+
+                <!-- ========================================================== -->
+                <!-- HEADER CONTENT                                              -->
+                <!-- ========================================================== -->
+
+                <uxap:headerContent>
+
+                    <l:HorizontalLayout
+                        id="itemHeaderContent"
+                        allowWrapping="true">
+
+                        <!-- SALES ORDER -->
+                        <l:VerticalLayout
+                            id="itemHeaderDocument"
+                            class="sapUiLargeMarginEnd">
+
+                            <Label
+                                id="itemLblHeaderDocument"
+                                text="{i18n>salesOrder}" />
+
+                            <Link
+                                id="itemLinkHeaderDocument"
+                                text="{salesOrder}"
+                                press=".onNavToHeader" />
+
+                        </l:VerticalLayout>
+
+                        <!-- QUANTITY -->
+                        <l:VerticalLayout
+                            id="itemHeaderQuantity"
+                            class="sapUiLargeMarginEnd">
+
+                            <Label
+                                id="itemLblHeaderQuantity"
+                                text="{i18n>quantity}" />
+
+                            <ObjectNumber
+                                id="itemNumHeaderQuantity"
+                                number="{path: 'quantity', formatter: '.formatter.quantity'}"
+                                unit="{quantityUnit}" />
+
+                        </l:VerticalLayout>
+
+                        <!-- LINE AMOUNT -->
+                        <l:VerticalLayout
+                            id="itemHeaderValue"
+                            class="sapUiLargeMarginEnd">
+
+                            <Label
+                                id="itemLblHeaderValue"
+                                text="{i18n>lineAmount}" />
+
+                            <ObjectNumber
+                                id="itemNumHeaderValue"
+                                number="{path: 'lineAmount', formatter: '.formatter.amount'}"
+                                unit="{lineAmountCurrency}"
+                                emphasized="true" />
+
+                        </l:VerticalLayout>
+
+                        <!-- LINE STATUS -->
+                        <l:VerticalLayout
+                            id="itemHeaderStatus">
+
+                            <Label
+                                id="itemLblHeaderStatus"
+                                text="{i18n>lineStatus}" />
+
+                            <ObjectStatus
+                                id="itemStatusLine"
+                                text="{lineStatus_code}"
+                                state="{path: 'lineStatus_code', formatter: '.formatter.statusState'}"
+                                icon="{path: 'lineStatus_code', formatter: '.formatter.statusIcon'}" />
+
+                        </l:VerticalLayout>
+
+                    </l:HorizontalLayout>
+
+                </uxap:headerContent>
+
+
+                <!-- ========================================================== -->
+                <!-- 7 VERTICAL SECTIONS                                        -->
+                <!-- ========================================================== -->
+
+                <uxap:sections>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 1. ITEM DETAILS                                       -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecDetails"
+                        title="{i18n>itemDetails}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecDetails"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormDetails"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="2"
+                                        columnsL="3"
+                                        columnsXL="3">
+
+
+                                        <Label
+                                            id="itemLblLineId"
+                                            text="{i18n>lineId}" />
+
+                                        <Text
+                                            id="itemValLineId"
+                                            text="{lineId}" />
+
+
+                                        <Label
+                                            id="itemLblCustomerPartNumber"
+                                            text="{i18n>customerPartNumber}" />
+
+                                        <Text
+                                            id="itemValCustomerPartNumber"
+                                            text="{customerPartNumber}" />
+
+
+                                        <Label
+                                            id="itemLblCustomerLineId"
+                                            text="{i18n>customerLineId}" />
+
+                                        <Text
+                                            id="itemValCustomerLineId"
+                                            text="{customerLineId}" />
+
+
+                                        <Label
+                                            id="itemLblFromLine"
+                                            text="{i18n>fromLine}" />
+
+                                        <Text
+                                            id="itemValFromLine"
+                                            text="{fromLine}" />
+
+
+                                        <Label
+                                            id="itemLblShippingPoint"
+                                            text="{i18n>shippingPoint}" />
+
+                                        <Text
+                                            id="itemValShippingPoint"
+                                            text="{shippingPoint}" />
+
+
+                                        <Label
+                                            id="itemLblStorageLocation"
+                                            text="{i18n>storageLocationDescription}" />
+
+                                        <Text
+                                            id="itemValStorageLocation"
+                                            text="{storageLocationDescription}" />
+
+
+                                        <Label
+                                            id="itemLblEndSupplier"
+                                            text="{i18n>endSupplier}" />
+
+                                        <Text
+                                            id="itemValEndSupplier"
+                                            text="{endSupplier}" />
+
+
+                                        <Label
+                                            id="itemLblCarrier"
+                                            text="{i18n>carrierSo}" />
+
+                                        <Text
+                                            id="itemValCarrier"
+                                            text="{carrierSo}" />
+
+
+                                        <Label
+                                            id="itemLblOtherCarrier"
+                                            text="{i18n>otherCarrierSo}" />
+
+                                        <Text
+                                            id="itemValOtherCarrier"
+                                            text="{otherCarrierSo}" />
+
+
+                                        <Label
+                                            id="itemLblTransitTime"
+                                            text="{i18n>transitTime}" />
+
+                                        <Text
+                                            id="itemValTransitTime"
+                                            text="{transitTime}" />
+
+
+                                        <Label
+                                            id="itemLblGtsHold"
+                                            text="{i18n>gtsHold}" />
+
+                                        <Text
+                                            id="itemValGtsHold"
+                                            text="{gtsHold}" />
+
+
+                                        <Label
+                                            id="itemLblSimpleChange"
+                                            text="{i18n>simpleChangeProcessingIndicator}" />
+
+                                        <Text
+                                            id="itemValSimpleChange"
+                                            text="{simpleChangeProcessingIndicator}" />
+
+
+                                        <Label
+                                            id="itemLblChangeInOrigin"
+                                            text="{i18n>soChangeInOrigin}" />
+
+                                        <Text
+                                            id="itemValChangeInOrigin"
+                                            text="{soChangeInOrigin}" />
+
+
+                                        <Label
+                                            id="itemLblAckOutOrigin"
+                                            text="{i18n>soAckOutOrigin}" />
+
+                                        <Text
+                                            id="itemValAckOutOrigin"
+                                            text="{soAckOutOrigin}" />
+
+
+                                        <Label
+                                            id="itemLblIncotermsRevision"
+                                            text="{i18n>incotermsRevision}" />
+
+                                        <Text
+                                            id="itemValIncotermsRevision"
+                                            text="{incotermsRevision}" />
+
+
+                                        <Label
+                                            id="itemLblTermsDelivery"
+                                            text="{i18n>termsOfDeliveryDescription}" />
+
+                                        <Text
+                                            id="itemValTermsDelivery"
+                                            text="{termsOfDeliveryDescription}" />
+
+
+                                        <Label
+                                            id="itemLblDeliveryPlace"
+                                            text="{i18n>deliveryPlace}" />
+
+                                        <Text
+                                            id="itemValDeliveryPlace"
+                                            text="{deliveryPlace}" />
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 2. QUANTITIES & PRICING                               -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecQuantities"
+                        title="{i18n>quantitiesAndPricing}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecQuantities"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormQuantities"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="2"
+                                        columnsL="3"
+                                        columnsXL="3">
+
+
+                                        <Label
+                                            id="itemLblQuantityUnit"
+                                            text="{i18n>quantityUnit}" />
+
+                                        <Text
+                                            id="itemValQuantityUnit"
+                                            text="{quantityUnit}" />
+
+
+                                        <Label
+                                            id="itemLblPlannedReceiptDate"
+                                            text="{i18n>plannedReceiptDate}" />
+
+                                        <Text
+                                            id="itemValPlannedReceiptDate"
+                                            text="{path: 'plannedReceiptDate', formatter: '.formatter.date'}" />
+
+
+                                        <Label
+                                            id="itemLblOriginalPlannedReceiptDate"
+                                            text="{i18n>originalPlannedReceiptDate}" />
+
+                                        <Text
+                                            id="itemValOriginalPlannedReceiptDate"
+                                            text="{path: 'originalPlannedReceiptDate', formatter: '.formatter.date'}" />
+
+
+                                        <Label
+                                            id="itemLblSalesPrice"
+                                            text="{i18n>salesPrice}" />
+
+                                        <ObjectNumber
+                                            id="itemValSalesPrice"
+                                            number="{path: 'salesPrice', formatter: '.formatter.amount'}"
+                                            unit="{salesPriceCurrency}"
+                                            visible="{= ${view>/mode} !== 'EDIT' }" />
+
+                                        <Input
+                                            id="itemInpSalesPrice"
+                                            type="Number"
+                                            value="{edit>/salesPrice}"
+                                            description="{salesPriceCurrency}"
+                                            visible="{= ${view>/mode} === 'EDIT' }"
+                                            liveChange=".onSalesPriceLiveChange" />
+
+
+                                        <Label
+                                            id="itemLblSalesPriceCurrency"
+                                            text="{i18n>salesPriceCurrency}" />
+
+                                        <Text
+                                            id="itemValSalesPriceCurrency"
+                                            text="{salesPriceCurrency}" />
+
+
+                                        <Label
+                                            id="itemLblSalesPriceUnit"
+                                            text="{i18n>salesPriceUnit}" />
+
+                                        <Text
+                                            id="itemValSalesPriceUnit"
+                                            text="{salesPriceUnit}"
+                                            visible="{= ${view>/mode} !== 'EDIT' }" />
+
+                                        <Select
+                                            id="itemSelSalesPriceUnit"
+                                            selectedKey="{edit>/salesPriceUnit}"
+                                            visible="{= ${view>/mode} === 'EDIT' }"
+                                            width="100%"
+                                            forceSelection="true">
+
+                                            <items>
+
+                                                <core:Item
+                                                    id="itemPriceUnit1"
+                                                    key="1"
+                                                    text="{i18n>priceUnit1}" />
+
+                                                <core:Item
+                                                    id="itemPriceUnit10"
+                                                    key="10"
+                                                    text="{i18n>priceUnit10}" />
+
+                                                <core:Item
+                                                    id="itemPriceUnit100"
+                                                    key="100"
+                                                    text="{i18n>priceUnit100}" />
+
+                                                <core:Item
+                                                    id="itemPriceUnit1000"
+                                                    key="1000"
+                                                    text="{i18n>priceUnit1000}" />
+
+                                                <core:Item
+                                                    id="itemPriceUnit10000"
+                                                    key="10000"
+                                                    text="{i18n>priceUnit10000}" />
+
+                                            </items>
+
+                                        </Select>
+
+
+                                        <Label
+                                            id="itemLblLineAmountCurrency"
+                                            text="{i18n>lineAmountCurrency}" />
+
+                                        <Text
+                                            id="itemValLineAmountCurrency"
+                                            text="{lineAmountCurrency}" />
+
+
+                                        <Label
+                                            id="itemLblConfirmedLineId"
+                                            text="{i18n>confirmedLineId}" />
+
+                                        <Text
+                                            id="itemValConfirmedLineId"
+                                            text="{confirmedLineId}" />
+
+
+                                        <Label
+                                            id="itemLblConfirmedQuantity"
+                                            text="{i18n>confirmedQuantity}" />
+
+                                        <ObjectNumber
+                                            id="itemValConfirmedQuantity"
+                                            number="{path: 'confirmedQuantity', formatter: '.formatter.quantity'}"
+                                            unit="{quantityUnit}" />
+
+
+                                        <Label
+                                            id="itemLblConfirmedReceiptDate"
+                                            text="{i18n>confirmedReceiptDate}" />
+
+                                        <Text
+                                            id="itemValConfirmedReceiptDate"
+                                            text="{path: 'confirmedReceiptDate', formatter: '.formatter.date'}" />
+
+
+                                        <Label
+                                            id="itemLblBalanceQuantity"
+                                            text="{i18n>balanceQuantity}" />
+
+                                        <ObjectNumber
+                                            id="itemValBalanceQuantity"
+                                            number="{path: 'balanceQuantity', formatter: '.formatter.quantity'}"
+                                            unit="{quantityUnit}" />
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 3. COMMERCIAL INFORMATION                             -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecCommercial"
+                        title="{i18n>commercialInformation}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecCommercial"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormCommercial"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="2"
+                                        columnsL="3"
+                                        columnsXL="3">
+
+
+                                        <Label
+                                            id="itemLblSpecialDeal"
+                                            text="{i18n>specialDealFlagSo}" />
+
+                                        <Text
+                                            id="itemValSpecialDeal"
+                                            text="{path: 'specialDealFlagSo', formatter: '.formatter.yesNo'}"
+                                            visible="{= ${view>/mode} !== 'EDIT' }" />
+
+                                        <Select
+                                            id="itemSelSpecialDeal"
+                                            selectedKey="{edit>/specialDealFlagSo}"
+                                            visible="{= ${view>/mode} === 'EDIT' }"
+                                            width="100%"
+                                            forceSelection="true">
+
+                                            <items>
+
+                                                <core:Item
+                                                    id="itemSpecialDealYes"
+                                                    key="Y"
+                                                    text="{i18n>yes}" />
+
+                                                <core:Item
+                                                    id="itemSpecialDealNo"
+                                                    key="N"
+                                                    text="{i18n>no}" />
+
+                                            </items>
+
+                                        </Select>
+
+
+                                        <Label
+                                            id="itemLblSpecialPriceSo"
+                                            text="{i18n>specialPriceIndicatorSo}" />
+
+                                        <Text
+                                            id="itemValSpecialPriceSo"
+                                            text="{path: 'specialPriceIndicatorSo', formatter: '.formatter.yesNo'}" />
+
+
+                                        <Label
+                                            id="itemLblSpecialPricePo"
+                                            text="{i18n>specialPriceIndicatorPo}" />
+
+                                        <Text
+                                            id="itemValSpecialPricePo"
+                                            text="{path: 'specialPriceIndicatorPo', formatter: '.formatter.yesNo'}" />
+
+
+                                        <Label
+                                            id="itemLblCancellationReason"
+                                            text="{i18n>reasonForCancellation}"
+                                            required="{= ${view>/mode} === 'CANCEL' }" />
+
+                                        <Text
+                                            id="itemValCancellationReason"
+                                            text="{reasonForCancellation_code}"
+                                            visible="{= ${view>/mode} !== 'CANCEL' }" />
+
+                                        <Select
+                                            id="itemSelCancellationReason"
+                                            selectedKey="{edit>/reasonForCancellation}"
+                                            visible="{= ${view>/mode} === 'CANCEL' }"
+                                            width="100%"
+                                            forceSelection="false"
+                                            items="{
+                                                path: '/CancellationReasons',
+                                                sorter: {
+                                                    path: 'code'
+                                                }
+                                            }">
+
+                                            <core:ListItem
+                                                id="itemCancellationReason"
+                                                key="{code}"
+                                                text="{code} - {name}" />
+
+                                        </Select>
+
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 4. NOTES                                               -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecNotes"
+                        title="{i18n>notes}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecNotes"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormNotes"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="1"
+                                        columnsL="2"
+                                        columnsXL="2">
+
+
+                                        <Label
+                                            id="itemLblHpNotesToCustomer"
+                                            text="{i18n>hpNotesToCustomer}" />
+
+                                        <Text
+                                            id="itemValHpNotesToCustomer"
+                                            text="{hpNotesToCustomer}"
+                                            wrapping="true"
+                                            visible="{= ${view>/mode} !== 'EDIT' }" />
+
+                                        <TextArea
+                                            id="itemInpHpNotesToCustomer"
+                                            value="{edit>/hpNotesToCustomer}"
+                                            rows="4"
+                                            width="100%"
+                                            visible="{= ${view>/mode} === 'EDIT' }" />
+
+
+                                        <Label
+                                            id="itemLblCustomerNotesToHp"
+                                            text="{i18n>customerNotesToHp}" />
+
+                                        <Text
+                                            id="itemValCustomerNotesToHp"
+                                            text="{customerNotesToHp}"
+                                            wrapping="true" />
+
+
+                                        <Label
+                                            id="itemLblHpBacklogNotes"
+                                            text="{i18n>hpBacklogNotes}" />
+
+                                        <Text
+                                            id="itemValHpBacklogNotes"
+                                            text="{hpBacklogNotes}"
+                                            wrapping="true"
+                                            visible="{= ${view>/mode} !== 'EDIT' }" />
+
+                                        <TextArea
+                                            id="itemInpHpBacklogNotes"
+                                            value="{edit>/hpBacklogNotes}"
+                                            rows="4"
+                                            width="100%"
+                                            visible="{= ${view>/mode} === 'EDIT' }" />
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 5. FULFILMENT INFORMATION                             -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecFulfilment"
+                        title="{i18n>fulfilmentInformation}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecFulfilment"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormFulfilment"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="2"
+                                        columnsL="3"
+                                        columnsXL="3">
+
+
+                                        <Label
+                                            id="itemLblTotalShippedQuantity"
+                                            text="{i18n>totalShippedQuantity}" />
+
+                                        <ObjectNumber
+                                            id="itemValTotalShippedQuantity"
+                                            number="{path: 'totalShippedQuantity', formatter: '.formatter.quantity'}"
+                                            unit="{quantityUnit}" />
+
+
+                                        <Label
+                                            id="itemLblTotalDeliveredQuantity"
+                                            text="{i18n>totalDeliveredQuantity}" />
+
+                                        <ObjectNumber
+                                            id="itemValTotalDeliveredQuantity"
+                                            number="{path: 'totalDeliveredQuantity', formatter: '.formatter.quantity'}"
+                                            unit="{quantityUnit}" />
+
+
+                                        <Label
+                                            id="itemLblTotalInvoicedQuantity"
+                                            text="{i18n>totalInvoicedQuantity}" />
+
+                                        <ObjectNumber
+                                            id="itemValTotalInvoicedQuantity"
+                                            number="{path: 'totalInvoicedQuantity', formatter: '.formatter.quantity'}"
+                                            unit="{quantityUnit}" />
+
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                    <!-- ====================================================== -->
+                    <!-- 6. PURCHASE ORDER REFERENCE                           -->
+                    <!-- ====================================================== -->
+
+                    <uxap:ObjectPageSection
+                        id="itemSecPurchaseOrder"
+                        title="{i18n>purchaseOrderReference}"
+                        titleUppercase="false">
+
+                        <uxap:subSections>
+
+                            <uxap:ObjectPageSubSection
+                                id="itemSubSecPurchaseOrder"
+                                titleUppercase="false">
+
+                                <uxap:blocks>
+
+                                    <form:SimpleForm
+                                        id="itemFormPurchaseOrder"
+                                        editable="false"
+                                        layout="ColumnLayout"
+                                        columnsM="2"
+                                        columnsL="3"
+                                        columnsXL="3">
+
+
+                                        <Label
+                                            id="itemLblHpPurchaseOrder"
+                                            text="{i18n>hpPurchaseOrder}" />
+
+                                        <Link
+                                            id="itemValHpPurchaseOrder"
+                                            text="{hpPurchaseOrder}"
+                                            press=".onNavToPurchaseOrder" />
+
+
+                                        <Label
+                                            id="itemLblHpPoLineItem"
+                                            text="{i18n>hpPoLineItem}" />
+
+                                        <Text
+                                            id="itemValHpPoLineItem"
+                                            text="{hpPoLineItem}" />
+
+
+                                        <Label
+                                            id="itemLblSoRequisitionNumber"
+                                            text="{i18n>soRequisitionNumber}" />
+
+                                        <Text
+                                            id="itemValSoRequisitionNumber"
+                                            text="{soRequisitionNumber}" />
+
+                                    </form:SimpleForm>
+
+                                </uxap:blocks>
+
+                            </uxap:ObjectPageSubSection>
+
+                        </uxap:subSections>
+
+                    </uxap:ObjectPageSection>
+
+
+                </uxap:sections>
+
+            </uxap:ObjectPageLayout>
+
+        </content>
+
+    </Page>
+
+</mvc:View>

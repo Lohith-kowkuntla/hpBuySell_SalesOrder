@@ -2771,115 +2771,64 @@ sap.ui.define(
                 // PARTNER DETAILS DIALOG
                 // =============================================================
 
-              // =============================================================
-// PARTNER DETAILS DIALOG
-// =============================================================
+                onShowPartnerDetails: function (oEvent) {
 
+                    var oButton = oEvent.getSource();
+                    var sPartnerType = oButton.data("partner");
+                    var oView = this.getView();
+                    var oViewModel = this.getModel("view");
+                    var oBinding = oView.getElementBinding();
 
-onShowPartnerDetails: function (oEvent) {
-    var oButton = oEvent.getSource();
-    var sPartnerType = oButton.data("partner");
+                    if (!oBinding || !oBinding.getBoundContext()) {
+                        return;
+                    }
 
-    var oView = this.getView();
-    var oViewModel = this.getModel("view");
-    var oBinding = oView.getElementBinding();
+                    var oData = oBinding.getBoundContext().getObject();
 
-    if (!oBinding || !oBinding.getBoundContext()) {
-        return;
-    }
+                    var mPartnerConfig = {
+                        SHIP_TO: {
+                            title: this.getText("partnerDetails.title.shipTo"),
+                            code: oData.shipTo,
+                            details: oData.shipToDetails
+                        },
+                        BILL_TO: {
+                            title: this.getText("partnerDetails.title.billTo"),
+                            code: oData.billTo,
+                            details: oData.billToDetails
+                        },
+                        PAYER: {
+                            title: this.getText("partnerDetails.title.payer"),
+                            code: oData.payer,
+                            details: oData.payerDetails
+                        },
+                        LSP: {
+                            title: this.getText("partnerDetails.title.lsp"),
+                            code: oData.lspAddress,
+                            details: oData.lspDetails
+                        }
+                    };
 
-    var oData = oBinding.getBoundContext().getObject();
+                    var oConfig = mPartnerConfig[sPartnerType];
 
-    var mPartnerConfig = {
-        SHIP_TO: {
-            title: this.getText("partnerDetails.title.shipTo"),
-            code: oData.shipTo,
-            details: {
-                name: oData.shipToDetails_name,
-                address1: oData.shipToDetails_address1,
-                address2: oData.shipToDetails_address2,
-                city: oData.shipToDetails_city,
-                postalCode: oData.shipToDetails_postalCode,
-                country: oData.shipToDetails_country
-            }
-        },
+                    if (!oConfig) {
+                        return;
+                    }
 
-        BILL_TO: {
-            title: this.getText("partnerDetails.title.billTo"),
-            code: oData.billTo,
-            details: {
-                name: oData.billToDetails_name,
-                address1: oData.billToDetails_address1,
-                address2: oData.billToDetails_address2,
-                city: oData.billToDetails_city,
-                postalCode: oData.billToDetails_postalCode,
-                country: oData.billToDetails_country
-            }
-        },
+                    oViewModel.setProperty("/partnerDetailsTitle", oConfig.title);
+                    oViewModel.setProperty("/partnerCode", oConfig.code || "");
+                    oViewModel.setProperty("/partnerData", oConfig.details || {});
 
-        PAYER: {
-            title: this.getText("partnerDetails.title.payer"),
-            code: oData.payer,
-            details: {
-                name: oData.payerDetails_name,
-                address1: oData.payerDetails_address1,
-                address2: oData.payerDetails_address2,
-                city: oData.payerDetails_city,
-                postalCode: oData.payerDetails_postalCode,
-                country: oData.payerDetails_country
-            }
-        },
+                    if (!this._oPartnerDetailsDialog) {
+                        this._oPartnerDetailsDialog = sap.ui.xmlfragment(
+                            oView.getId(),
+                            "hpbuysell.otc.salesorder.ui.view.fragments.PartnerDetails",
+                            this
+                        );
+                        oView.addDependent(this._oPartnerDetailsDialog);
+                    }
 
-        LSP: {
-            title: this.getText("partnerDetails.title.lsp"),
-            code: oData.lspAddress,
-            details: {
-                name: oData.lspDetails_name,
-                address1: oData.lspDetails_address1,
-                address2: oData.lspDetails_address2,
-                city: oData.lspDetails_city,
-                postalCode: oData.lspDetails_postalCode,
-                country: oData.lspDetails_country
-            }
-        }
-    };
-
-    var oConfig = mPartnerConfig[sPartnerType];
-
-    if (!oConfig) {
-        console.warn("Unknown partner type:", sPartnerType);
-        return;
-    }
-
-    oViewModel.setProperty("/partnerDetailsTitle", oConfig.title);
-    oViewModel.setProperty("/partnerCode", oConfig.code || "");
-    oViewModel.setProperty("/partnerData", oConfig.details || {});
-
-    if (!this._oPartnerDetailsDialog) {
-        this._oPartnerDetailsDialog = sap.ui.xmlfragment(
-            oView.getId(),
-            "hpbuysell.otc.salesorder.ui.view.fragments.PartnerDetails",
-            this
-        );
-
-        oView.addDependent(this._oPartnerDetailsDialog);
-    }
-
-    this._oPartnerDetailsDialog.open();
-},
-
-onPartnerDetailsClose: function () {
-    if (this._oPartnerDetailsDialog) {
-        this._oPartnerDetailsDialog.close();
-    }
-},
-
-onPartnerDetailsClose: function () {
-
-    if (this._oPartnerDetailsDialog) {
-        this._oPartnerDetailsDialog.close();
-    }
-},
+                    this._oPartnerDetailsDialog.open();
+                },
 
                 onPartnerDetailsClose: function () {
 

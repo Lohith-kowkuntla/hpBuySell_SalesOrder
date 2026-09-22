@@ -1,45 +1,71 @@
+
 sap.ui.define([], function () {
     "use strict";
 
-    // Single source of truth for line/header status codes - matches the real
-    // seeded LineStatuses/SalesOrderStatuses data (AACK, OPEN, CONF, CHPR,
-    // PSHP, SHIP, DLVD, INVD, CANC). CHPR (Change Processing) is tolerated
-    // defensively in the cancellable set for forward-compat with Phase 2,
-    // even though the backend cannot produce it yet.
+    // -----------------------------------------------------------------------*
+    // Status configuration
+    // -----------------------------------------------------------------------*
+
     var CANCELLED_STATUS_CODE = "CANC";
-    var CANCELLABLE_STATUS_CODES = ["AACK", "OPEN", "CONF", "CHPR"];
+
+    var CANCELLABLE_STATUS_CODES = [
+        "AACK",
+        "OPEN",
+        "CONF",
+        "CHPR"
+    ];
+
+
+    // -----------------------------------------------------------------------*
+    // Internal helper functions
+    // -----------------------------------------------------------------------*
 
     function normalize(sStatus) {
         return String(sStatus || "").toUpperCase();
     }
 
-    // Plain closures, not exported methods - safe to call from anywhere in
-    // this module without relying on `this`, which UI5 does NOT guarantee to
-    // be bound to this module object when invoking a ".formatter.xxx" binding.
+
     function isCancelledStatusImpl(sStatus) {
         return normalize(sStatus) === CANCELLED_STATUS_CODE;
     }
 
+
     function isCancellableStatusImpl(sStatus) {
-        return CANCELLABLE_STATUS_CODES.indexOf(normalize(sStatus)) !== -1;
+        return CANCELLABLE_STATUS_CODES.indexOf(
+            normalize(sStatus)
+        ) !== -1;
     }
+
 
     function formatYesNoImpl(bValue) {
-        return bValue ? "Yes" : "No"; // swap for i18n-resourced text if needed
+        return bValue ? "Yes" : "No";
     }
 
+
+    // -----------------------------------------------------------------------*
+    // Formatter object
+    // -----------------------------------------------------------------------*
+
     return {
+
+        // -------------------------------------------------------------------*
+        // Status
+        // -------------------------------------------------------------------*
 
         isCancelledStatus: function (sStatus) {
             return isCancelledStatusImpl(sStatus);
         },
 
+
         isCancellableStatus: function (sStatus) {
             return isCancellableStatusImpl(sStatus);
         },
 
+
         statusState: function (status) {
+
             switch (normalize(status)) {
+
                 case "CONF":
                 case "DLVD":
                 case "INVD":
@@ -59,8 +85,11 @@ sap.ui.define([], function () {
             }
         },
 
+
         statusIcon: function (status) {
+
             switch (normalize(status)) {
+
                 case "CONF":
                 case "DLVD":
                 case "INVD":
@@ -80,99 +109,295 @@ sap.ui.define([], function () {
             }
         },
 
+
+        // -------------------------------------------------------------------*
+        // Yes / No
+        // -------------------------------------------------------------------*
+
         formatYesNo: function (bValue) {
             return formatYesNoImpl(bValue);
         },
+
 
         yesNo: function (bValue) {
             return formatYesNoImpl(bValue);
         },
 
-        isEditableLine: function (status) {
-            return !isCancelledStatusImpl(status);
-        },
 
         yesNoText: function (value) {
-            return value === "Y" ? "Yes" : value === "N" ? "No" : value || "";
+
+            return value === "Y"
+                ? "Yes"
+                : value === "N"
+                    ? "No"
+                    : value || "";
         },
 
-        formatNumber: function (value) {
-            if (value === null || value === undefined || value === "") {
-                return "";
+
+        // -------------------------------------------------------------------*
+        // Customer display
+        //
+        // Used by:
+        //
+        // formatter.customerDisplay
+        //
+        // Example:
+        //  "123456 - Customer Name"
+        // -------------------------------------------------------------------*
+
+        customerDisplay: function (
+            sCustomerCode,
+            sCustomerDescription
+        ) {
+
+            var sCode = sCustomerCode || "";
+            var sDescription = sCustomerDescription || "";
+
+            if (sCode && sDescription) {
+                return sCode + " - " + sDescription;
             }
-            return Number(value).toLocaleString();
+
+            return sCode || sDescription;
         },
 
-        dateTime: function (vValue) {
+
+        // -------------------------------------------------------------------*
+        // Date
+        //
+        // Used by:
+        //
+        // formatter.date
+        // -------------------------------------------------------------------*
+
+        date: function (vValue) {
+
             if (!vValue) {
                 return "";
             }
-            var oDate = vValue instanceof Date ? vValue : new Date(vValue);
+
+            var oDate = vValue instanceof Date
+                ? vValue
+                : new Date(vValue);
+
             if (isNaN(oDate.getTime())) {
                 return "";
             }
+
+            return oDate.toLocaleDateString();
+        },
+
+
+        // -------------------------------------------------------------------*
+        // Date + Time
+        // -------------------------------------------------------------------*
+
+        dateTime: function (vValue) {
+
+            if (!vValue) {
+                return "";
+            }
+
+            var oDate = vValue instanceof Date
+                ? vValue
+                : new Date(vValue);
+
+            if (isNaN(oDate.getTime())) {
+                return "";
+            }
+
             return oDate.toLocaleString();
         },
 
-        // -----------------------------------------------------------------------*
-        // Inline-edit row formatters for the Sales Order Items table
-        // (FDS 3.7.2 editable fields, 3.9.6 cancelled-line lockout)
-        //
-        // These are multi-part formatters, bound in the view like:
-        //   visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines',
-        //             'lineId', 'lineStatus'], formatter: '.formatter.lineEditable'}"
-        //
-        // A row's cell shows its Input/Select control only when:
-        //   1) the table is in the matching mode (edit or cancel), AND
-        //   2) that specific row is ticked, AND
-        //   3) the row's status is not Cancelled - a cancelled line permits
-        //      no action at all, ticked or not (FDS 3.9.6).
-        // -----------------------------------------------------------------------*
 
-        /**
-         * True when this row's cell should show its Text (read-only) control -
-         * i.e. NOT in Items edit mode, OR this row isn't ticked, OR this row's
-         * status is Cancelled.
-         */
-        lineDisplayOnly: function (bEditMode, mSelectedLines, sLineId, sLineStatus) {
+        // -------------------------------------------------------------------*
+        // Number
+        // -------------------------------------------------------------------*
+
+        formatNumber: function (value) {
+
+            if (
+                value === null ||
+                value === undefined ||
+                value === ""
+            ) {
+                return "";
+            }
+
+            var fValue = Number(value);
+
+            if (isNaN(fValue)) {
+                return "";
+            }
+
+            return fValue.toLocaleString();
+        },
+
+
+        // -------------------------------------------------------------------*
+        // Quantity
+        //
+        // Used by:
+        //
+        // formatter.quantity
+        //
+        // Example:
+        //  1000       -> 1,000
+        //  1000.25    -> 1,000.25
+        // -------------------------------------------------------------------*
+
+        quantity: function (vValue) {
+
+            if (
+                vValue === null ||
+                vValue === undefined ||
+                vValue === ""
+            ) {
+                return "";
+            }
+
+            var fValue = Number(vValue);
+
+            if (isNaN(fValue)) {
+                return "";
+            }
+
+            return fValue.toLocaleString(undefined, {
+                maximumFractionDigits: 3
+            });
+        },
+
+
+        // -------------------------------------------------------------------*
+        // Amount
+        //
+        // Used by:
+        //
+        // formatter.amount
+        //
+        // Example:
+        //  100       -> 100.00
+        //  1250.5    -> 1,250.50
+        // -------------------------------------------------------------------*
+
+        amount: function (vValue) {
+
+            if (
+                vValue === null ||
+                vValue === undefined ||
+                vValue === ""
+            ) {
+                return "";
+            }
+
+            var fValue = Number(vValue);
+
+            if (isNaN(fValue)) {
+                return "";
+            }
+
+            return fValue.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        },
+
+
+        // -------------------------------------------------------------------*
+        // Header / line editability
+        // -------------------------------------------------------------------*
+
+        isEditableLine: function (status) {
+
+            return !isCancelledStatusImpl(status);
+        },
+
+
+        // -------------------------------------------------------------------*
+        // Inline-edit row formatters
+        //
+        // FDS 3.7.2 editable fields
+        // FDS 3.9.6 cancelled-line lockout
+        // -------------------------------------------------------------------*
+
+        lineDisplayOnly: function (
+            bEditMode,
+            mSelectedLines,
+            sLineId,
+            sLineStatus
+        ) {
+
             if (isCancelledStatusImpl(sLineStatus)) {
                 return true;
             }
-            return !bEditMode || !mSelectedLines || !mSelectedLines[sLineId];
+
+            return (
+                !bEditMode ||
+                !mSelectedLines ||
+                !mSelectedLines[sLineId]
+            );
         },
 
-        /**
-         * True when this row's cell should show its Input/Select control.
-         * Exact inverse of lineDisplayOnly.
-         */
-        lineEditable: function (bEditMode, mSelectedLines, sLineId, sLineStatus) {
+
+        lineEditable: function (
+            bEditMode,
+            mSelectedLines,
+            sLineId,
+            sLineStatus
+        ) {
+
             if (isCancelledStatusImpl(sLineStatus)) {
                 return false;
             }
-            return !!bEditMode && !!mSelectedLines && !!mSelectedLines[sLineId];
+
+            return (
+                !!bEditMode &&
+                !!mSelectedLines &&
+                !!mSelectedLines[sLineId]
+            );
         },
 
-        /**
-         * Reason for Cancellation cell, read-only (Text) variant - shown while
-         * NOT in Cancel Line mode, OR this row isn't ticked, OR it's already
-         * Cancelled.
-         */
-        lineCancelReadOnly: function (bCancelMode, mSelectedLines, sLineId, sLineStatus) {
+
+        // -------------------------------------------------------------------*
+        // Cancellation formatters
+        // -------------------------------------------------------------------*
+
+        lineCancelReadOnly: function (
+            bCancelMode,
+            mSelectedLines,
+            sLineId,
+            sLineStatus
+        ) {
+
             if (isCancelledStatusImpl(sLineStatus)) {
                 return true;
             }
-            return !bCancelMode || !mSelectedLines || !mSelectedLines[sLineId];
+
+            return (
+                !bCancelMode ||
+                !mSelectedLines ||
+                !mSelectedLines[sLineId]
+            );
         },
 
-        /**
-         * Reason for Cancellation cell, editable dropdown variant - shown only
-         * in Cancel Line mode, on a ticked, still-cancellable row.
-         */
-        lineCancelVisible: function (bCancelMode, mSelectedLines, sLineId, sLineStatus) {
+
+        lineCancelVisible: function (
+            bCancelMode,
+            mSelectedLines,
+            sLineId,
+            sLineStatus
+        ) {
+
             if (isCancelledStatusImpl(sLineStatus)) {
                 return false;
             }
-            return !!bCancelMode && !!mSelectedLines && !!mSelectedLines[sLineId];
+
+            return (
+                !!bCancelMode &&
+                !!mSelectedLines &&
+                !!mSelectedLines[sLineId]
+            );
         }
+
     };
 });
+

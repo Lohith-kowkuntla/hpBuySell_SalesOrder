@@ -18,6 +18,19 @@ using {
 } from '@sap/cds/common';
 
 // ---------------------------------------------------------------------------
+// Reusable Partner Address Details Type
+// ---------------------------------------------------------------------------
+
+type PartnerAddressDetails {
+    name        : String(100);
+    address1    : String(200);
+    address2    : String(200);
+    city        : String(100);
+    postalCode  : String(20);
+    country     : String(10);
+}
+
+// ---------------------------------------------------------------------------
 // Header
 // ---------------------------------------------------------------------------
 
@@ -122,6 +135,22 @@ entity SalesOrders : managed {
 
         @title: '{i18n>soHeader.lspAddress}' // CHAR80
         lspAddress                     : String(80);
+
+        // =====================================================================
+        // Partner Details (read-only structured data for popup display)
+        // =====================================================================
+
+        @title: '{i18n>soHeader.shipToDetails}'
+        shipToDetails                  : PartnerAddressDetails;
+
+        @title: '{i18n>soHeader.billToDetails}'
+        billToDetails                  : PartnerAddressDetails;
+
+        @title: '{i18n>soHeader.payerDetails}'
+        payerDetails                   : PartnerAddressDetails;
+
+        @title: '{i18n>soHeader.lspDetails}'
+        lspDetails                     : PartnerAddressDetails;
 
         @title              : '{i18n>soHeader.customerNotesToHp}' // CHAR255
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)

@@ -1,0 +1,139 @@
+<!--
+    Partner Details Dialog Fragment
+    ===============================================================================
+    Confidential and Proprietary
+    Copyright 2026, HP
+    All Rights Reserved
+    ===============================================================================
+    Description: Reusable read-only dialog for displaying partner address details
+    Used by: SalesOrderDetail.view.xml
+    Partner Types: Ship To, Bill To, Payer, LSP Address
+    ===============================================================================
+-->
+
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.ui.layout.form">
+
+    <Dialog
+        id="partnerDetailsDialog"
+        title="{view>/partnerDetailsTitle}"
+        type="Standard"
+        state="Standard"
+        contentWidth="500px"
+        showHeader="true"
+        stretch="false">
+
+        <content>
+
+            <ScrollContainer
+                id="partnerDetailsScroll"
+                height="100%"
+                vertical="true"
+                horizontal="false"
+                class="sapUiSmallMargin">
+
+                <f:SimpleForm
+                    id="partnerDetailsForm"
+                    editable="false"
+                    layout="ColumnLayout"
+                    columnsM="1"
+                    columnsL="1"
+                    columnsXL="1">
+
+                    <!-- Code -->
+                    <Label
+                        id="pdLblCode"
+                        text="{i18n>partnerDetails.code}"/>
+
+                    <Text
+                        id="pdTxtCode"
+                        text="{view>/partnerCode}"
+                        wrapping="false"/>
+
+
+                    <!-- Name -->
+                    <Label
+                        id="pdLblName"
+                        text="{i18n>partnerDetails.name}"/>
+
+                    <Text
+                        id="pdTxtName"
+                        text="{view>/partnerData/name}"
+                        wrapping="true"/>
+
+
+                    <!-- Address 1 -->
+                    <Label
+                        id="pdLblAddress1"
+                        text="{i18n>partnerDetails.address1}"/>
+
+                    <Text
+                        id="pdTxtAddress1"
+                        text="{view>/partnerData/address1}"
+                        wrapping="true"/>
+
+
+                    <!-- Address 2 -->
+                    <Label
+                        id="pdLblAddress2"
+                        text="{i18n>partnerDetails.address2}"/>
+
+                    <Text
+                        id="pdTxtAddress2"
+                        text="{view>/partnerData/address2}"
+                        wrapping="true"/>
+
+
+                    <!-- City -->
+                    <Label
+                        id="pdLblCity"
+                        text="{i18n>partnerDetails.city}"/>
+
+                    <Text
+                        id="pdTxtCity"
+                        text="{view>/partnerData/city}"
+                        wrapping="false"/>
+
+
+                    <!-- Postal Code -->
+                    <Label
+                        id="pdLblPostalCode"
+                        text="{i18n>partnerDetails.postalCode}"/>
+
+                    <Text
+                        id="pdTxtPostalCode"
+                        text="{view>/partnerData/postalCode}"
+                        wrapping="false"/>
+
+
+                    <!-- Country -->
+                    <Label
+                        id="pdLblCountry"
+                        text="{i18n>partnerDetails.country}"/>
+
+                    <Text
+                        id="pdTxtCountry"
+                        text="{view>/partnerData/country}"
+                        wrapping="false"/>
+
+                </f:SimpleForm>
+
+            </ScrollContainer>
+
+        </content>
+
+        <beginButton>
+
+            <Button
+                id="partnerDetailsCloseButton"
+                text="{i18n>partnerDetails.close}"
+                type="Emphasized"
+                press=".onPartnerDetailsClose"/>
+
+        </beginButton>
+
+    </Dialog>
+
+</core:FragmentDefinition>

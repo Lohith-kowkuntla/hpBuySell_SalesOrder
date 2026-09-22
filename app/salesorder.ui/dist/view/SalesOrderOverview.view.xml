@@ -1,0 +1,1013 @@
+
+<!-- Screen 1 -->
+
+<mvc:View
+    controllerName="hpbuysell.otc.salesorder.ui.controller.SalesOrderOverview"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:sfb="sap.ui.comp.smartfilterbar"
+    xmlns:st="sap.ui.comp.smarttable"
+    xmlns:svm="sap.ui.comp.smartvariants"
+    xmlns:table="sap.ui.table"
+    xmlns:rowmodes="sap.ui.table.rowmodes"
+    height="100%">
+
+    <f:DynamicPage
+        id="salesOrderOverviewPage"
+        headerExpanded="true"
+        toggleHeaderOnTitleClick="true"
+        fitContent="true">
+
+        <!-- ============================================================= -->
+        <!-- TITLE                                                         -->
+        <!-- ============================================================= -->
+
+        <f:title>
+
+            <f:DynamicPageTitle
+                id="salesOrderOverviewTitle">
+
+                <f:heading>
+
+                    <HBox
+                        id="salesOrderOverviewHeadingBox"
+                        alignItems="Center">
+
+                        <Title
+                            id="salesOrderOverviewPageTitle"
+                            text="{i18n>salesOrderOverview}"
+                            level="H1"/>
+
+                        <svm:SmartVariantManagement
+                            id="salesOrderPageVariant"
+                            class="sapUiTinyMarginBegin"
+                            showExecuteOnSelection="true"
+                            showSetAsDefault="true"
+                            showShare="true"
+                            afterSave=".onVariantSaved"
+                            select=".onVariantSelected"
+                           />
+
+                    </HBox>
+
+                </f:heading>
+
+                <f:snappedContent>
+
+                    <Label
+                        id="salesOrderSnappedFilterHint"
+                        text="{view>/filterSummary}"/>
+
+                </f:snappedContent>
+
+                <f:actions>
+
+                    <Button
+                        id="salesOrderSummaryButton"
+                        icon="sap-icon://business-objects-experience"
+                        text="{i18n>salesOrderSummary}"
+                        tooltip="{i18n>salesOrderSummaryTooltip}"
+                        press=".onNavToSummary"/>
+
+                </f:actions>
+
+            </f:DynamicPageTitle>
+
+        </f:title>
+
+
+        <!-- ============================================================= -->
+        <!-- FILTER BAR                                                     -->
+        <!-- ============================================================= -->
+
+        <f:header>
+
+            <f:DynamicPageHeader
+                id="salesOrderOverviewPageHeader"
+                pinnable="true">
+
+            <sfb:SmartFilterBar
+    id="salesOrderSmartFilterBar"
+    class="salesOrderFilterBar"
+    entitySet="SalesOrderSearchExport"
+    smartVariant="salesOrderPageVariant"
+    useToolbar="false"
+    showClearOnFB="true"
+    showRestoreButton="true"
+    showFilterConfiguration="true"
+    enableBasicSearch="true"
+    liveMode="false"
+    search=".onSearch"
+    clear=".onClearFilters"
+    filterChange=".onFilterChange"
+    initialise=".onFilterBarInitialised">
+
+    <sfb:controlConfiguration>
+
+
+
+    
+    <!-- ============================================================= -->
+    <!-- 01 HP Sales Organization                                      -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpSalesOrganization"
+        index="1"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpSalesOrganization}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 02 Business Model                                             -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="businessModel"
+        index="2"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>businessModel}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 03 Customer Code                                              -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerCode"
+        index="3"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>customerCode}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 04 Customer Description                                       -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerDescription"
+        index="4"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>customerDescription}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 05 Customer Order                                             -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerOrder"
+        index="5"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>customerOrder}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 06 Customer Order Date                                        -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerOrderDate"
+        index="6"
+        visibleInAdvancedArea="true"
+        label="{i18n>customerOrderDate}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 07 Customer Part Number                                       -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerPartNumber"
+        index="7"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>customerPartNumber}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 08 End Supplier                                               -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="endSupplier"
+        index="8"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>endSupplier}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 09 HP Buyer Code                                              -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpBuyerCode"
+        index="9"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpBuyerCode}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 10 HP Buyer Name                                              -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpBuyerName"
+        index="10"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpBuyerName}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 11 HP Company Code                                            -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpCompanyCode"
+        index="11"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpCompanyCode}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 12 HP Part Description                                        -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpPartDescription"
+        index="12"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpPartDescription}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 13 HP Part Number                                             -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpPartNumber"
+        index="13"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpPartNumber}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 14 HP Plant                                                   -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpPlant"
+        index="14"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpPlant}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 15 HP Sales Order                                             -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="hpSalesOrder"
+        index="15"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>hpSalesOrder}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 16 Line ID                                                    -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="lineId"
+        index="16"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>lineId}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 17 Line Status                                                -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="lineStatus"
+        index="17"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>lineStatus}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 18 Sales Order Origin                                         -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="salesOrderOrigin"
+        index="18"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>salesOrderOrigin}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 19 Sales Order Status                                         -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="salesOrderStatus"
+        index="19"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>salesOrderStatus}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 20 SO Ack Out Origin                                          -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="soAckOutOrigin"
+        index="20"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>soAckOutOrigin}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 21 SO Change In Origin                                        -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="soChangeInOrigin"
+        index="21"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>soChangeInOrigin}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 22 SO Order Date                                              -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="soOrderDate"
+        index="22"
+        visibleInAdvancedArea="true"
+        label="{i18n>soOrderDate}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 23 Special Deal Flag                                          -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="specialDealFlagSo"
+        index="23"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>specialDealFlagSo}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 24 Storage Location + Description                             -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="storageLocation"
+        index="24"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>storageLocation}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 25 WBS Project Code                                           -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="wbsProjectCode"
+        index="25"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>wbsProjectCode}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 26 Sales Order Type                                           -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="salesOrderType"
+        index="26"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>salesOrderType}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 27 Bill To Code + Description                                 -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="billTo"
+        index="27"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>billTo}"/>
+
+
+    <!-- ============================================================= -->
+    <!-- 28 GTS Hold                                                   -->
+    <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="gtsHold"
+        index="28"
+        visibleInAdvancedArea="true"
+        filterType="multiple"
+        label="{i18n>gtsHold}"/>
+
+</sfb:controlConfiguration>
+
+
+
+
+
+                </sfb:SmartFilterBar>
+
+            </f:DynamicPageHeader>
+
+        </f:header>
+
+
+        <!-- ============================================================= -->
+        <!-- SMART TABLE                                                    -->
+        <!-- ============================================================= -->
+
+        <f:content>
+
+            <st:SmartTable
+                id="salesOrderSmartTable"
+
+                entitySet="SalesOrderSearchExport"
+
+                smartFilterId="salesOrderSmartFilterBar"
+
+                tableType="Table"
+
+                smartVariant="salesOrderPageVariant"
+
+                useVariantManagement="true"
+
+                useTablePersonalisation="true"
+
+                showRowCount="true"
+
+                header="{i18n>salesOrderLines}"
+
+                enableAutoBinding="false"
+
+                enableAutoColumnWidth="true"
+
+                showFullScreenButton="true"
+
+                height="100%"
+
+                persistencyKey="hpbuysellSalesOrderOverviewTable_v1"
+
+                initialise=".onSmartTableInitialised"
+
+                beforeRebindTable=".onBeforeRebindTable"
+
+                class="salesOrderSmartTable">
+
+
+                <!-- ===================================================== -->
+                <!-- CUSTOM TOOLBAR                                        -->
+                <!-- ===================================================== -->
+
+                <st:customToolbar>
+
+                    <OverflowToolbar
+                        id="salesOrderOverviewToolbar">
+
+                        <ToolbarSpacer
+                            id="salesOrderOverviewToolbarSpacer"/>
+
+                        <Text
+                            id="salesOrderSelectionCount"
+                            text="{view>/selectionText}"
+                            visible="{= ${view>/selectedCount} > 0 }"/>
+
+                        <Button
+                            id="salesOrderExportButton"
+                            icon="sap-icon://excel-attachment"
+                            text="{i18n>export}"
+                            tooltip="{i18n>exportTooltip}"
+                            enabled="{= !${view>/exportBusy} }"
+                            press=".onOpenExportDialog"/>
+
+                    </OverflowToolbar>
+
+                </st:customToolbar>
+
+
+                <!-- ===================================================== -->
+                <!-- INNER GRID TABLE                                      -->
+                <!-- ===================================================== -->
+
+                <table:Table
+                    id="salesOrderTable"
+
+                    class="salesOrderGridTable"
+
+                    selectionMode="MultiToggle"
+
+                    selectionBehavior="RowSelector"
+
+                    enableSelectAll="false"
+
+                    fixedColumnCount="1"
+
+                    threshold="100"
+
+                    enableColumnFreeze="true"
+
+                    enableBusyIndicator="true"
+
+                    busyIndicatorDelay="0"
+
+                    rowSelectionChange=".onSelectionChange">
+
+
+                    <!-- Auto row mode -->
+
+                    <table:layoutData>
+
+                        <FlexItemData
+                            id="salesOrderTableFlexData"
+                            growFactor="1"
+                            baseSize="0%"/>
+
+                    </table:layoutData>
+
+
+                    <table:rowMode>
+
+                        <rowmodes:Auto
+                            id="salesOrderAutoRowMode"
+                            minRowCount="5"/>
+
+                    </table:rowMode>
+
+
+                    <!-- ================================================= -->
+                    <!-- No Data                                            -->
+                    <!-- ================================================= -->
+
+                    <table:noData>
+
+                        <IllustratedMessage
+                            id="salesOrderNoData"
+                            illustrationType="sapIllus-NoFilterResults"
+                            title="{i18n>noDataSalesOrders}"
+                            description="{i18n>noDataSalesOrdersDescription}"/>
+
+                    </table:noData>
+
+
+                    <!-- ================================================= -->
+                    <!-- Sales Order Number                                 -->
+                    <!-- ================================================= -->
+
+                    <table:columns>
+
+                        <table:Column
+                            id="salesOrderNumberColumn"
+                            width="11rem"
+                            autoResizable="true">
+
+                            <table:customData>
+
+                                <core:CustomData
+                                    key="p13nData"
+                                    value='\{"columnKey":"hpSalesOrder","leadingProperty":"hpSalesOrder","sortProperty":"hpSalesOrder","filterProperty":"hpSalesOrder","columnIndex":0,"importance":"High"}'/>
+
+                            </table:customData>
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderNumberHeader"
+                                    text="{i18n>hpSalesOrder}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Link
+                                    id="salesOrderNumberLink"
+                                    text="{hpSalesOrder}"
+                                    tooltip="{i18n>openSalesOrderTooltip}"
+                                    wrapping="false"
+                                    press=".onSalesOrderLinkPress"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Line ID -->
+
+                        <table:Column
+                            id="salesOrderLineIdColumn"
+                            width="7rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderLineIdHeader"
+                                    text="{i18n>lineId}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderLineIdText"
+                                    text="{lineId}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Line Status -->
+
+                        <table:Column
+                            id="salesOrderLineStatusColumn"
+                            width="10rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderLineStatusHeader"
+                                    text="{i18n>lineStatus}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <ObjectStatus
+                                    id="salesOrderLineStatus"
+                                    text="{lineStatus}"
+                                    state="{
+                                        path: 'lineStatus',
+                                        formatter: '.formatter.statusState'
+                                    }"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Customer -->
+
+                        <table:Column
+                            id="salesOrderCustomerColumn"
+                            width="15rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderCustomerHeader"
+                                    text="{i18n>customerDescription}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderCustomerText"
+                                    text="{customerDescription}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- HP Part -->
+
+                        <table:Column
+                            id="salesOrderPartNumberColumn"
+                            width="12rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderPartNumberHeader"
+                                    text="{i18n>hpPartNumber}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderPartNumberText"
+                                    text="{hpPartNumber}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Customer Part -->
+
+                        <table:Column
+                            id="salesOrderCustomerPartColumn"
+                            width="13rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderCustomerPartHeader"
+                                    text="{i18n>customerPartNumber}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderCustomerPartText"
+                                    text="{customerPartNumber}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Quantity -->
+
+                        <table:Column
+                            id="salesOrderQuantityColumn"
+                            width="9rem"
+                            hAlign="End">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderQuantityHeader"
+                                    text="{i18n>quantity}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <ObjectNumber
+                                    id="salesOrderQuantity"
+                                    number="{quantity}"
+                                    unit="{quantityUnit}"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Planned Receipt Date -->
+
+                        <table:Column
+                            id="salesOrderPlannedReceiptColumn"
+                            width="13rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderPlannedReceiptHeader"
+                                    text="{i18n>plannedReceiptDate}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderPlannedReceiptText"
+                                    text="{
+                                        path: 'plannedReceiptDate',
+                                        type: 'sap.ui.model.type.Date',
+                                        formatOptions: {
+                                            pattern: 'dd.MM.yyyy'
+                                        }
+                                    }"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- HP Purchase Order -->
+
+                        <table:Column
+                            id="salesOrderPurchaseOrderColumn"
+                            width="13rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderPurchaseOrderHeader"
+                                    text="{i18n>hpPurchaseOrder}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderPurchaseOrderText"
+                                    text="{hpPurchaseOrder}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- SO Order Date -->
+
+                        <table:Column
+                            id="salesOrderDateColumn"
+                            width="12rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderDateHeader"
+                                    text="{i18n>soOrderDate}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderDateText"
+                                    text="{
+                                        path: 'soOrderDate',
+                                        type: 'sap.ui.model.type.Date',
+                                        formatOptions: {
+                                            pattern: 'dd.MM.yyyy'
+                                        }
+                                    }"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Customer Order -->
+
+                        <table:Column
+                            id="salesOrderCustomerOrderColumn"
+                            width="13rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderCustomerOrderHeader"
+                                    text="{i18n>customerOrder}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderCustomerOrderText"
+                                    text="{customerOrder}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- WBS -->
+
+                        <table:Column
+                            id="salesOrderWbsColumn"
+                            width="13rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderWbsHeader"
+                                    text="{i18n>wbsProjectCode}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderWbsText"
+                                    text="{wbsProjectCode}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Business Unit -->
+
+                        <table:Column
+                            id="salesOrderBusinessUnitColumn"
+                            width="12rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderBusinessUnitHeader"
+                                    text="{i18n>businessUnit}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderBusinessUnitText"
+                                    text="{businessUnit}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                        <!-- Sales Organization -->
+
+                        <table:Column
+                            id="salesOrderSalesOrganizationColumn"
+                            width="14rem">
+
+                            <table:label>
+
+                                <Text
+                                    id="salesOrderSalesOrganizationHeader"
+                                    text="{i18n>hpSalesOrganization}"
+                                    wrapping="false"/>
+
+                            </table:label>
+
+                            <table:template>
+
+                                <Text
+                                    id="salesOrderSalesOrganizationText"
+                                    text="{hpSalesOrganization}"
+                                    wrapping="false"/>
+
+                            </table:template>
+
+                        </table:Column>
+
+
+                    </table:columns>
+
+                </table:Table>
+
+            </st:SmartTable>
+
+        </f:content>
+
+    </f:DynamicPage>
+
+</mvc:View>
