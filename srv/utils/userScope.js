@@ -454,6 +454,8 @@ function failClosed(reason, email = null) {
 
         email,
 
+        groupIndicator: null,
+
         unrestricted: false,
 
         customerUser: false,
@@ -807,6 +809,8 @@ async function loadUserScope(req) {
 
             email: null,
 
+            groupIndicator: "HP",
+
             unrestricted: true,
 
             customerUser: false,
@@ -949,6 +953,8 @@ async function loadUserScope(req) {
             const scope = {
 
                 email,
+
+                groupIndicator: "HP",
 
                 unrestricted: true,
 
@@ -1255,6 +1261,8 @@ async function loadUserScope(req) {
         const scope = {
 
             email,
+
+            groupIndicator: "C",
 
             unrestricted: false,
 

@@ -179,7 +179,11 @@ function removeDuplicates(rows, columns) {
 }
 
 
-async function readMdmValueHelp(req, valueHelpName) {
+async function readMdmValueHelp(
+  req,
+  valueHelpName,
+  additionalWhere
+) {
 
   const config = MDM_VALUE_HELP_CONFIG[valueHelpName];
 
@@ -193,6 +197,24 @@ async function readMdmValueHelp(req, valueHelpName) {
   const mdm = await getMdmService();
 
   const query = buildMdmQuery(req, config);
+
+  if (additionalWhere && additionalWhere.length) {
+
+    if (query.SELECT.where && query.SELECT.where.length) {
+
+      query.SELECT.where = [
+        "(",
+        ...query.SELECT.where,
+        ")",
+        "and",
+        ...additionalWhere
+      ];
+
+    } else {
+
+      query.SELECT.where = additionalWhere;
+    }
+  }
 
   LOG.info(
     `[MDM VH] ${valueHelpName} -> ${config.entity}`

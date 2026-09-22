@@ -342,6 +342,121 @@ const VALUE_HELP_CONFIG = {
         ],
 
         scope: true
+    },
+
+
+    // ------------------------------------------------------------------------
+    // HP BUYER (available for Customer users from local data)
+    // ------------------------------------------------------------------------
+
+    VH_Buyer: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrders",
+
+        columns: [
+            "hpBuyerCode",
+            "hpBuyerName"
+        ],
+
+        scope: true
+    },
+
+
+    VH_BuyerName: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrders",
+
+        columns: [
+            "hpBuyerCode",
+            "hpBuyerName"
+        ],
+
+        scope: true
+    },
+
+
+    // ------------------------------------------------------------------------
+    // HP COMPANY CODE (available for Customer users from local data)
+    // ------------------------------------------------------------------------
+
+    VH_CompanyCode: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrders",
+
+        columns: [
+            "hpCompanyCode",
+            "hpCompanyDescription"
+        ],
+
+        scope: true
+    },
+
+
+    // ------------------------------------------------------------------------
+    // WBS PROJECT (available for Customer users from local data)
+    // ------------------------------------------------------------------------
+
+    VH_WbsProject: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrders",
+
+        columns: [
+            "wbsProjectCode",
+            "wbsProjectCodeDescription"
+        ],
+
+        scope: true
+    },
+
+
+    // ------------------------------------------------------------------------
+    // BUSINESS MODEL (available for Customer users from local data)
+    // ------------------------------------------------------------------------
+
+    VH_BusinessModel: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrders",
+
+        columns: [
+            "businessModel"
+        ],
+
+        scope: true
+    },
+
+
+    // ------------------------------------------------------------------------
+    // HP PART NUMBER (available for Customer users from local data)
+    // ------------------------------------------------------------------------
+
+    VH_HpPartNumber: {
+
+        source: "local",
+
+        entity:
+            "hpbuysell.otc.salesorder.SalesOrderItems",
+
+        columns: [
+            "hpPartNumber",
+            "hpPartDescription"
+        ],
+
+        scope: true
     }
 };
 
@@ -612,135 +727,31 @@ async function readLocalValueHelp(
 
 
 // ============================================================================
-// Read authorized Buyer codes
-//
-// IMPORTANT:
-// This does NOT change loadUserScope().
-// This only uses the existing scope to determine
-// which Buyer codes exist in authorized SalesOrders.
+// Determine Value Help source based on user group
 // ============================================================================
 
-async function readAuthorizedBuyerCodes(
-    req,
-    scope
-) {
+function getValueHelpSource(scope) {
 
-    const entity =
-        getCdsEntity(
-            "hpbuysell.otc.salesorder.SalesOrders"
-        );
-
-
-    const query =
-        SELECT.distinct
-            .from(entity)
-            .columns(
-                "hpBuyerCode"
-            );
-
-
-    const authorizationWhere =
-        buildScopeExpression(
-            {
-                ...req,
-                target: entity
-            },
-            scope
-        );
-
-
-    query.SELECT.where =
-        authorizationWhere;
-
-
-    const rows =
-        await cds.tx(req).run(
-            query
-        );
-
-
-    return [
-        ...new Set(
-            (rows || [])
-                .map(
-                    row =>
-                        row.hpBuyerCode
-                )
-                .filter(Boolean)
-        )
-    ];
-}
-
-
-// ============================================================================
-// Build Buyer authorization condition for MDM
-// ============================================================================
-
-async function buildBuyerAuthorizationWhere(
-    req,
-    scope
-) {
-
-    if (!scope || scope.unrestricted) {
-        return null;
+    if (!scope) {
+        return "EMPTY";
     }
 
-
-    const allowedBuyerCodes =
-        await readAuthorizedBuyerCodes(
-            req,
-            scope
-        );
-
-
-    if (
-        allowedBuyerCodes.length === 0
-    ) {
-
-        return [
-            {
-                ref: ["buyercode"]
-            },
-            "=",
-            {
-                val: "__NO_AUTHORIZED_BUYER__"
-            }
-        ];
+    if (scope.groupIndicator === "HP") {
+        return "MDM";
     }
 
+    if (scope.groupIndicator === "C") {
+        return "LOCAL";
+    }
 
-    const condition = [];
-
-
-    allowedBuyerCodes.forEach(
-        (
-            buyerCode,
-            index
-        ) => {
-
-            if (index > 0) {
-                condition.push("or");
-            }
-
-            condition.push(
-                {
-                    ref: ["buyercode"]
-                },
-                "=",
-                {
-                    val: buyerCode
-                }
-            );
-        }
-    );
-
-
-    return condition;
+    return "EMPTY";
 }
 
 
 // ============================================================================
 // Read MDM VH
+//
+// For HP users only. Customer users use LOCAL sources.
 // ============================================================================
 
 async function readMdmScopedValueHelp(
@@ -749,36 +760,9 @@ async function readMdmScopedValueHelp(
     scope
 ) {
 
-    let additionalWhere = null;
-
-
-    /*
-     * Customer Buyer authorization.
-     *
-     * Existing Customer + WBS scope is used to determine
-     * authorized Buyer codes from SalesOrders.
-     */
-    if (
-        scope &&
-        !scope.unrestricted &&
-        (
-            valueHelpName === "VH_Buyer" ||
-            valueHelpName === "VH_BuyerName"
-        )
-    ) {
-
-        additionalWhere =
-            await buildBuyerAuthorizationWhere(
-                req,
-                scope
-            );
-    }
-
-
     return readMdmValueHelp(
         req,
-        valueHelpName,
-        additionalWhere
+        valueHelpName
     );
 }
 
@@ -816,13 +800,41 @@ async function readValueHelp(
 
 
     /*
-     * MDM Value Help
+     * Determine Value Help source based on user group
      */
-    if (
-        isMdmValueHelp(
-            valueHelpName
-        )
-    ) {
+    const source =
+        getValueHelpSource(scope);
+
+
+    LOG.info(
+        `[value-help-scope] ` +
+        `${valueHelpName} source determination: ` +
+        `group=${scope?.groupIndicator}, source=${source}`
+    );
+
+
+    /*
+     * HP User or Unrestricted
+     * Source: MDM
+     */
+    if (source === "MDM") {
+
+        if (
+            !isMdmValueHelp(
+                valueHelpName
+            )
+        ) {
+
+            LOG.warn(
+                `[value-help-scope] ` +
+                `${valueHelpName} is not MDM VH ` +
+                `but HP user requested MDM source`
+            );
+
+            return [];
+        }
+
+
         LOG.info(
             `[value-help-scope] ` +
             `${valueHelpName} -> MDM`
@@ -837,27 +849,51 @@ async function readValueHelp(
 
 
     /*
-     * Local Value Help
+     * Customer User
+     * Source: LOCAL
      */
-    const config =
-        VALUE_HELP_CONFIG[valueHelpName];
+    if (source === "LOCAL") {
+
+        const config =
+            VALUE_HELP_CONFIG[valueHelpName];
 
 
-    if (!config) {
+        if (!config) {
 
-        return req.reject(
-            400,
-            `Unknown value help: ${valueHelpName}`
+            LOG.warn(
+                `[value-help-scope] ` +
+                `${valueHelpName} not configured as LOCAL VH ` +
+                `for Customer users`
+            );
+
+            return [];
+        }
+
+
+        LOG.info(
+            `[value-help-scope] ` +
+            `${valueHelpName} -> LOCAL`
+        );
+
+        return readLocalValueHelp(
+            req,
+            valueHelpName,
+            config,
+            scope
         );
     }
 
 
-    return readLocalValueHelp(
-        req,
-        valueHelpName,
-        config,
-        scope
+    /*
+     * Unknown or EMPTY source
+     */
+    LOG.warn(
+        `[value-help-scope] ` +
+        `${valueHelpName} unknown source ` +
+        `for group=${scope?.groupIndicator}`
     );
+
+    return [];
 }
 
 
