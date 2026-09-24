@@ -1,37 +1,46 @@
 _schema-version: 3.3.0
+
 ID: hpbuysell-otc-salesorder
+description: HP BuySell OTC Sales Order - CAP service and Fiori Elements UI.
 version: 1.0.0
-description: "A simple CAP project."
-parameters:
-  enable-parallel-deployments: true
-  deploy_mode: html5-repo
-build-parameters:
-  before-all:
-    - builder: custom
-      commands:
-        - npm ci
-        - npx cds build --production
+
 modules:
+
+  # --------------------------------------------------------------------------
+  # CAP SERVICE
+  # --------------------------------------------------------------------------
   - name: hpbuysell-otc-salesorder-srv
     type: nodejs
     path: gen/srv
-    parameters:
-      instances: 1
-      buildpack: nodejs_buildpack
-    build-parameters:
-      builder: npm-ci
-    provides:
-      - name: srv-api # required by consumers of CAP services (e.g. approuter)
-        properties:
-          srv-url: ${default-url}
+
     requires:
       - name: hpbuysell-otc-salesorder-auth
-      - name: hpbuysell-otc-salesorder-postgres
+      - name: buysell-dev-pgdb
       - name: hpbuysell-otc-salesorder-destination
 
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+
+    parameters:
+      buildpack: nodejs_buildpack
+      instances: 1
+
+    build-parameters:
+      builder: npm-ci
+
+  # --------------------------------------------------------------------------
+  # POSTGRESQL DEPLOYER
+  # --------------------------------------------------------------------------
   - name: hpbuysell-otc-salesorder-postgres-deployer
     type: nodejs
     path: gen/pg
+
+    requires:
+      - name: buysell-dev-pgdb
+      - name: hpbuysell-otc-salesorder-auth
+
     parameters:
       buildpack: nodejs_buildpack
       no-route: true
@@ -39,76 +48,227 @@ modules:
       tasks:
         - name: deploy-to-postgresql
           command: npm start
-    requires:
-      - name: hpbuysell-otc-salesorder-postgres
 
-  - name: hpbuysell-otc-salesorder-app-deployer
+  # --------------------------------------------------------------------------
+  # DESTINATION CONTENT
+  # --------------------------------------------------------------------------
+  - name: hpbuysell-otc-salesorder-destination-content
     type: com.sap.application.content
-    path: gen
-    build-parameters:
-      build-result: app/
-      requires:
-        - name: hpbuysellotcsalesordersalesorder.ui
-          artifacts:
-            - salesorder.ui.zip
-          target-path: app/
+
     requires:
+
+      # Destination service
+      - name: hpbuysell-otc-salesorder-destination
+        parameters:
+          content-target: true
+
+      # HTML5 repository service key
+      - name: hpbuysell-otc-salesorder-html5-repo-host
+        parameters:
+          service-key:
+            name: hpbuysell-otc-salesorder-html5-repo-host-key
+
+      # XSUAA service key
       - name: hpbuysell-otc-salesorder-auth
+        parameters:
+          service-key:
+            name: hpbuysell-otc-salesorder-auth-key
+
+      # CAP service
       - name: srv-api
+
+    parameters:
+      content:
+        instance:
+          destinations:
+
+            # ----------------------------------------------------------------
+            # CAP SERVICE DESTINATION
+            # ----------------------------------------------------------------
+            - Authentication: OAuth2UserTokenExchange
+              Name: hpbuysell-otc-salesorder-srv-dest
+              TokenServiceInstanceName: hpbuysell-otc-salesorder-auth
+              TokenServiceKeyName: hpbuysell-otc-salesorder-auth-key
+              URL: ~{srv-api/srv-url}
+              sap.cloud.service: hpbuysellotcsalesorder.service
+
+            # ----------------------------------------------------------------
+            # HTML5 APPLICATION REPOSITORY
+            # ----------------------------------------------------------------
+            - Name: hpbuysell-otc-salesorder_html_repo_host
+              ServiceInstanceName: hpbuysell-otc-salesorder-html5-repo-host
+              ServiceKeyName: hpbuysell-otc-salesorder-html5-repo-host-key
+              sap.cloud.service: hpbuysellotcsalesorder.service
+
+            # ----------------------------------------------------------------
+            # XSUAA DESTINATION
+            # ----------------------------------------------------------------
+            - Authentication: OAuth2UserTokenExchange
+              Name: hpbuysell-otc-salesorder-auth-dest
+              ServiceInstanceName: hpbuysell-otc-salesorder-auth
+              ServiceKeyName: hpbuysell-otc-salesorder-auth-key
+
+          existing_destinations_policy: update
+
+    build-parameters:
+      no-source: true
+
+  # --------------------------------------------------------------------------
+  # HTML5 APP CONTENT DEPLOYER
+  # --------------------------------------------------------------------------
+  - name: hpbuysell-otc-salesorder-app-content
+    type: com.sap.application.content
+    path: .
+
+    requires:
       - name: hpbuysell-otc-salesorder-html5-repo-host
         parameters:
           content-target: true
-          config:
-            HTML5Runtime_enabled: true
 
+    parameters:
+      content:
+        instance:
+          service: hpbuysellotcsalesorder.service
+          existing_apps_policy: update
+
+    build-parameters:
+      build-result: resources
+
+      requires:
+        - artifacts:
+            - salesorder.ui.zip
+          name: hpbuysellotcsalesordersalesorder.ui
+          target-path: resources/
+
+  # --------------------------------------------------------------------------
+  # HTML5 UI APPLICATION
+  # --------------------------------------------------------------------------
   - name: hpbuysellotcsalesordersalesorder.ui
     type: html5
     path: app/salesorder.ui
+
     build-parameters:
       build-result: dist
       builder: custom
+
       commands:
-        - npm ci
-        - npm run build
+        - npm install
+        - npm run build:cf
+
       supported-platforms:
         []
 
+# =============================================================================
+# RESOURCES
+# =============================================================================
+
 resources:
+
+  # --------------------------------------------------------------------------
+  # XSUAA
+  # --------------------------------------------------------------------------
   - name: hpbuysell-otc-salesorder-auth
     type: org.cloudfoundry.managed-service
+
     parameters:
-      service: xsuaa
-      service-plan: application
-      path: ./xs-security.json
+      service-name: hpbuysell-otc-salesorder-auth
+
       config:
-        xsappname: hpbuysell-otc-salesorder-${org}-${space}
-        tenant-mode: dedicated
         oauth2-configuration:
           credential-types:
-            - "binding-secret"
-            - "x509"
-        role-collections:
-          - name: 'SalesOrderManage (hpbuysell-otc-salesorder ${org}-${space})'
-            description: 'generated'
-            role-template-references:
-              - '$XSAPPNAME.SalesOrderManage'
-          - name: 'SalesOrderViewer (hpbuysell-otc-salesorder ${org}-${space})'
-            description: 'generated'
-            role-template-references:
-              - '$XSAPPNAME.SalesOrderViewer'
-  - name: hpbuysell-otc-salesorder-postgres
+            - binding-secret
+            - x509
+
+        tenant-mode: dedicated
+
+        xsappname: hpbuysell-otc-salesorder
+
+      path: ./xs-security.json
+
+      service: xsuaa
+      service-plan: application
+
+  # --------------------------------------------------------------------------
+  # POSTGRESQL
+  # --------------------------------------------------------------------------
+  - name: buysell-dev-pgdb
     type: org.cloudfoundry.managed-service
+
     parameters:
       service: postgresql-db
-      service-plan: development
+      service-plan: standard
+
+  # --------------------------------------------------------------------------
+  # DESTINATION SERVICE
+  # --------------------------------------------------------------------------
   - name: hpbuysell-otc-salesorder-destination
     type: org.cloudfoundry.managed-service
+
     parameters:
+      service-name: hpbuysell-otc-salesorder-destination
+
+      config:
+        HTML5Runtime_enabled: true
+
+        init_data:
+          instance:
+            existing_destinations_policy: update
+
+            destinations:
+
+              # --------------------------------------------------------------
+              # UI5 LIBRARY
+              # --------------------------------------------------------------
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+
+              # --------------------------------------------------------------
+              # CAP SERVICE
+              # --------------------------------------------------------------
+              - Authentication: NoAuthentication
+                HTML5.DynamicDestination: true
+                HTML5.ForwardAuthToken: true
+                Name: srv-api
+                ProxyType: Internet
+                Type: HTTP
+                URL: ~{srv-api/srv-url}
+
       service: destination
       service-plan: lite
 
+    requires:
+      - name: srv-api
+
+  # --------------------------------------------------------------------------
+  # HTML5 APPLICATION REPOSITORY
+  # --------------------------------------------------------------------------
   - name: hpbuysell-otc-salesorder-html5-repo-host
     type: org.cloudfoundry.managed-service
+
     parameters:
+      service-name: hpbuysell-otc-salesorder-html5-repo-host
+
       service: html5-apps-repo
       service-plan: app-host
+
+# =============================================================================
+# GLOBAL PARAMETERS
+# =============================================================================
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+# =============================================================================
+# BUILD
+# =============================================================================
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production

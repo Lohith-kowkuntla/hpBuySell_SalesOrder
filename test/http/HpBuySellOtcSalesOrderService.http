@@ -44,7 +44,6 @@ Authorization: Basic {{username}}:{{password}}
   "hpBuyerCode": "e-23251151",
   "hpBuyerName": "hpBuyerName-23251151",
   "customerCode": "e-23251151",
-  "customerDescription": "tomerDescription-23251151",
   "shipTo": "shipTo-23251151",
   "otherShipTo": "o-23251151",
   "billTo": "billTo-23251151",
@@ -57,7 +56,6 @@ Authorization: Basic {{username}}:{{password}}
   "simpleChangeProcessingInd": false,
   "acknowledgements": [
     {
-      "ID": "25113310-dcd4-4ea7-a3d5-505447733160",
       "mediaType": "mediaType-25113310",
       "fileName": "fileName-25113310",
       "version": 23,
@@ -70,7 +68,6 @@ Authorization: Basic {{username}}:{{password}}
       "modifiedBy": "modifiedBy.ey9jy@example.net"
     },
     {
-      "ID": "25113311-f84d-4b57-ae03-8c7533952660",
       "mediaType": "mediaType-25113311",
       "fileName": "fileName-25113311",
       "version": 45,

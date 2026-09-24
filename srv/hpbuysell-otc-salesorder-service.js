@@ -99,7 +99,17 @@ const CANCELLABLE_LINE_STATUS_CODES = [
     "CONF"
 ];
 
-const { SELECT, UPDATE } = cds.ql;
+const { SELECT, UPDATE, INSERT } = cds.ql;
+
+
+// ============================================================================
+// SMALL HELPERS - shared by the UPSERT implementation below
+// ============================================================================
+
+function toArray(value) {
+    if (value === undefined || value === null) return [];
+    return Array.isArray(value) ? value : [value];
+}
 
 
 // ============================================================================
@@ -248,7 +258,8 @@ module.exports = cds.service.impl(
 
         const {
             SalesOrders,
-            SalesOrderItems
+            SalesOrderItems,
+            SalesOrderAcknowledgements
         } = srv.entities;
 
 
@@ -1670,5 +1681,490 @@ module.exports = cds.service.impl(
                 );
             }
         );
+
+
+        // =====================================================================
+        // UPSERT (create-or-update) for CPI / external integration
+        // =====================================================================
+        //
+        // CPI addresses this service with POST alone: there is no "does the
+        // Sales Order exist yet" call first, and no PUT/PATCH afterwards. So a
+        // write is resolved here - the same architecture used in the Purchase
+        // Order service's srv.js - rather than at the sender:
+        //
+        //     record does NOT exist (by primary key)  ->  INSERT
+        //     record already EXISTS                   ->  UPDATE in place
+        //
+        // The same handler is registered on UPDATE too, so a sender that uses
+        // PUT/PATCH gets the same answer instead of a 404 on a record that has
+        // not arrived yet. Either verb is safe to repeat.
+        //
+        // Three shapes reach it:
+        //
+        //     one row                { "hpSalesOrder": "5000000010", ... }
+        //     several rows           [ { ... }, { ... } ]
+        //     a document with lines  { "hpSalesOrder": "...", "items": [...] }
+        //
+        // A deep payload is split rather than written as one: replacing the
+        // "items" composition (or the "acknowledgements" composition) would
+        // delete every row the sender happened not to include in this
+        // message, which is wrong for a partial change message from an ERP.
+        //
+        // Bypassed handlers, and why they are re-applied here explicitly:
+        //
+        // assertBuyer (registered on CREATE/UPDATE by registerUserScope) runs
+        // ahead of this handler in the normal before-phase, so row-level
+        // authorization is unaffected. But enforcePricingRules and
+        // blockCancelledLineUpdate are registered on UPDATE only - a sender
+        // that POSTs to resolve an already-existing record never raises the
+        // UPDATE event those are attached to - so both are re-applied inline
+        // below, in applyItemUpdateBusinessRules, wherever the key already
+        // exists. EDITABLE_FIELDS is deliberately NOT re-applied here: it
+        // restricts what a human buyer may PATCH from the Fiori UI in Phase 1
+        // MVP, not what the inbound ERP/CPI feed may populate - most of the
+        // fields it excludes (dates, quantities, part numbers, ship-to) are
+        // exactly the fields this integration exists to synchronize.
+        //
+        // SalesOrderAcknowledgements (the ORDRSP PDF) is upserted the same
+        // way PurchaseOrderAttachment is in the Purchase Order service: keyed
+        // on (salesOrder, ackType, version) rather than a generated id, so
+        // CPI can POST a confirmation or cancellation PDF by key, without a
+        // GET first, the same way it posts a header or an item.
+        // =====================================================================
+
+        /**
+         * The key elements of an entity as stored: flattened association
+         * foreign keys included, the association itself and CAP's draft key
+         * left out.
+         */
+        function keyElementsOf(entity) {
+            return Object.keys(entity.elements).filter((name) => {
+                const element = entity.elements[name];
+
+                return element && element.key &&
+                    !element.isAssociation && !element.virtual &&
+                    name !== "IsActiveEntity";
+            });
+        }
+
+        /**
+         * Flattens a key association sent as a nested object onto the
+         * foreign key column CAP actually stores, e.g.
+         *
+         *     { "salesOrder": { "hpSalesOrder": "5000000010" } }
+         *
+         * becomes
+         *
+         *     { "salesOrder_hpSalesOrder": "5000000010" }
+         *
+         * Senders may write either shape; neither should have to know which
+         * one this service stores.
+         */
+        function flattenKeyAssociations(entity, row) {
+            for (const name of Object.keys(entity.elements)) {
+                const element = entity.elements[name];
+
+                if (!element || !element.isAssociation || !element.key) continue;
+
+                const nested = row[name];
+                if (!nested || typeof nested !== "object") continue;
+
+                for (const target of Object.keys(nested)) {
+                    const flattened = name + "_" + target;
+
+                    if (row[flattened] === undefined) row[flattened] = nested[target];
+                }
+
+                delete row[name];
+            }
+        }
+
+        /** The entity's own name, without the service prefix. */
+        function shortName(entity) {
+            return String(entity.name).split(".").pop();
+        }
+
+        /**
+         * The compositions each entity owns, and the parent key that
+         * identifies a child as belonging to this parent. A child arriving
+         * inside its header does not have to repeat that key - it is filled
+         * in from the parent before the child is written.
+         */
+        const CHILD_COMPOSITIONS = {
+            SalesOrders: [
+                {
+                    property: "items",
+                    target: () => SalesOrderItems,
+                    parentKeys: { salesOrder_hpSalesOrder: "hpSalesOrder" }
+                },
+                {
+                    property: "acknowledgements",
+                    target: () => SalesOrderAcknowledgements,
+                    parentKeys: { salesOrder_hpSalesOrder: "hpSalesOrder" }
+                }
+            ]
+        };
+
+        /** Item fields whose change requires the ORDCHG simple-change flag - same list as updateSalesOrderItem. */
+        const ITEM_ORDCHG_FIELDS = [
+            "salesPrice",
+            "salesPriceUnit",
+            "specialDealFlagSo",
+            "hpNotesToCustomer",
+            "reasonForCancellation_code"
+        ];
+
+        /**
+         * The business rules that normally run only on UPDATE - the cancelled
+         * line guard and the special-deal pricing rule - re-applied here
+         * because a CPI POST that resolves to an update never raises the
+         * UPDATE event those handlers are registered on.
+         *
+         * Measured against the stored line, the same way updateSalesOrderItem
+         * measures it: a field the sender left out falls back to what is
+         * already on file, so a message that changes only the notes does not
+         * have to repeat the price and unit for this check to pass.
+         *
+         * @param {object} req the request, for the rejection
+         * @param {object} existing the line as stored
+         * @param {object} row the incoming payload for this line
+         */
+        function applyItemUpdateBusinessRules(req, existing, row) {
+            if (existing.lineStatus_code === CANCELLED_LINE_STATUS_CODE) {
+                return req.reject(400, "Cannot update a cancelled line item");
+            }
+
+            if (row.salesPrice !== undefined) {
+                const effectiveSpecialDealFlag =
+                    row.specialDealFlagSo !== undefined
+                        ? row.specialDealFlagSo
+                        : existing.specialDealFlagSo;
+
+                if (effectiveSpecialDealFlag !== true) {
+                    return req.reject(
+                        400,
+                        "Special Deal Flag must be set to Yes before updating Sales Price"
+                    );
+                }
+
+                const effectivePriceUnit =
+                    row.salesPriceUnit !== undefined
+                        ? row.salesPriceUnit
+                        : existing.salesPriceUnit;
+
+                if (
+                    effectivePriceUnit === undefined ||
+                    effectivePriceUnit === null ||
+                    effectivePriceUnit === ""
+                ) {
+                    return req.reject(
+                        400,
+                        "Sales Price Unit is mandatory when Sales Price is updated"
+                    );
+                }
+            }
+
+            if (row.specialDealFlagSo === true) {
+                const effectivePrice =
+                    row.salesPrice !== undefined
+                        ? row.salesPrice
+                        : existing.salesPrice;
+
+                if (effectivePrice === undefined || effectivePrice === null) {
+                    return req.reject(
+                        400,
+                        "Sales Price cannot be blank when Special Deal Flag is Yes"
+                    );
+                }
+            }
+        }
+
+        /**
+         * Writes one row: created when its key is not on file, updated in
+         * place when it is, and its children resolved the same way after.
+         *
+         * @param {object} req the request, for the rejection on a missing key
+         * @param {object} entity CSN entity definition
+         * @param {object} row the payload for this row
+         * @returns {Promise<{created: number, updated: number}>} what the
+         *          write did, this row and everything beneath it counted
+         *          together
+         */
+        async function upsertRow(req, entity, row) {
+            if (!row || typeof row !== "object") return { created: 0, updated: 0 };
+
+            flattenKeyAssociations(entity, row);
+
+            // Children travel separately: writing them with the parent would
+            // replace the composition rather than upsert into it
+            const children = CHILD_COMPOSITIONS[shortName(entity)] || [];
+            const pending = [];
+
+            for (const child of children) {
+                const childRows = toArray(row[child.property]);
+
+                if (childRows.length) pending.push({ child, rows: childRows });
+
+                delete row[child.property];
+            }
+
+            const where = {};
+
+            for (const name of keyElementsOf(entity)) {
+                const value = row[name];
+
+                if (value === undefined || value === null || value === "") {
+                    return req.reject(
+                        400,
+                        `Key field "${name}" is required for upsert on ${shortName(entity)}`
+                    );
+                }
+
+                where[name] = value;
+            }
+
+            const existing = await SELECT.one.from(entity).where(where);
+            const result = { created: 0, updated: 0 };
+
+            if (existing) {
+                if (shortName(entity) === "SalesOrderItems") {
+                    applyItemUpdateBusinessRules(req, existing, row);
+
+                    const changedFields = getChangedFields(existing, row, "SalesOrderItems");
+
+                    setProcessingFlags(row, "SalesOrderItems", changedFields);
+
+                    if (changedFields.some((field) => ITEM_ORDCHG_FIELDS.includes(field))) {
+                        row.simpleChangeProcessingInd = true;
+                    }
+                }
+
+                if (shortName(entity) === "SalesOrders") {
+                    const changedFields = getChangedFields(existing, row, "SalesOrders");
+
+                    setProcessingFlags(row, "SalesOrders", changedFields);
+
+                    if (changedFields.length) row.simpleChangeProcessingInd = true;
+                }
+
+                // Only the elements the message carried: a sender that leaves
+                // a field out is not asking for it to be cleared
+                await UPDATE(entity).set(row).where(where);
+                result.updated += 1;
+            } else {
+                await INSERT.into(entity).entries(row);
+                result.created += 1;
+            }
+
+            for (const entry of pending) {
+                const target = entry.child.target();
+
+                for (const childRow of entry.rows) {
+                    if (!childRow || typeof childRow !== "object") continue;
+
+                    // Fill the parent key in from the parent, where the child
+                    // left it out
+                    for (const [childKey, parentKey] of Object.entries(entry.child.parentKeys)) {
+                        if (childRow[childKey] === undefined || childRow[childKey] === null) {
+                            childRow[childKey] = where[parentKey] !== undefined
+                                ? where[parentKey]
+                                : row[parentKey];
+                        }
+                    }
+
+                    const childResult = await upsertRow(req, target, childRow);
+
+                    result.created += childResult.created;
+                    result.updated += childResult.updated;
+                }
+            }
+
+            return result;
+        }
+
+        /**
+         * The keys the request was addressed to, as they appear in the URL.
+         * A POST carries the whole record in its body, but a PATCH names the
+         * record in its path and sends only the elements it is changing - so
+         * on that route the key is in req.params and nowhere else.
+         *
+         * @param {object} req the request
+         * @returns {object} key values, empty when the request addresses a
+         *          collection
+         */
+        function addressedKeys(req) {
+            const keys = {};
+
+            for (const param of toArray(req.params)) {
+                if (!param || typeof param !== "object") continue;
+                Object.assign(keys, param);
+            }
+
+            return keys;
+        }
+
+        /**
+         * Rolls the header Sales Order Status up for every document a write
+         * touched. Idempotent - the status is derived from the lines each
+         * time - which is what makes it safe to call even though the after
+         * READ handler above may also recalculate the same document once it
+         * is next read.
+         *
+         * Direct CQL writes inside upsertRow bypass the service layer, so the
+         * after-READ recalculation is the only other place this would happen
+         * - and only on the next read of the document, not at write time.
+         * Running it here means a document created with its items in one
+         * message carries the correct status immediately.
+         */
+        async function rollUpWrittenOrders(entity, rows) {
+            const name = shortName(entity);
+
+            if (name !== "SalesOrders" && name !== "SalesOrderItems") return;
+
+            const salesOrderNumbers = new Set();
+
+            for (const row of rows) {
+                if (!row) continue;
+
+                const salesOrderNumber = name === "SalesOrders"
+                    ? row.hpSalesOrder
+                    : row.salesOrder_hpSalesOrder;
+
+                if (salesOrderNumber) salesOrderNumbers.add(salesOrderNumber);
+            }
+
+            for (const salesOrderNumber of salesOrderNumbers) {
+                try {
+                    await updateHeaderSalesOrderStatus(
+                        salesOrderNumber,
+                        SalesOrders,
+                        SalesOrderItems
+                    );
+                } catch (error) {
+                    // A write that succeeded must not be failed by the roll
+                    // up after it
+                    console.warn(
+                        `Header status roll up for ${salesOrderNumber} skipped:`,
+                        error.message
+                    );
+                }
+            }
+        }
+
+        /**
+         * CREATE / UPDATE handler for an entity that is written by message.
+         *
+         * @param {object} entity CSN entity definition
+         * @returns {Function} CAP request handler
+         */
+        const upsert = (entity) => async (req) => {
+            const bulk = Array.isArray(req.data);
+            const rows = bulk ? req.data : [req.data];
+            const addressed = addressedKeys(req);
+
+            // The URL wins over the body: a PATCH that names one record and
+            // carries the key of another in its payload is addressing the
+            // record it named
+            for (const row of rows) {
+                if (!row || typeof row !== "object") continue;
+
+                flattenKeyAssociations(entity, row);
+
+                for (const [name, value] of Object.entries(addressed)) {
+                    if (value !== undefined && value !== null) row[name] = value;
+                }
+            }
+
+            const totals = { created: 0, updated: 0 };
+
+            for (const row of rows) {
+                const result = await upsertRow(req, entity, row);
+
+                // A rejected row has already ended the request; nothing
+                // comes back
+                if (!result) return;
+
+                totals.created += result.created;
+                totals.updated += result.updated;
+            }
+
+            // Lines written through upsertRow use plain CQL, not the service,
+            // so the after-READ recalculation never sees them until the
+            // document is next read - bring the header status in line now
+            await rollUpWrittenOrders(entity, rows);
+
+            req.info(
+                totals.created ? 201 : 200,
+                `${shortName(entity)}: ${totals.created} record(s) created, ` +
+                `${totals.updated} record(s) updated`
+            );
+
+            // The persisted representation, read back so the sender sees what
+            // was stored rather than what it sent - the derived status and
+            // processing flags included
+            const persisted = [];
+
+            for (const row of rows) {
+                const where = {};
+                let complete = true;
+
+                for (const name of keyElementsOf(entity)) {
+                    if (row[name] === undefined || row[name] === null) {
+                        complete = false;
+                        break;
+                    }
+
+                    where[name] = row[name];
+                }
+
+                if (complete) persisted.push(await SELECT.one.from(entity).where(where));
+            }
+
+            return bulk ? persisted : persisted[0];
+        };
+
+        srv.on("CREATE", SalesOrders, upsert(SalesOrders));
+        srv.on("CREATE", SalesOrderItems, upsert(SalesOrderItems));
+        srv.on("CREATE", SalesOrderAcknowledgements, upsert(SalesOrderAcknowledgements));
+
+        // The same resolution for a sender that uses PUT or PATCH: a record
+        // that is not on file yet is created rather than answered with a 404
+        srv.on("UPDATE", SalesOrders, upsert(SalesOrders));
+        srv.on("UPDATE", SalesOrderItems, upsert(SalesOrderItems));
+        srv.on("UPDATE", SalesOrderAcknowledgements, upsert(SalesOrderAcknowledgements));
+
+        /**
+         * hasContent for the acknowledgement list - the same computation
+         * PurchaseOrderAttachment.hasContent uses: an "is not null" over the
+         * keys of the page, so the PDF blob itself is never selected just to
+         * answer whether one is on file.
+         */
+        srv.after("READ", SalesOrderAcknowledgements, async (results) => {
+            if (!results) return;
+
+            const rows = toArray(results).filter((row) => row && row.ackType);
+            if (!rows.length) return;
+
+            const salesOrderNumbers = [...new Set(
+                rows.map((row) => row.salesOrder_hpSalesOrder).filter(Boolean)
+            )];
+
+            const stored = salesOrderNumbers.length
+                ? await SELECT.from(SalesOrderAcknowledgements)
+                    .columns("salesOrder_hpSalesOrder", "ackType", "version")
+                    .where({
+                        salesOrder_hpSalesOrder: { in: salesOrderNumbers },
+                        content: { "!=": null }
+                    })
+                : [];
+
+            const ackKey = (row) => [
+                row.salesOrder_hpSalesOrder, row.ackType, row.version
+            ].join("|");
+
+            const withContent = new Set(stored.map(ackKey));
+
+            for (const row of rows) row.hasContent = withContent.has(ackKey(row));
+        });
     }
 );

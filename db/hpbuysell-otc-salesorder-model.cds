@@ -3,7 +3,7 @@
  * Source: SO mapping file - working.xlsx, sheet "SAP PS4 to SAP BTP"
  *   i18n key   <- BTP - Field Label   (text lives in _i18n/i18n.properties)
  *   CDS type   <- DATA TYPE IN PS4
- *
+ *st
  * All user-facing text is externalized. Add translations as
  * _i18n/i18n_<locale>.properties (e.g. i18n_de.properties).
  * Deviations from the mapping sheet are flagged with "DEVIATION:".
@@ -22,12 +22,12 @@ using {
 // ---------------------------------------------------------------------------
 
 type PartnerAddressDetails {
-    name        : String(100);
-    address1    : String(200);
-    address2    : String(200);
-    city        : String(100);
-    postalCode  : String(20);
-    country     : String(10);
+    name       : String(100);
+    address1   : String(200);
+    address2   : String(200);
+    city       : String(100);
+    postalCode : String(20);
+    country    : String(10);
 }
 
 // ---------------------------------------------------------------------------
@@ -111,9 +111,6 @@ entity SalesOrders : managed {
         @title: '{i18n>soHeader.customerCode}' // CHAR10
         customerCode                   : String(10);
 
-        @title: '{i18n>soHeader.customerDescription}' // CHAR25
-        customerDescription            : String(25);
-
         @title              : '{i18n>soHeader.shipTo}' // CHAR45
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
         shipTo                         : String(45);
@@ -151,6 +148,9 @@ entity SalesOrders : managed {
 
         @title: '{i18n>soHeader.lspDetails}'
         lspDetails                     : PartnerAddressDetails;
+
+        @title: '{i18n>soHeader.customerDetails}'
+        customerDetails                  : PartnerAddressDetails;
 
         @title              : '{i18n>soHeader.customerNotesToHp}' // CHAR255
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
@@ -313,6 +313,9 @@ entity SalesOrderItems : managed {
         @title: '{i18n>soItem.storageLocation}' // CHAR40
         storageLocation                    : String(40);
 
+        @title: '{i18n>soItem.storageLocationDetails}'
+        storageLocationDetails             : PartnerAddressDetails;
+
         @title              : '{i18n>soItem.termsOfDelivery}' // CHAR50
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
         termsOfDelivery                    : String(50);
@@ -388,7 +391,7 @@ entity SalesOrderItems : managed {
         @title              : '{i18n>soItem.reasonForCancellationProcessingInd}'
         @readonly
         reasonForCancellationProcessingInd : Boolean default false;
-        
+
 
         @title              : '{i18n>soItem.hpNotesToCustomerProcessingInd}'
         @readonly
@@ -406,12 +409,39 @@ entity SalesOrderItems : managed {
 // Versioned: FDS 3.9.1 requires original + revised confirmations to be retained
 // ---------------------------------------------------------------------------
 
+/**
+ * PDF acknowledgement of a Sales Order, sent in by the ORDRSP inbound message.
+ *
+ * Keyed the same way PurchaseOrderAttachment is keyed in the Purchase Order
+ * service: a natural, upsertable key rather than a generated one, so CPI can
+ * POST a PDF the same way it POSTs a header or an item - by key, without a
+ * GET first.
+ *
+ * ackType is the version chain's identity, not just a category: an order can
+ * be confirmed and later cancelled, and each of those is its own sequence of
+ * revisions rather than one shared version counter. FDS 3.9.1 lists exactly
+ * two chains (CONFIRMATION, CANCELLATION), which is why ackType itself is
+ * enough of an identity here and no separate generated id - PO's
+ * attachmentId - is needed the way it is for the open-ended attachment
+ * categories a purchase order can carry.
+ *
+ * isLatest is carried as data, the same way PurchaseOrderAttachment carries
+ * it: set on exactly one version per (salesOrder, ackType) chain, so a
+ * superseded PDF can be marked as such the moment its revision arrives,
+ * without a reader having to aggregate max(version) to find the current one.
+ */
 @title      : '{i18n>SalesOrderAcknowledgements}'
 @description: '{i18n>SalesOrderAcknowledgements.descr}'
-entity SalesOrderAcknowledgements : cuid, managed {
+entity SalesOrderAcknowledgements : managed {
 
     @title: '{i18n>soAck.salesOrder}'
-    salesOrder : Association to SalesOrders;
+    key salesOrder : Association to SalesOrders;
+
+    @title: '{i18n>soAck.ackType}'
+    key ackType    : String(20); // 'CONFIRMATION' | 'CANCELLATION'
+
+    @title: '{i18n>soAck.version}'
+    key version    : Integer;
 
     @title           : '{i18n>soAck.content}'
     @Core.MediaType  : mediaType
@@ -424,14 +454,8 @@ entity SalesOrderAcknowledgements : cuid, managed {
     @title: '{i18n>soAck.fileName}'
     fileName   : String(255);
 
-    @title: '{i18n>soAck.version}'
-    version    : Integer;
-
     @title: '{i18n>soAck.isLatest}'
     isLatest   : Boolean default true;
-
-    @title: '{i18n>soAck.ackType}'
-    ackType    : String(20); // 'CONFIRMATION' | 'CANCELLATION'
 
     @title: '{i18n>soAck.receivedAt}'
     receivedAt : Timestamp;

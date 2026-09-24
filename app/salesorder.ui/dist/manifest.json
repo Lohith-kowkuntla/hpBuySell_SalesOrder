@@ -152,5 +152,9 @@
 			]
 		},
 		"flexBundle": false
+	},
+	"sap.cloud": {
+		"public": true,
+		"service": "hpbuysellotcsalesorder.service"
 	}
 }

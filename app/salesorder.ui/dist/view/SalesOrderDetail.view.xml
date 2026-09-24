@@ -1,3 +1,4 @@
+
 <!--
     screen 2
   ===================================================================================*
@@ -19,6 +20,7 @@
     xmlns:core="sap.ui.core"
     xmlns:f="sap.f"
     xmlns:form="sap.ui.layout.form"
+    xmlns:cssgrid="sap.ui.layout.cssgrid"
     xmlns:table="sap.ui.table"
     xmlns:rowmodes="sap.ui.table.rowmodes"
     height="100%">
@@ -65,28 +67,17 @@
                 <f:expandedContent>
                     <Text
                         id="soExpandedSubtitle"
-                        text="{parts: ['customerCode', 'customerDescription'], formatter: '.formatter.customerDisplay'}" />
+                        text="{customerCode}" />
                 </f:expandedContent>
 
                 <f:snappedContent>
                     <Text
                         id="soSnappedSubtitle"
-                        text="{parts: ['customerCode', 'customerDescription'], formatter: '.formatter.customerDisplay'}" />
+                        text="{customerCode}" />
                 </f:snappedContent>
 
                 <f:actions>
-
-                    <!--
-                        IMPORTANT:
-                        Use salesOrderStatus_code.
-                        Do not use salesOrderStatus.
-                    -->
-                    <!-- <ObjectStatus
-                        id="soHeaderStatus"
-                        text="{salesOrderStatus_code}"
-                        state="Information"
-                        icon="sap-icon://status-in-process" /> -->
-
+                    <!-- Header status is displayed in DynamicPageHeader -->
                 </f:actions>
 
             </f:DynamicPageTitle>
@@ -110,108 +101,94 @@
                     justifyContent="SpaceBetween">
 
                     <!-- Customer -->
+
                     <VBox
-                id="soFactCustomer"
-                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
-                width="22%">
+                        id="soFactCustomer"
+                        class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                        width="22%">
 
-                <Label
-                    id="soLblCustomer"
-                    text="{i18n>customer}"
-                    design="Bold" />
+                        <Label
+                            id="soLblCustomerid"
+                            text="{i18n>customer}"
+                            design="Bold" />
 
-                <Text
-                    id="soTxtCustomerName"
-                    text="{customerDescription}"
-                    wrapping="true" />
+                        <Text
+                            id="soTxtCustomerCode"
+                            text="{customerCode}"
+                            wrapping="false" />
 
-                <Text
-                    id="soTxtCustomerCode"
-                    text="{customerCode}"
-                    wrapping="false" />
-
-            </VBox>
-
-              <!-- ========================================================= -->
-            <!-- 2. WBS-PROJECT CODE                                        -->
-            <!-- ========================================================= -->
-
-            <VBox
-                id="soFactWbs"
-                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
-                width="22%">
-
-                <Label
-                    id="soLblWbs"
-                    text="{i18n>wbsProjectCode}"
-                    design="Bold" />
-
-                <Text
-                    id="soTxtWbs"
-                    text="{wbsProjectCode}"
-                    wrapping="false" />
-
-                <Text
-                    id="soTxtWbsDesc"
-                    text="{wbsProjectCodeDescription}"
-                    wrapping="true" />
-
-            </VBox>
+                    </VBox>
 
 
-            <!-- ========================================================= -->
-            <!-- 3. HP BUYER                                                -->
-            <!-- ========================================================= -->
+                    <!-- WBS Project -->
 
-            <VBox
-                id="soFactBuyer"
-                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
-                width="22%">
+                    <VBox
+                        id="soFactWbs"
+                        class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                        width="22%">
 
-                <Label
-                    id="soLblBuyer"
-                    text="{i18n>hpBuyer}"
-                    design="Bold" />
+                        <Label
+                            id="soLblWbs"
+                            text="{i18n>wbsProjectCode}"
+                            design="Bold" />
 
-                <Text
-                    id="soTxtBuyerName"
-                    text="{hpBuyerName}"
-                    wrapping="true" />
+                        <Text
+                            id="soTxtWbs"
+                            text="{wbsProjectCode}"
+                            wrapping="false" />
 
-                <Text
-                    id="soTxtBuyerCode"
-                    text="{hpBuyerCode}"
-                    wrapping="false" />
+                        <Text
+                            id="soTxtWbsDesc"
+                            text="{wbsProjectCodeDescription}"
+                            wrapping="true" />
 
-            </VBox>
-
-            <!-- ========================================================= -->
-            <!-- 4. SALES ORDER STATUS                                      -->
-            <!-- ========================================================= -->
-
-            <VBox
-                id="soFactStatus"
-                class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
-                width="22%">
-
-                <Label
-                    id="soLblStatus"
-                    text="{i18n>salesOrderStatus}"
-                    design="Bold" />
-
-                <!-- status -->
-
-                <ObjectStatus
-                    id="soHeaderStatus"
-                    text="{salesOrderStatus_code}"
-                    state="Information"
-                    icon="sap-icon://status-in-process" />
-
-            </VBox>
+                    </VBox>
 
 
+                    <!-- HP Buyer -->
+
+                    <VBox
+                        id="soFactBuyer"
+                        class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                        width="22%">
+
+                        <Label
+                            id="soLblBuyerid"
+                            text="{i18n>hpBuyer}"
+                            design="Bold" />
+
+                        <Text
+                            id="soTxtBuyerName"
+                            text="{hpBuyerName}"
+                            wrapping="true" />
+
+                        <Text
+                            id="soTxtBuyerCode"
+                            text="{hpBuyerCode}"
+                            wrapping="false" />
+
+                    </VBox>
 
 
+                    <!-- Sales Order Status -->
+
+                    <VBox
+                        id="soFactStatus"
+                        class="sapUiMediumMarginEnd sapUiTinyMarginBottom"
+                        width="22%">
+
+                        <Label
+                            id="soLblStatus"
+                            text="{i18n>salesOrderStatus}"
+                            design="Bold" />
+
+                        <ObjectStatus
+                            id="soHeaderStatus"
+                            text="{salesOrderStatus_code}"
+                            state="Information"
+                            icon="sap-icon://status-in-process" />
+
+                    </VBox>
 
                 </FlexBox>
 
@@ -258,233 +235,501 @@
                                 id="soOverviewContent"
                                 class="sapUiSmallMargin">
 
-                                <form:SimpleForm
-                                    id="soFormGeneral"
-                                    title="{i18n>generalInformation}"
-                                    editable="false"
-                                    layout="ColumnLayout"
-                                    columnsM="2"
-                                    columnsL="3"
-                                    columnsXL="3">
+                                <!--
+                                    IMPORTANT:
+                                    ResponsiveGridLayout is used here instead of
+                                    ColumnLayout because the partner fields contain
+                                    HBox/Button controls.
+                                -->
 
-                                    <Label
-                                        id="soLblSoNumber"
-                                        text="{i18n>hpSalesOrder}" />
+                                <VBox
+    id="soGeneralInformation"
+    width="100%"
+    class="sapUiSmallMarginBottom">
 
-                                    <Text
-                                        id="soValSoNumber"
-                                        text="{hpSalesOrder}" />
+    <Title
+        id="soGeneralInformationTitle"
+        text="{i18n>generalInformation}"
+        level="H3"
+        class="sapUiSmallMarginBottom" />
 
+    <cssgrid:CSSGrid
+        id="soGeneralGrid"
+        width="100%"
+        gridTemplateColumns="repeat(3, 1fr)"
+        gridAutoRows="auto"
+        gridColumnGap="1rem"
+        gridRowGap="0.75rem">
 
-                                    <Label
-                                        id="soLblCustomerOrder"
-                                        text="{i18n>customerOrder}" />
+        <!-- ===================================================== -->
+        <!-- ROW 1                                                 -->
+        <!-- ===================================================== -->
 
-                                    <Text
-                                        id="soValCustomerOrder"
-                                        text="{customerOrder}" />
+        <!-- HP Sales Order -->
+        <VBox
+            id="soGridHpSalesOrder"
+            class="soGeneralGridCell">
 
+            <Label
+                id="soLblSoNumber"
+                text="{i18n>hpSalesOrder}"
+                design="Bold" />
 
-                                    <Label
-                                        id="soLblOrderDate"
-                                        text="{i18n>soOrderDate}" />
+            <Text
+                id="soValSoNumber"
+                text="{hpSalesOrder}"
+                wrapping="true" />
 
-                                    <Text
-                                        id="soValOrderDate"
-                                        text="{path: 'soOrderDate', formatter: '.formatter.date'}" />
-
-
-                                    <Label
-                                        id="soLblContractNumber"
-                                        text="{i18n>contractNumber}" />
-
-                                    <Text
-                                        id="soValContractNumber"
-                                        text="{contractNumber}" />
-
-
-                                    <Label
-                                        id="soLblBusinessModel"
-                                        text="{i18n>businessModel}" />
-
-                                    <Text
-                                        id="soValBusinessModel"
-                                        text="{businessModel}" />
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblCompanyCode"
-                                        text="{i18n>hpCompanyCode}" />
+        <!-- Customer Order -->
+        <VBox
+            id="soGridCustomerOrder"
+            class="soGeneralGridCell">
 
-                                    <Text
-                                        id="soValCompanyCode"
-                                        text="{hpCompanyCode} - {hpCompanyDescription}" />
+            <Label
+                id="soLblCustomerOrder"
+                text="{i18n>customerOrder}"
+                design="Bold" />
 
+            <Text
+                id="soValCustomerOrder"
+                text="{customerOrder}"
+                wrapping="true" />
 
-                                    <Label
-                                        id="soLblShipTo"
-                                        text="{i18n>shipTo}" />
-
-                                    <HBox
-                                        id="soBoxShipTo"
-                                        alignItems="Center"
-                                        renderType="Bare">
-
-                                        <Text
-                                            id="soValShipTo"
-                                            text="{shipTo}"
-                                            class="sapUiSmallMarginEnd" />
-
-                                        <Button
-                                            id="soBtnShipToDetails"
-                                            icon="sap-icon://hint"
-                                            type="Transparent"
-                                            tooltip="{i18n>partnerDetails.viewDetails}"
-                                            data-partner="SHIP_TO"
-                                            press=".onShowPartnerDetails" />
-
-                                    </HBox>
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblBillTo"
-                                        text="{i18n>billTo}" />
+        <!-- SO Order Date -->
+        <VBox
+            id="soGridOrderDate"
+            class="soGeneralGridCell">
 
-                                    <HBox
-                                        id="soBoxBillTo"
-                                        alignItems="Center"
-                                        renderType="Bare">
+            <Label
+                id="soLblOrderDate"
+                text="{i18n>soOrderDate}"
+                design="Bold" />
 
-                                        <Text
-                                            id="soValBillTo"
-                                            text="{billTo}"
-                                            class="sapUiSmallMarginEnd" />
+            <Text
+                id="soValOrderDate"
+                text="{path: 'soOrderDate', formatter: '.formatter.date'}"
+                wrapping="true" />
 
-                                        <Button
-                                            id="soBtnBillToDetails"
-                                            icon="sap-icon://hint"
-                                            type="Transparent"
-                                            tooltip="{i18n>partnerDetails.viewDetails}"
-                                            data-partner="BILL_TO"
-                                            press=".onShowPartnerDetails" />
-
-                                    </HBox>
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblPayer"
-                                        text="{i18n>payer}" />
+        <!-- ===================================================== -->
+        <!-- ROW 2                                                 -->
+        <!-- ===================================================== -->
 
-                                    <HBox
-                                        id="soBoxPayer"
-                                        alignItems="Center"
-                                        renderType="Bare">
+        <!-- Contract Number -->
+        <VBox
+            id="soGridContractNumber"
+            class="soGeneralGridCell">
 
-                                        <Text
-                                            id="soValPayer"
-                                            text="{payer}"
-                                            class="sapUiSmallMarginEnd" />
+            <Label
+                id="soLblContractNumber"
+                text="{i18n>contractNumber}"
+                design="Bold" />
 
-                                        <Button
-                                            id="soBtnPayerDetails"
-                                            icon="sap-icon://hint"
-                                            type="Transparent"
-                                            tooltip="{i18n>partnerDetails.viewDetails}"
-                                            data-partner="PAYER"
-                                            press=".onShowPartnerDetails" />
+            <Text
+                id="soValContractNumber"
+                text="{contractNumber}"
+                wrapping="true" />
 
-                                    </HBox>
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblSalesOrg"
-                                        text="{i18n>hpSalesOrganization}" />
+        <!-- Business Model -->
+        <VBox
+            id="soGridBusinessModel"
+            class="soGeneralGridCell">
 
-                                    <Text
-                                        id="soValSalesOrg"
-                                        text="{hpSalesOrganization}" />
+            <Label
+                id="soLblBusinessModel"
+                text="{i18n>businessModel}"
+                design="Bold" />
 
+            <Text
+                id="soValBusinessModel"
+                text="{businessModel}"
+                wrapping="true" />
 
-                                    <Label
-                                        id="soLblOrigin"
-                                        text="{i18n>salesOrderOrigin}" />
-
-                                    <Text
-                                        id="soValOrigin"
-                                        text="{salesOrderOrigin}" />
-
-
-                                    <Label
-                                        id="soLblPaymentTerms"
-                                        text="{i18n>paymentTerms}" />
-
-                                    <Text
-                                        id="soValPaymentTerms"
-                                        text="{paymentTerms} - {paymentTermsDescription}" />
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblLspAddress"
-                                        text="{i18n>lspAddress}" />
+        <!-- HP Company Code -->
+        <VBox
+            id="soGridCompanyCode"
+            class="soGeneralGridCell">
 
-                                    <HBox
-                                        id="soBoxLspAddress"
-                                        alignItems="Center"
-                                        renderType="Bare">
+            <Label
+                id="soLblCompanyCode"
+                text="{i18n>hpCompanyCode}"
+                design="Bold" />
 
-                                        <Text
-                                            id="soValLspAddress"
-                                            text="{lspAddress}"
-                                            class="sapUiSmallMarginEnd" />
+            <Text
+                id="soValCompanyCode"
+                text="{hpCompanyCode} - {hpCompanyDescription}"
+                wrapping="true" />
 
-                                        <Button
-                                            id="soBtnLspDetails"
-                                            icon="sap-icon://hint"
-                                            type="Transparent"
-                                            tooltip="{i18n>partnerDetails.viewDetails}"
-                                            data-partner="LSP"
-                                            press=".onShowPartnerDetails" />
-
-                                    </HBox>
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblPlant"
-                                        text="{i18n>hpPlant}" />
+        <!-- ===================================================== -->
+        <!-- ROW 3                                                 -->
+        <!-- ===================================================== -->
 
-                                    <Text
-                                        id="soValPlant"
-                                        text="{hpPlant}" />
+        <!-- Ship To -->
+        <VBox
+            id="soGridShipTo"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblShipTo"
+                text="{i18n>shipTo}"
+                design="Bold" />
+
+            <HBox
+                id="soBoxShipTo"
+                alignItems="Center"
+                renderType="Bare">
+
+                <Text
+                    id="soValShipTo"
+                    text="{shipTo}"
+                    class="sapUiSmallMarginEnd"
+                    wrapping="true" />
+
+                <Button
+                    id="soBtnShipToDetails"
+                    icon="sap-icon://hint"
+                    type="Transparent"
+                    tooltip="{i18n>partnerDetails.viewDetails}"
+                    press=".onShowPartnerDetails">
+
+                    <customData>
+                        <core:CustomData
+                            key="partner"
+                            value="SHIP_TO"
+                            writeToDom="false" />
+                    </customData>
+
+                </Button>
+
+            </HBox>
+
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblSoType"
-                                        text="{i18n>salesOrderType}" />
+        <!-- Bill To -->
+        <VBox
+            id="soGridBillTo"
+            class="soGeneralGridCell">
 
-                                    <Text
-                                        id="soValSoType"
-                                        text="{salesOrderType}" />
+            <Label
+                id="soLblBillTo"
+                text="{i18n>billTo}"
+                design="Bold" />
+
+            <HBox
+                id="soBoxBillTo"
+                alignItems="Center"
+                renderType="Bare">
+
+                <Text
+                    id="soValBillTo"
+                    text="{billTo}"
+                    class="sapUiSmallMarginEnd"
+                    wrapping="true" />
+
+                <Button
+                    id="soBtnBillToDetails"
+                    icon="sap-icon://hint"
+                    type="Transparent"
+                    tooltip="{i18n>partnerDetails.viewDetails}"
+                    press=".onShowPartnerDetails">
+
+                    <customData>
+                        <core:CustomData
+                            key="partner"
+                            value="BILL_TO"
+                            writeToDom="false" />
+                    </customData>
+
+                </Button>
+
+            </HBox>
+
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblBlanket"
-                                        text="{i18n>blanketIndicator}" />
+        <!-- Payer -->
+        <VBox
+            id="soGridPayer"
+            class="soGeneralGridCell">
 
-                                    <Text
-                                        id="soValBlanket"
-                                        text="{path: 'blanketIndicator', formatter: '.formatter.yesNo'}" />
+            <Label
+                id="soLblPayer"
+                text="{i18n>payer}"
+                design="Bold" />
+
+            <HBox
+                id="soBoxPayer"
+                alignItems="Center"
+                renderType="Bare">
+
+                <Text
+                    id="soValPayer"
+                    text="{payer}"
+                    class="sapUiSmallMarginEnd"
+                    wrapping="true" />
+
+                <Button
+                    id="soBtnPayerDetails"
+                    icon="sap-icon://hint"
+                    type="Transparent"
+                    tooltip="{i18n>partnerDetails.viewDetails}"
+                    press=".onShowPartnerDetails">
+
+                    <customData>
+                        <core:CustomData
+                            key="partner"
+                            value="PAYER"
+                            writeToDom="false" />
+                    </customData>
+
+                </Button>
+
+            </HBox>
+
+        </VBox>
 
 
-                                    <Label
-                                        id="soLblCustNotes"
-                                        text="{i18n>customerNotesToHp}" />
+        <!-- ===================================================== -->
+        <!-- ROW 4                                                 -->
+        <!-- ===================================================== -->
 
-                                    <Text
-                                        id="soValCustNotes"
-                                        text="{customerNotesToHp}"
-                                        wrapping="true" />
+        <!-- WBS Project -->
+        <VBox
+            id="soGridWbs"
+            class="soGeneralGridCell">
 
-                                </form:SimpleForm>
+            <Label
+                id="soLblWbsProject"
+                text="{i18n>wbsProjectCode}"
+                design="Bold" />
+
+            <Text
+                id="soValWbsProject"
+                text="{wbsProjectCode}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- HP Sales Organization -->
+        <VBox
+            id="soGridSalesOrganization"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblSalesOrg"
+                text="{i18n>hpSalesOrganization}"
+                design="Bold" />
+
+            <Text
+                id="soValSalesOrg"
+                text="{hpSalesOrganization}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- HP Plant -->
+        <VBox
+            id="soGridPlant"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblPlant"
+                text="{i18n>hpPlant}"
+                design="Bold" />
+
+            <Text
+                id="soValPlant"
+                text="{hpPlant}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- ===================================================== -->
+        <!-- ROW 5                                                 -->
+        <!-- ===================================================== -->
+
+        <!-- HP Buyer -->
+        <VBox
+            id="soGridBuyer"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblBuyer"
+                text="{i18n>hpBuyer}"
+                design="Bold" />
+
+            <Text
+                id="soValBuyer"
+                text="{hpBuyerName} ({hpBuyerCode})"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- Customer -->
+        <VBox
+            id="soGridCustomer"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblCustomer"
+                text="{i18n>customer}"
+                design="Bold" />
+
+            <Text
+                id="soValCustomer"
+                text="{customerCode}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- Payment Terms -->
+        <VBox
+            id="soGridPaymentTerms"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblPaymentTerms"
+                text="{i18n>paymentTerms}"
+                design="Bold" />
+
+            <Text
+                id="soValPaymentTerms"
+                text="{paymentTerms}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- ===================================================== -->
+        <!-- ROW 6                                                 -->
+        <!-- ===================================================== -->
+
+        <!-- LSP -->
+        <VBox
+            id="soGridLsp"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblLspAddress"
+                text="{i18n>lspAddress}"
+                design="Bold" />
+
+            <HBox
+                id="soBoxLspAddress"
+                alignItems="Center"
+                renderType="Bare">
+
+                <Text
+                    id="soValLspAddress"
+                    text="{lspAddress}"
+                    class="sapUiSmallMarginEnd"
+                    wrapping="true" />
+
+                <Button
+                    id="soBtnLspDetails"
+                    icon="sap-icon://hint"
+                    type="Transparent"
+                    tooltip="{i18n>partnerDetails.viewDetails}"
+                    press=".onShowPartnerDetails">
+
+                    <customData>
+                        <core:CustomData
+                            key="partner"
+                            value="LSP"
+                            writeToDom="false" />
+                    </customData>
+
+                </Button>
+
+            </HBox>
+
+        </VBox>
+
+
+        <!-- Sales Order Origin -->
+        <VBox
+            id="soGridOrigin"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblOrigin"
+                text="{i18n>salesOrderOrigin}"
+                design="Bold" />
+
+            <Text
+                id="soValOrigin"
+                text="{salesOrderOrigin}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- Blanket Indicator -->
+        <VBox
+            id="soGridBlanket"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblBlanket"
+                text="{i18n>blanketIndicator}"
+                design="Bold" />
+
+            <Text
+                id="soValBlanket"
+                text="{path: 'blanketIndicator', formatter: '.formatter.yesNo'}"
+                wrapping="true" />
+
+        </VBox>
+
+
+        <!-- ===================================================== -->
+        <!-- ROW 7                                                 -->
+        <!-- ===================================================== -->
+
+        <!-- Customer Notes -->
+        <VBox
+            id="soGridCustomerNotes"
+            class="soGeneralGridCell">
+
+            <Label
+                id="soLblCustNotes"
+                text="{i18n>customerNotesToHp}"
+                design="Bold" />
+
+            <Text
+                id="soValCustNotes"
+                text="{customerNotesToHp}"
+                wrapping="true" />
+
+        </VBox>
+
+    </cssgrid:CSSGrid>
+
+</VBox>
+                            
 
                             </VBox>
 
@@ -501,8 +746,7 @@
                         id="soTabItems"
                         key="items"
                         icon="sap-icon://list"
-                        text="{view>/itemTitle}"
-                       >
+                        text="{view>/itemTitle}">
 
                         <VBox
                             id="soItemTabBox"
@@ -510,7 +754,6 @@
                             fitContainer="true"
                             renderType="Bare">
 
-                            <!-- Edit information -->
                             <MessageStrip
                                 id="soItemEditHint"
                                 class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
@@ -520,7 +763,6 @@
                                 text="{i18n>inlineEditHint}" />
 
 
-                            <!-- Cancel information -->
                             <MessageStrip
                                 id="soItemCancelHint"
                                 class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
@@ -596,7 +838,6 @@
                                             id="soItemTableSpacer" />
 
 
-                                        <!-- Search -->
                                         <SearchField
                                             id="soItemSearchField"
                                             width="15rem"
@@ -605,7 +846,6 @@
                                             search=".onItemSearch" />
 
 
-                                        <!-- Edit -->
                                         <Button
                                             id="soItemEditButton"
                                             text="{i18n>edit}"
@@ -617,7 +857,6 @@
                                             press=".onEditItems" />
 
 
-                                        <!-- Cancel Line -->
                                         <Button
                                             id="soItemCancelLineButton"
                                             text="{i18n>cancelLine}"
@@ -629,7 +868,6 @@
                                             press=".onCancelItems" />
 
 
-                                        <!-- Save -->
                                         <Button
                                             id="soItemSaveButton"
                                             text="{i18n>save}"
@@ -638,7 +876,6 @@
                                             press=".onSaveItems" />
 
 
-                                        <!-- Confirm Cancellation -->
                                         <Button
                                             id="soItemConfirmCancelButton"
                                             text="{i18n>confirmCancellation}"
@@ -647,7 +884,6 @@
                                             press=".onConfirmItemsCancel" />
 
 
-                                        <!-- History -->
                                         <Button
                                             id="soItemHistoryButton"
                                             text="{i18n>actionViewHistory}"
@@ -659,7 +895,6 @@
                                             press=".onViewHistoryForSelection" />
 
 
-                                        <!-- Reset -->
                                         <Button
                                             id="soItemResetButton"
                                             text="{i18n>reset}"
@@ -679,10 +914,6 @@
                                 <!-- ================================================= -->
 
                                 <table:columns>
-
-                                    <!-- ================================================= -->
-                                    <!-- Line ID                                        -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColLineId"
@@ -712,10 +943,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- HP Part Number                                  -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColMaterial"
                                         width="12rem"
@@ -741,10 +968,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- HP Part Description                             -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColMaterialDesc"
@@ -772,10 +995,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- LINE STATUS                                     -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColStatus"
                                         width="12rem"
@@ -792,10 +1011,6 @@
 
                                         <table:template>
 
-                                            <!--
-                                                IMPORTANT:
-                                                Status is lineStatus_code.
-                                            -->
                                             <ObjectStatus
                                                 id="soCellStatus"
                                                 text="{lineStatus_code}"
@@ -805,10 +1020,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- CUSTOMER PART NUMBER                            -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColCustPart"
@@ -836,10 +1047,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- QUANTITY                                        -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColQty"
                                         width="10rem"
@@ -865,10 +1072,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- CONFIRMED QUANTITY                             -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColConfirmedQty"
@@ -896,10 +1099,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- BALANCE QUANTITY                                -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColBalanceQty"
                                         width="10rem"
@@ -926,10 +1125,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- SALES PRICE                                     -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColPrice"
                                         width="11rem"
@@ -953,25 +1148,23 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Read-only -->
                                                 <ObjectNumber
                                                     id="soCellPrice"
                                                     visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
                                                     number="{path: 'salesPrice', formatter: '.formatter.amount'}"
                                                     unit="{salesPriceCurrency}" />
 
-                                                <!-- Editable -->
-                                               <Input
-    id="soInpPrice"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-    value="{salesPrice}"
-    valueLiveUpdate="true"
-    description="{salesPriceCurrency}"
-    textAlign="End"
-    width="100%"
-    type="Number"
-    liveChange=".onSalesPriceLiveChange"
-    change=".onSalesPriceChange" />
+                                                <Input
+                                                    id="soInpPrice"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    value="{salesPrice}"
+                                                    valueLiveUpdate="true"
+                                                    description="{salesPriceCurrency}"
+                                                    textAlign="End"
+                                                    width="100%"
+                                                    type="Number"
+                                                    liveChange=".onSalesPriceLiveChange"
+                                                    change=".onSalesPriceChange" />
 
                                             </HBox>
 
@@ -979,10 +1172,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- SALES PRICE UNIT                                -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColPriceUnit"
@@ -1007,21 +1196,19 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Read-only -->
                                                 <Text
                                                     id="soCellPriceUnit"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
                                                     text="{salesPriceUnit}" />
 
-                                                <!-- Editable -->
-                                               <Select
-    id="soSelPriceUnit"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-    width="100%"
-    forceSelection="false"
-    selectedKey="{salesPriceUnit}"
-    change=".onSalesPriceUnitChange">
+                                                <Select
+                                                    id="soSelPriceUnit"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    width="100%"
+                                                    forceSelection="false"
+                                                    selectedKey="{salesPriceUnit}"
+                                                    change=".onSalesPriceUnitChange">
 
                                                     <items>
 
@@ -1061,10 +1248,6 @@
                                     </table:Column>
 
 
-                                    <!-- ================================================= -->
-                                    <!-- SPECIAL DEAL FLAG                               -->
-                                    <!-- ================================================= -->
-
                                     <table:Column
                                         id="soColSpecialDeal"
                                         width="11rem"
@@ -1087,40 +1270,42 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                            <!-- Read-only -->
-<Text
-    id="soCellSpecialDeal"
-    wrapping="false"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
-    text="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }" />
+                                                <Text
+                                                    id="soCellSpecialDeal"
+                                                    wrapping="false"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
+                                                    text="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }" />
 
-<!-- Editable -->
-<Select
-    id="soSelSpecialDeal"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-    width="100%"
-    forceSelection="false"
-    selectedKey="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }"
-    change=".onspecialDealFlagSoChange">
+                                                <Select
+                                                    id="soSelSpecialDeal"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    width="100%"
+                                                    forceSelection="false"
+                                                    selectedKey="{= (${specialDealFlagSo} === true || ${specialDealFlagSo} === 'Y') ? 'Y' : 'N' }"
+                                                    change=".onspecialDealFlagSoChange">
 
-                                                
+                                                    <items>
 
-    <items>
-        <core:Item id="soSdY" key="Y" text="{i18n>yes}" />
-        <core:Item id="soSdN" key="N" text="{i18n>no}" />
-    </items>
-</Select>
-                                      
+                                                        <core:Item
+                                                            id="soSdY"
+                                                            key="Y"
+                                                            text="{i18n>yes}" />
+
+                                                        <core:Item
+                                                            id="soSdN"
+                                                            key="N"
+                                                            text="{i18n>no}" />
+
+                                                    </items>
+
+                                                </Select>
+
                                             </HBox>
 
                                         </table:template>
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- HP NOTES TO CUSTOMER - ITEM                     -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColHpNotes"
@@ -1144,21 +1329,19 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Read-only -->
                                                 <Text
                                                     id="soCellHpNotes"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
                                                     text="{hpNotesToCustomer}" />
 
-                                                <!-- Editable -->
                                                 <Input
-    id="soInpHpNotes"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-    value="{hpNotesToCustomer}"
-    valueLiveUpdate="true"
-    width="100%"
-    change=".onHpNotesChange" />
+                                                    id="soInpHpNotes"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    value="{hpNotesToCustomer}"
+                                                    valueLiveUpdate="true"
+                                                    width="100%"
+                                                    change=".onHpNotesChange" />
 
                                             </HBox>
 
@@ -1166,10 +1349,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- HP BACKLOG NOTES                                -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColBacklog"
@@ -1193,21 +1372,19 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Read-only -->
                                                 <Text
                                                     id="soCellBacklog"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineDisplayOnly'}"
                                                     text="{hpBacklogNotes}" />
 
-                                                <!-- Editable -->
-                                               <Input
-    id="soInpBacklog"
-    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
-    value="{hpBacklogNotes}"
-    valueLiveUpdate="true"
-    width="100%"
-    change=".onBacklogNotesChange" />
+                                                <Input
+                                                    id="soInpBacklog"
+                                                    visible="{parts: ['view>/itemsEditMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineEditable'}"
+                                                    value="{hpBacklogNotes}"
+                                                    valueLiveUpdate="true"
+                                                    width="100%"
+                                                    change=".onBacklogNotesChange" />
 
                                             </HBox>
 
@@ -1215,10 +1392,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- REASON FOR CANCELLATION                         -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColReasonCancel"
@@ -1242,14 +1415,12 @@
                                                 alignItems="Center"
                                                 width="100%">
 
-                                                <!-- Normal read-only display -->
                                                 <Text
                                                     id="soCellReasonCancel"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelReadOnly'}"
                                                     text="{reasonForCancellation_code}" />
 
-                                                <!-- Cancel dropdown -->
                                                 <Select
                                                     id="soSelReasonCancel"
                                                     visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelVisible'}"
@@ -1277,10 +1448,6 @@
 
                                     </table:Column>
 
-
-                                    <!-- ================================================= -->
-                                    <!-- SIMPLE CHANGE PROCESSING INDICATOR             -->
-                                    <!-- ================================================= -->
 
                                     <table:Column
                                         id="soColSimpleChangeInd"
@@ -1336,48 +1503,42 @@
                                 id="soNotesContent"
                                 class="sapUiSmallMargin">
 
+                                <Panel
+                                    id="soHpNotesPanel"
+                                    headerText="{i18n>hpNotesToCustomerHeader}"
+                                    expandable="false"
+                                    class="sapUiSmallMarginBottom">
+
+                                    <VBox width="100%">
+
+                                        <HBox
+                                            justifyContent="End"
+                                            width="100%"
+                                            class="sapUiTinyMarginBottom">
+
+                                            <Button
+                                                id="hpNotesEditButton"
+                                                icon="sap-icon://edit"
+                                                type="Transparent"
+                                                tooltip="Edit"
+                                                press=".onEditHpNotes" />
+
+                                        </HBox>
+
+                                        <TextArea
+                                            id="soHpNotesText"
+                                            value="{hpNotesToCustomer}"
+                                            editable="false"
+                                            width="100%"
+                                            rows="6"
+                                            growing="true"
+                                            growingMaxLines="8" />
+
+                                    </VBox>
+
+                                </Panel>
 
 
-                                
-                                <!-- HP Notes to Customer -->
-<Panel
-    id="soHpNotesPanel"
-    headerText="{i18n>hpNotesToCustomerHeader}"
-    expandable="false"
-    class="sapUiSmallMarginBottom">
-
-    <VBox width="100%">
-
-        <!-- Edit / Save button -->
-        <HBox
-            justifyContent="End"
-            width="100%"
-            class="sapUiTinyMarginBottom">
-
-            <Button
-                id="hpNotesEditButton"
-                icon="sap-icon://edit"
-                type="Transparent"
-                tooltip="Edit"
-                press=".onEditHpNotes"/>
-        </HBox>
-
-        <!-- Notes field -->
-        <TextArea
-            id="soHpNotesText"
-            value="{hpNotesToCustomer}"
-            editable="false"
-            width="100%"
-            rows="6"
-            growing="true"
-            growingMaxLines="8"/>
-
-    </VBox>
-
-</Panel>
-
-
-                                <!-- Customer Notes to HP -->
                                 <Panel
                                     id="soCustomerNotesPanel"
                                     headerText="{i18n>customerNotesToHp}"
@@ -1409,148 +1570,145 @@
                         id="soTabChangeHistory"
                         key="changeHistory"
                         icon="sap-icon://history"
-                        text="{view>/changeTitle}"
-                       >
+                        text="{view>/changeTitle}">
 
-                       <Table
-    id="soChangeTable"
-    class="soSubTable"
-    inset="false"
-    mode="None"
-    growing="true"
-    growingThreshold="25"
-    updateFinished=".onChangesUpdateFinished"
-    noDataText="{i18n>noDataChanges}"
-    items="{
-        path: 'changes',
-        sorter: {
-            path: 'createdAt',
-            descending: true
-        }
-    }">
+                        <Table
+                            id="soChangeTable"
+                            class="soSubTable"
+                            inset="false"
+                            mode="None"
+                            growing="true"
+                            growingThreshold="25"
+                            updateFinished=".onChangesUpdateFinished"
+                            noDataText="{i18n>noDataChanges}"
+                            items="{
+                                path: 'changes',
+                                sorter: {
+                                    path: 'createdAt',
+                                    descending: true
+                                }
+                            }">
 
-    <headerToolbar>
+                            <headerToolbar>
 
-        <OverflowToolbar
-            id="soChangeTableToolbar">
+                                <OverflowToolbar
+                                    id="soChangeTableToolbar">
 
-            <Title
-                id="soChangeTableTitle"
-                text="{view>/changeTitle}"
-                level="H3" />
+                                    <Title
+                                        id="soChangeTableTitle"
+                                        text="{view>/changeTitle}"
+                                        level="H3" />
 
-            <ToolbarSpacer
-                id="soChangeTableSpacer" />
+                                    <ToolbarSpacer
+                                        id="soChangeTableSpacer" />
 
-            <SearchField
-                id="soChangeSearchField"
-                width="15rem"
-                placeholder="{i18n>phSearchChanges}"
-                search=".onChangeSearch" />
+                                    <SearchField
+                                        id="soChangeSearchField"
+                                        width="15rem"
+                                        placeholder="{i18n>phSearchChanges}"
+                                        search=".onChangeSearch" />
 
-            <Select
-                id="soChangeScopeFilter"
-                tooltip="{i18n>changeScope}"
-                selectedKey="ALL"
-                change=".onChangeScopeFilter">
+                                    <Select
+                                        id="soChangeScopeFilter"
+                                        tooltip="{i18n>changeScope}"
+                                        selectedKey="ALL"
+                                        change=".onChangeScopeFilter">
 
-                <items>
+                                        <items>
 
-                    <core:Item
-                        key="ALL"
-                        text="{i18n>all}" />
+                                            <core:Item
+                                                key="ALL"
+                                                text="{i18n>all}" />
 
-                    <core:Item
-                        key="HEADER"
-                        text="{i18n>header}" />
+                                            <core:Item
+                                                key="HEADER"
+                                                text="{i18n>header}" />
 
-                    <core:Item
-                        key="ITEM"
-                        text="{i18n>item}" />
+                                            <core:Item
+                                                key="ITEM"
+                                                text="{i18n>item}" />
 
-                </items>
+                                        </items>
 
-            </Select>
+                                    </Select>
 
-        </OverflowToolbar>
+                                </OverflowToolbar>
 
-    </headerToolbar>
+                            </headerToolbar>
 
-    <columns>
+                            <columns>
 
-        <Column width="11rem">
-            <Text text="{i18n>changedAt}" />
-        </Column>
+                                <Column width="11rem">
+                                    <Text text="{i18n>changedAt}" />
+                                </Column>
 
-        <Column width="10rem">
-            <Text text="{i18n>changedBy}" />
-        </Column>
+                                <Column width="10rem">
+                                    <Text text="{i18n>changedBy}" />
+                                </Column>
 
-        <Column width="18rem">
-            <Text text="{i18n>changedObject}" />
-        </Column>
+                                <Column width="18rem">
+                                    <Text text="{i18n>changedObject}" />
+                                </Column>
 
-        <Column width="16rem">
-            <Text text="{i18n>fieldLabel}" />
-        </Column>
+                                <Column width="16rem">
+                                    <Text text="{i18n>fieldLabel}" />
+                                </Column>
 
-        <Column width="12rem">
-            <Text text="{i18n>oldValue}" />
-        </Column>
+                                <Column width="12rem">
+                                    <Text text="{i18n>oldValue}" />
+                                </Column>
 
-        <Column width="12rem">
-            <Text text="{i18n>newValue}" />
-        </Column>
+                                <Column width="12rem">
+                                    <Text text="{i18n>newValue}" />
+                                </Column>
 
-        <Column width="10rem">
-            <Text text="{i18n>changeType}" />
-        </Column>
+                                <Column width="10rem">
+                                    <Text text="{i18n>changeType}" />
+                                </Column>
 
-    </columns>
+                            </columns>
 
-    <items>
+                            <items>
 
-        <ColumnListItem>
+                                <ColumnListItem>
 
-            <cells>
+                                    <cells>
 
-                <Text
-                    text="{
-                        path: 'createdAt',
-                        type: 'sap.ui.model.type.DateTime'
-                    }" />
+                                        <Text
+                                            text="{
+                                                path: 'createdAt',
+                                                type: 'sap.ui.model.type.DateTime'
+                                            }" />
 
-                <Text
-                    text="{createdBy}" />
+                                        <Text
+                                            text="{createdBy}" />
 
-                <Text
-                    text="{objectID}"
-                    wrapping="true" />
+                                        <Text
+                                            text="{objectID}"
+                                            wrapping="true" />
 
-                <Text
-                    text="{attributeLabel}"
-                    wrapping="true" />
+                                        <Text
+                                            text="{attributeLabel}"
+                                            wrapping="true" />
 
-                <Text
-                    text="{valueChangedFromLabel}"
-                    wrapping="true" />
+                                        <Text
+                                            text="{valueChangedFromLabel}"
+                                            wrapping="true" />
 
-                <Text
-                    text="{valueChangedToLabel}"
-                    wrapping="true" />
+                                        <Text
+                                            text="{valueChangedToLabel}"
+                                            wrapping="true" />
 
-                <Text
-                    text="{modificationLabel}" />
+                                        <Text
+                                            text="{modificationLabel}" />
 
-            </cells>
+                                    </cells>
 
-        </ColumnListItem>
+                                </ColumnListItem>
 
-    </items>
+                            </items>
 
-</Table>
-
-                       
+                        </Table>
 
                     </IconTabFilter>
 
@@ -1669,3 +1827,4 @@
     </f:DynamicPage>
 
 </mvc:View>
+

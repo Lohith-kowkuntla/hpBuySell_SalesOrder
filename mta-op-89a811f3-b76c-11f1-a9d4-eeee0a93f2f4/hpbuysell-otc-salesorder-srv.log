@@ -1,0 +1,176 @@
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:00.690414] Updated app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 ({"lifecycle"=>{"data"=>{"buildpacks"=>["nodejs_buildpack"]}, "type"=>"buildpack"}}) (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:00.831905] Updating process: "web" (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:39.091291] Uploading app package for app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:39.284400] Updated app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 ({"environment_variables"=>"[PRIVATE DATA HIDDEN]"}) (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.012343] Stopping app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.069325] Cell 86f241ab-309a-4e11-9bdd-0b75188f846f stopping instance 27fd7905-e872-4a85-5852-2a11 (STDOUT, CELL)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.260240] Creating build for app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.630900] Downloading nodejs_buildpack... (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.668526] Downloaded nodejs_buildpack (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.668611] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e creating container for instance f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:34:59.987217] Security group rules were updated (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:00.011385] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e successfully created container for instance f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:00.287662] Downloading app package... (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:00.287663] Downloading build artifacts cache... (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:00.428182] Downloaded build artifacts cache (216B) (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:01.870640] Downloaded app package (19.4M) (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:01.936687] -----> Nodejs Buildpack version 1.9.4 (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:02.433292] -----> Bootstrapping python (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:02.433309] -----> Installing python 3.13.15 (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:02.433367] Copy [/tmp/buildpacks/a5982ae3653c0c93/dependencies/6832464ec708e1392d482a6034aa2c94/python_3.13.15_linux_x64_cflinuxfs4_0c9cd9fd.tgz] (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899234] -----> Installing binaries (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899324] engines.node (package.json): >=20 (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899345] engines.npm (package.json): unspecified (use default) (STDOUT, STG)#
+#2026 09 23 16:35:08.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899352] [31;1m**WARNING**[0m Dangerous semver range (>) in engines.node. See: http://docs.cloudfoundry.org/buildpacks/node/node-tips.html (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899431] -----> Installing node 24.19.0 (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:05.899578] Copy [/tmp/buildpacks/a5982ae3653c0c93/dependencies/cf9035c55d85610a9158faa009b7a7b5/node_24.19.0_linux_x64_cflinuxfs4_9ab26efa.tgz] (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:07.780412] Using default npm version: 11.17.0 (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:07.780428] -----> Installing yarn 1.22.22 (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:07.780589] Copy [/tmp/buildpacks/a5982ae3653c0c93/dependencies/e4fe26756e9984a665478d350474fa2e/yarn_1.22.22_linux_noarch_any-stack_b6132b86.tgz] (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.038503] Installed yarn 1.22.22 (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.038521] -----> Creating runtime environment (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040091] NODE_ENV=production (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040101] NODE_HOME=/tmp/contents2440652335/deps/0/node (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040104] NODE_MODULES_CACHE=true (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040106] NODE_VERBOSE=false (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040108] NPM_CONFIG_LOGLEVEL=error (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040111] NPM_CONFIG_PRODUCTION=true (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040123] -----> Building dependencies (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040147] Prebuild detected (node_modules already exists) (STDOUT, STG)#
+#2026 09 23 16:35:08.738#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28233#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.040152] Rebuilding any native modules (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.897338] rebuilt dependencies successfully (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.898677] npm notice (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.898687] npm notice New major version of npm available! 11.17.0 -> 12.1.0 (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.898690] npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.1.0 (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.898692] npm notice To update run: npm install -g npm@12.1.0 (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.898694] npm notice (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:08.956216] Installing any new modules (package.json + package-lock.json) (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:09.678022] up to date in 658ms (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:09.678183] 46 packages are looking for funding (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:09.678202] run `npm fund` for details (STDOUT, STG)#
+#2026 09 23 16:35:18.737#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28247#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:11.048139] Contrast Security no credentials found. Will not write environment files. (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.164897] Exit status 0 (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.164937] Uploading droplet, build artifacts cache... (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.164967] Uploading droplet... (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.164973] Uploading build artifacts cache... (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.336082] Uploaded build artifacts cache (223B) (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:22.880781] Creating droplet for app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:24.966447] Uploaded droplet (73.4M) (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:24.988779] Uploading complete (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:25.708919] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e stopping instance f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:25.708950] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e destroying container for instance f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, STG)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:25.759950] Staging complete for build f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, API)#
+#2026 09 23 16:35:28.756#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28260#
+[PollStageAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:27.086513] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e successfully destroyed container for instance f9ba5005-0986-4415-a2cc-55282e55ebcf (STDOUT, STG)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:28.822105] Updated app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 ({:droplet_guid=>"a8141e87-84e8-41b0-8068-2239799a2948"}) (STDOUT, API)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.001096] Creating revision for app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.032075] Starting app with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 (STDOUT, API)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.241299] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e creating container for instance b314c9d2-7817-40f2-52ae-f8cb (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.577794] Security group rules were updated (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.599011] Cell e8da587c-c91c-4c2b-b17d-e48065f7140e successfully created container for instance b314c9d2-7817-40f2-52ae-f8cb (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:29.921804] Downloading droplet... (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.023120] Downloaded droplet (73.4M) (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.023272] Starting health monitoring of container (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.089113] Invoking pre-start scripts. (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.252716] Invoking start command. (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.582055] > hpbuysell-otc-salesorder@1.0.0 start (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:34.582081] > cds-serve (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.038187] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.037Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"loaded model from 1 file(s):\n ","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.038417] srv/csn.json (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.284340] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.283Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"connect to db > postgres {\n  database: 'db.sqlite',\n  schema: 'hpbuysell_otc_salesorder',\n  username: '70899151aba4',\n  password: '...',\n  hostname: 'postgres-63a33c28-9d9e-4453-821a-000f0ee4a75c.c24srvdukvjo.us-east-1.rds.amazonaws.com',\n  dbname: 'BQiFxAUMVHcr',\n  port: '7565',\n  uri: 'postgres://...:...@postgres-63a33c28-9d9e-4453-821a-000f0ee4a75c.c24srvdukvjo.us-east-1.rds.amazonaws.com:7565/BQiFxAUMVHcr',\n  urls: {\n    api_server: 'https://api-backing-services.us10.data.services.cloud.sap'\n  },\n  sslcert: '...',\n  sslrootcert: '...'\n}","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.292747] {"level":"info","logger":"sales-order-user-scope","timestamp":"2026-09-23T16:35:35.292Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"[sales-order-user-scope] User scope handlers registered","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.312024] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.311Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"using auth strategy { kind: 'xsuaa' }","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.348315] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.348Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"serving HpBuySellOtcSalesOrderService {\n  at: [ '/odata/v4/salesorder' ],\n  decl: 'srv/csn.json:1387',\n  impl: 'srv/hpbuysell-otc-salesorder-service.js'\n}","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.417737] (node:225) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead. (STDERR, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.417758] (Use `node --trace-deprecation ...` to show where the warning was created) (STDERR, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.456951] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.456Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"server listening on { url: 'http://localhost:8080' }","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:35.457931] {"level":"info","logger":"cds","timestamp":"2026-09-23T16:35:35.457Z","layer":"cds","component_type":"application","container_id":"10.36.192.18","component_id":"30a35eb8-d3f3-4113-9347-bb35ee8ee030","component_name":"hpbuysell-otc-salesorder-srv","component_instance":0,"source_instance":0,"organization_name":"HP Inc._hp-gps-buysell-dev","organization_id":"28f5f013-e7b0-47dd-be78-90527778d0f9","space_name":"buysell-dev-cf-sp","space_id":"0850fa4f-7659-486a-868e-d7f3c8781c3b","msg":"server v9.9.3 launched in 865 ms","type":"log"} (STDOUT, APP/PROC/WEB)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:36.772419] Container became healthy (STDOUT, CELL)#
+#2026 09 23 16:35:38.794#Z#DEBUG#89a811f3-b76c-11f1-a9d4-eeee0a93f2f4.hpbuysell-otc-salesorder-srv#flowable-async-job-executor-thread-28292#
+[PollStartAppStatusExecution] 30a35eb8-d3f3-4113-9347-bb35ee8ee030 [2026-09-23T16:35:36.806400] Process became ready with guid 30a35eb8-d3f3-4113-9347-bb35ee8ee030 payload: {"instance"=>"b314c9d2-7817-40f2-52ae-f8cb", "index"=>0, "cell_id"=>"e8da587c-c91c-4c2b-b17d-e48065f7140e", "ready"=>true, "version"=>"5c6881f2-631c-4041-aab9-2517ed17765c"} (STDOUT, API)#

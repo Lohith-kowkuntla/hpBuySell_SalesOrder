@@ -24,7 +24,11 @@ service HpBuySellOtcSalesOrderService {
             ]
         },
         {
-            grant: ['UPDATE'],
+            // CREATE is granted so that CPI/integration senders can POST a
+            // Sales Order without checking existence first - the UPSERT
+            // handler in srv.js resolves INSERT vs UPDATE by key. Same role
+            // as UPDATE: only SalesOrderManage may write.
+            grant: ['CREATE', 'UPDATE','DELETE'],
             to   : ['SalesOrderManage']
         }
     ]
@@ -48,7 +52,9 @@ service HpBuySellOtcSalesOrderService {
             ]
         },
         {
-            grant: ['UPDATE'],
+            // CREATE is granted for the same CPI/UPSERT reason as on
+            // SalesOrders - see srv.js "UPSERT (create-or-update)" section.
+            grant: ['CREATE', 'UPDATE','DELETE'],
             to   : ['SalesOrderManage']
         },
         {
@@ -86,17 +92,6 @@ service HpBuySellOtcSalesOrderService {
                                   hpBacklogNotes: String(1000))      returns UpdateResult;
 
 
-    @readonly
-    @title   : '{i18n>SalesOrderAcknowledgements}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
-
-
     // =========================================================================
     // Sales Order Header Update
     // =========================================================================
@@ -106,7 +101,43 @@ service HpBuySellOtcSalesOrderService {
                                     hpNotesToCustomer: String(1000)) returns UpdateResult;
 
 
-    entity SalesOrderAcknowledgements as projection on db.SalesOrderAcknowledgements;
+    /**
+     * PDF acknowledgements of a Sales Order (ORDRSP), every version of every
+     * chain. Kept as a composition of the header the same way
+     * PurchaseOrderAttachment is kept as a composition of PurchaseOrder.
+     *
+     * Writable by CPI through the same POST-only UPSERT as the header and
+     * items - see the "UPSERT" section of srv.js - which is why CREATE and
+     * UPDATE are granted here rather than the whole entity staying @readonly.
+     */
+    @title   : '{i18n>SalesOrderAcknowledgements}'
+    @restrict: [
+        {
+            grant: ['READ'],
+            to   : [
+                'SalesOrderManage',
+                'SalesOrderViewer'
+            ]
+        },
+        {
+            grant: ['CREATE', 'UPDATE','DELETE'],
+            to   : ['SalesOrderManage']
+        }
+    ]
+    entity SalesOrderAcknowledgements as
+        projection on db.SalesOrderAcknowledgements {
+            *,
+
+            /*
+             * Whether the PDF itself is stored here. The blob is never
+             * selected to find that out - a document is megabytes and the
+             * list only needs to know whether View has anything to fetch -
+             * so the question is asked as an "is not null" over the keys of
+             * the page, the same way PurchaseOrderAttachment.hasContent is.
+             */
+            @title: '{i18n>soAck.hasContent}'
+            virtual null as hasContent : Boolean
+        };
 
 
     // ==========================================================================
@@ -146,7 +177,6 @@ service HpBuySellOtcSalesOrderService {
                 salesOrder.hpCompanyCode                 as hpCompanyCode,
                 salesOrder.hpCompanyDescription          as hpCompanyDescription,
                 salesOrder.customerCode                  as customerCode,
-                salesOrder.customerDescription           as customerDescription,
                 salesOrder.shipTo                        as shipTo,
                 salesOrder.billTo                        as billTo,
                 salesOrder.payer                         as payer,
@@ -405,8 +435,7 @@ service HpBuySellOtcSalesOrderService {
     @cds.redirection.target: false
     entity VH_SalesOrderNumber        as
         select distinct
-            key hpSalesOrder,
-                customerDescription
+            key hpSalesOrder
         from db.SalesOrders
         where
                 hpSalesOrder is not null
@@ -414,14 +443,13 @@ service HpBuySellOtcSalesOrderService {
 
 
     //-------------------------------------------------------------------------------*
-    // Customer Code + Customer Description
+    // Customer Code
     //-------------------------------------------------------------------------------*
 
     @cds.redirection.target: false
     entity VH_Customer                as
         select distinct
-            key customerCode,
-                customerDescription
+            key customerCode
         from db.SalesOrders
         where
                 customerCode is not null

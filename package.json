@@ -42,24 +42,17 @@
         }
       },
       "db": {
-  "kind": "sqlite",
-  "credentials": {
-    "database": "db.sqlite"
-  },
-  "[production]": {
-    "kind": "postgres",
-    "credentials": {
-      "schema": "hpbuysell_otc_salesorder",
-      "ssl": {
-        "rejectUnauthorized": false
+        "kind": "sqlite",
+        "credentials": {
+          "database": "db.sqlite"
+        },
+        "[production]": {
+          "kind": "postgres",
+          "credentials": {
+            "schema": "hpbuysell_otc_salesorder"
+          }
+        }
       },
-      "pool": {
-        "acquireTimeoutMillis": 30000
-      }
-    }
-  }
-},
-    
       "[users]": {
         "auth": {
           "kind": "mocked",
@@ -145,7 +138,8 @@
         },
         "csrf": true,
         "csrfInBatch": true
-      }
+      },
+      "workzone": true
     },
     "migrations": {
       "db": {
@@ -155,5 +149,8 @@
   },
   "workspaces": [
     "app/*"
+  ],
+  "sapux": [
+    "app/salesorder.ui"
   ]
 }

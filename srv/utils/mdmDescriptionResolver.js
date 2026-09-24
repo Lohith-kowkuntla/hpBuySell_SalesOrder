@@ -75,11 +75,11 @@ const SOURCES = {
     },
 
     // Customer description
-    CUSTOMER: {
-        entity: 'Customer',
-        keys: ['customerid'],
-        text: 'customername'
-    },
+    // CUSTOMER: {
+    //     entity: 'Customer',
+    //     keys: ['customerid'],
+    //     text: 'customername'
+    // },
 
     // HP Buyer name
     BUYER: {

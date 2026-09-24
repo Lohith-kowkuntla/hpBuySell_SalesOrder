@@ -29,7 +29,8 @@
           }
         }
       }
-    }
+    },
+    "i18n": "i18n/i18n.properties"
   },
   "sap.ui": {
     "technology": "UI5",
@@ -142,5 +143,9 @@
         }
       ]
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "hpbuysellotcsalesorder.service"
   }
 }

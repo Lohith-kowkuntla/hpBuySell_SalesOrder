@@ -1,31 +1,36 @@
 {
-  "scopes": [
-    {
-      "name": "$XSAPPNAME.SalesOrderManage",
-      "description": "SalesOrderManage"
-    },
-    {
-      "name": "$XSAPPNAME.SalesOrderViewer",
-      "description": "SalesOrderViewer"
-    }
-  ],
-  "attributes": [],
-  "role-templates": [
-    {
-      "name": "SalesOrderManage",
-      "description": "generated",
-      "scope-references": [
-        "$XSAPPNAME.SalesOrderManage"
-      ],
-      "attribute-references": []
-    },
-    {
-      "name": "SalesOrderViewer",
-      "description": "generated",
-      "scope-references": [
-        "$XSAPPNAME.SalesOrderViewer"
-      ],
-      "attribute-references": []
-    }
-  ]
+ "xsappname": "hpbuysell-otc-salesorder",
+ "tenant-mode": "dedicated",
+ "scopes": [
+  {
+   "name": "$XSAPPNAME.SalesOrderManage",
+   "description": "SalesOrderManage"
+  },
+  {
+   "name": "$XSAPPNAME.SalesOrderViewer",
+   "description": "SalesOrderViewer"
+  }
+ ],
+ "attributes": [],
+ "role-templates": [
+  {
+   "name": "SalesOrderManage",
+   "description": "generated",
+   "scope-references": [
+    "$XSAPPNAME.SalesOrderManage"
+   ],
+   "attribute-references": []
+  },
+  {
+   "name": "SalesOrderViewer",
+   "description": "generated",
+   "scope-references": [
+    "$XSAPPNAME.SalesOrderViewer"
+   ],
+   "attribute-references": []
+  }
+ ],
+ "authorities": [
+  "$XSAPPNAME.SalesOrderManage"
+ ]
 }

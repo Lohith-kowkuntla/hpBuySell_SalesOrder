@@ -148,16 +148,6 @@
     <!-- ============================================================= -->
     <!-- 04 Customer Description                                       -->
     <!-- ============================================================= -->
-
-    <sfb:ControlConfiguration
-        key="customerDescription"
-        index="4"
-        visibleInAdvancedArea="true"
-        filterType="multiple"
-        label="{i18n>customerDescription}"/>
-
-
-    <!-- ============================================================= -->
     <!-- 05 Customer Order                                             -->
     <!-- ============================================================= -->
 
@@ -691,31 +681,6 @@
 
 
                         <!-- Customer -->
-
-                        <table:Column
-                            id="salesOrderCustomerColumn"
-                            width="15rem">
-
-                            <table:label>
-
-                                <Text
-                                    id="salesOrderCustomerHeader"
-                                    text="{i18n>customerDescription}"
-                                    wrapping="false"/>
-
-                            </table:label>
-
-                            <table:template>
-
-                                <Text
-                                    id="salesOrderCustomerText"
-                                    text="{customerDescription}"
-                                    wrapping="false"/>
-
-                            </table:template>
-
-                        </table:Column>
-
 
                         <!-- HP Part -->
 

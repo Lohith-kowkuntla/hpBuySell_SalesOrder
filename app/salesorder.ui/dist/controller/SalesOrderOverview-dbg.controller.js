@@ -80,7 +80,6 @@ sap.ui.define(
             hpSalesOrder: {
                 entity: "VH_SalesOrderNumber",
                 valueField: "hpSalesOrder",
-                descriptionField: "customerDescription",
                 title: "HP Sales Order",
                 multi: true
             },
@@ -88,16 +87,7 @@ sap.ui.define(
             customerCode: {
                 entity: "VH_Customer",
                 valueField: "customerCode",
-                descriptionField: "customerDescription",
                 title: "Customer",
-                multi: true
-            },
-
-            customerDescription: {
-                entity: "VH_Customer",
-                valueField: "customerDescription",
-                descriptionField: "customerCode",
-                title: "Customer Description",
                 multi: true
             },
 
@@ -1126,7 +1116,6 @@ sap.ui.define(
                         "lineId",
                         "lineStatus",
                         "customerCode",
-                        "customerDescription",
                         "hpPartNumber",
                         "hpPartDescription",
                         "customerPartNumber",
