@@ -18,6 +18,7 @@ const { buildCancelLineOrdchgPayload } =
 const {
     registerUserScope,
     loadUserScope,
+    buildScopeExpression,
     getVisibleFilters
 } = require("./utils/userScope");
 
@@ -29,8 +30,14 @@ const {
     MDM_SERVICE_NAME,
     MAPPINGS: MDM_DESCRIPTIONS,
     resolveDescriptions,
-    resolveProjectDetails
+    resolveProjectDetails,
+    resolveStorageLocationDetails,
+    resolveCodesByText
 } = require("./utils/mdmDescriptionResolver");
+
+const {
+    translateCustomerDescriptionWhere
+} = require("./utils/customerDescriptionFilter");
 
 
 // ============================================================================
@@ -52,6 +59,39 @@ const EDITABLE_FIELDS = {
         "reasonForCancellation_code"
     ]
 };
+
+
+// ============================================================================
+// SALES ORDER SUMMARY — line status tiles
+//
+// Ordered per LineStatuses.priority (see db model). The business-value
+// strings below are the CodeList's key itself (see db model), never SAP
+// technical codes — only "criticality" (a UI-only concept, not modelled in
+// CDS) is kept here as a small lookup, so there is exactly one source of
+// truth for the status text (the CodeList / VH_LineStatus).
+// ============================================================================
+
+const SO_SUMMARY_STATUSES = [
+    { code: "Open", criticality: "Good" },
+    { code: "Awaiting Ack", criticality: "Neutral" },
+    { code: "Confirmed", criticality: "Good" },
+    { code: "Change Processing", criticality: "Critical" },
+    { code: "Pending Cancellation", criticality: "Critical" },
+    { code: "Partially Shipped", criticality: "Critical" },
+    { code: "Shipped", criticality: "Good" },
+    { code: "Delivered", criticality: "Good" },
+    { code: "Invoiced", criticality: "Good" },
+    { code: "Cancelled", criticality: "Error" }
+];
+
+
+function splitCsv(sValue) {
+
+    return String(sValue || "")
+        .split(",")
+        .map((s) => s.trim())
+        .filter((s) => s.length > 0);
+}
 
 
 // ============================================================================
@@ -91,12 +131,13 @@ const FIELD_PROCESSING_FLAGS = {
 // LINE STATUS
 // ============================================================================
 
-const CANCELLED_LINE_STATUS_CODE = "CANC";
+const CANCELLED_LINE_STATUS_CODE = "Cancelled";
 
 const CANCELLABLE_LINE_STATUS_CODES = [
-    "AACK",
-    "OPEN",
-    "CONF"
+    "Awaiting Ack",
+    "Open",
+    "Confirmed",
+    "Change Processing"
 ];
 
 const { SELECT, UPDATE, INSERT } = cds.ql;
@@ -113,25 +154,11 @@ function toArray(value) {
 
 
 // ============================================================================
-// HEADER SALES ORDER STATUS PRIORITY - FDS 7.6
-// ============================================================================
-
-const HEADER_STATUS_PRIORITY = [
-
-    "OPEN",
-    "AACK",
-    "CONF",
-    "CHPR",
-    "PSHP",
-    "SHIP",
-    "DLVD",
-    "INVD",
-    "CANC"
-];
-
-
-// ============================================================================
-// DERIVE HEADER SALES ORDER STATUS
+// DERIVE HEADER SALES ORDER STATUS - FDS 7.6
+//
+// Priority order is read live from LineStatuses.priority (via the
+// lineStatus association) - the DB CodeList is the single source of truth,
+// not a second hardcoded array that could drift out of sync with it.
 // ============================================================================
 
 async function deriveHeaderSalesOrderStatus(
@@ -151,39 +178,33 @@ async function deriveHeaderSalesOrderStatus(
                     salesOrderId
             })
             .columns(
-                "lineStatus_code"
+                "lineStatus_code",
+                "lineStatus.priority as priority"
             );
 
     if (!lineItems.length) {
         return null;
     }
 
-    const lineStatusCodes =
-        new Set(
-            lineItems
-                .map(
-                    item =>
-                        item.lineStatus_code
-                )
-                .filter(Boolean)
-        );
-
-    for (
-        const statusCode
-        of HEADER_STATUS_PRIORITY
-    ) {
-
-        if (
-            lineStatusCodes.has(
-                statusCode
+    const bestLineItem =
+        lineItems
+            .filter(
+                item =>
+                    item.lineStatus_code &&
+                    item.priority !== null &&
+                    item.priority !== undefined
             )
-        ) {
+            .reduce(
+                (best, item) =>
+                    (!best || item.priority < best.priority)
+                        ? item
+                        : best,
+                null
+            );
 
-            return statusCode;
-        }
-    }
-
-    return null;
+    return bestLineItem
+        ? bestLineItem.lineStatus_code
+        : null;
 }
 
 
@@ -259,7 +280,8 @@ module.exports = cds.service.impl(
         const {
             SalesOrders,
             SalesOrderItems,
-            SalesOrderAcknowledgements
+            SalesOrderAcknowledgements,
+            SalesOrderSearchExport
         } = srv.entities;
 
 
@@ -325,7 +347,8 @@ module.exports = cds.service.impl(
             "MDM_UserGroup",
             "MDM_UserPartners",
             "MDM_UserProjects",
-            "MDM_BusinessModelVH"
+            "MDM_BusinessModelVH",
+            "MDM_StorageLoc"
 
         ];
 
@@ -351,6 +374,80 @@ module.exports = cds.service.impl(
                 }
             );
         }
+
+
+        // =====================================================================
+        // CUSTOMER DESCRIPTION — Search Filter (FDS "Customer Description")
+        //
+        // customerDescription is virtual (no local column - MDM only). A
+        // $filter on it can't reach the local DB, so it's rewritten here,
+        // before the query runs, into a customerCode IN (...) condition
+        // resolved via MDM text search (already-built resolveCodesByText -
+        // this is the only thing that was missing, it had no caller before).
+        // =====================================================================
+
+        srv.before(
+            "READ",
+            SalesOrderSearchExport,
+            async (req) => {
+
+                const where = req.query?.SELECT?.where;
+
+                if (!where?.length) {
+                    return;
+                }
+
+                req.query.SELECT.where = await translateCustomerDescriptionWhere(
+                    where,
+                    resolveCodesByText
+                );
+            }
+        );
+
+
+        // Resolve customerDescription for display, same way
+        // wbsProjectCodeDescription/hpCompanyDescription/hpBuyerName already
+        // are - just via MDM instead of a local column, since none exists.
+        srv.after(
+            "READ",
+            SalesOrderSearchExport,
+            async (rows, req) => {
+
+                // Unlike a real (persisted) column, a "virtual" element is
+                // never materialized onto the raw row by the generic READ
+                // handler - not even as null - regardless of $select. So
+                // resolveDescriptions()'s own "only resolve what the
+                // request actually selected" check (`target in row`) would
+                // always find it missing and skip it. Seed the key first,
+                // but only when the client actually asked for it - an
+                // unconditional resolve here would trigger an MDM lookup on
+                // every single Overview search, selected or not.
+                const columns = req.query?.SELECT?.columns;
+
+                const wasSelected =
+                    !columns ||
+                    columns.some((column) => column.ref?.[0] === "customerDescription");
+
+                if (!wasSelected) {
+                    return;
+                }
+
+                const list = Array.isArray(rows) ? rows : (rows ? [rows] : []);
+
+                list.forEach((row) => {
+
+                    if (row && !("customerDescription" in row)) {
+                        row.customerDescription = null;
+                    }
+                });
+
+                await resolveDescriptions(
+                    rows,
+                    MDM_DESCRIPTIONS.SalesOrderSearchExport,
+                    { fill: false }
+                );
+            }
+        );
 
 
         // =====================================================================
@@ -1056,6 +1153,148 @@ module.exports = cds.service.impl(
 
 
         // =====================================================================
+        // SALES ORDER SUMMARY — status count tiles (FDS 3.13)
+        // =====================================================================
+
+        srv.on(
+            "getSOSummaryCounts",
+            async (req) => {
+
+                const {
+                    businessModel,
+                    customerCode,
+                    hpCompanyCode
+                } = req.data;
+
+                /*
+                 * The tiles must count only what this user could actually
+                 * open on Overview - the same row-level Customer + WBS Project
+                 * scope enforced there (srv.before("READ", SalesOrders/...))
+                 * is NOT applied automatically to a SELECT issued from inside
+                 * a custom handler, so it is applied explicitly here, the same
+                 * way the Overview screen's own list query gets it.
+                 */
+                const scope =
+                    await loadUserScope(req);
+
+                const aScopeExpr =
+                    buildScopeExpression(
+                        {
+                            target: {
+                                name: "SalesOrders"
+                            }
+                        },
+                        scope
+                    );
+
+                const oSalesOrderFilter = {};
+
+                if (businessModel) {
+                    oSalesOrderFilter.businessModel =
+                        splitCsv(businessModel);
+                }
+
+                if (customerCode) {
+                    oSalesOrderFilter.customerCode =
+                        splitCsv(customerCode);
+                }
+
+                if (hpCompanyCode) {
+                    oSalesOrderFilter.hpCompanyCode =
+                        splitCsv(hpCompanyCode);
+                }
+
+                const bNeedsHeaderNarrowing =
+                    Object.keys(oSalesOrderFilter).length > 0 ||
+                    !scope.unrestricted;
+
+                let aSalesOrderKeys = null;
+
+                if (bNeedsHeaderNarrowing) {
+
+                    const oHeaderQuery =
+                        SELECT
+                            .from(SalesOrders)
+                            .columns("hpSalesOrder");
+
+                    if (
+                        Object.keys(oSalesOrderFilter).length
+                    ) {
+
+                        oHeaderQuery.where(
+                            oSalesOrderFilter
+                        );
+                    }
+
+                    if (aScopeExpr) {
+
+                        oHeaderQuery.where([
+                            "(",
+                            ...aScopeExpr,
+                            ")"
+                        ]);
+                    }
+
+                    const aSalesOrders =
+                        await oHeaderQuery;
+
+                    aSalesOrderKeys =
+                        aSalesOrders.map(
+                            (o) => o.hpSalesOrder
+                        );
+
+                    if (!aSalesOrderKeys.length) {
+
+                        return SO_SUMMARY_STATUSES.map(
+                            (oStatus) => ({
+                                code: oStatus.code,
+                                description: oStatus.code,
+                                count: 0,
+                                criticality: oStatus.criticality
+                            })
+                        );
+                    }
+                }
+
+                const oItemFilter =
+                    aSalesOrderKeys
+                        ? {
+                            salesOrder_hpSalesOrder:
+                                aSalesOrderKeys
+                        }
+                        : {};
+
+                const aCounts =
+                    await SELECT
+                        .from(SalesOrderItems)
+                        .columns(
+                            "lineStatus_code as code",
+                            "count(*) as count"
+                        )
+                        .where(oItemFilter)
+                        .groupBy("lineStatus_code");
+
+                const mCountByCode = {};
+
+                aCounts.forEach(
+                    (o) => {
+                        mCountByCode[o.code] = o.count;
+                    }
+                );
+
+                return SO_SUMMARY_STATUSES.map(
+                    (oStatus) => ({
+                        code: oStatus.code,
+                        description: oStatus.code,
+                        count: mCountByCode[oStatus.code] || 0,
+                        criticality: oStatus.criticality
+                    })
+                );
+            }
+        );
+
+
+        // =====================================================================
         // UPDATE SALES ORDER ITEM
         // =====================================================================
 
@@ -1659,16 +1898,10 @@ module.exports = cds.service.impl(
                     return;
                 }
 
-                // Resolve descriptions:
-                // PROJECT
-                // COMPANY_CODE
-                // CUSTOMER
-                // BUYER
-                await resolveDescriptions(
-                    rows,
-                    MDM_DESCRIPTIONS.SalesOrder,
-                    { fill: true }
-                );
+                // wbsProjectCodeDescription / hpCompanyDescription / hpBuyerName
+                // are now resolved and persisted at CREATE/UPDATE time (see
+                // upsertRow), so the DB values are returned here as-is rather
+                // than re-resolved from MDM on every read.
 
                 // Resolve project details:
                 // customerNumber
@@ -1677,6 +1910,17 @@ module.exports = cds.service.impl(
                 // termsOfPayment
                 // transitTime
                 await resolveProjectDetails(
+                    rows
+                );
+
+                // Resolve storage location details:
+                // storageLocationDetails_name
+                // storageLocationDetails_address1
+                // storageLocationDetails_address2
+                // storageLocationDetails_city
+                // storageLocationDetails_postalCode
+                // storageLocationDetails_country
+                await resolveStorageLocationDetails(
                     rows
                 );
             }
@@ -1894,6 +2138,14 @@ module.exports = cds.service.impl(
             if (!row || typeof row !== "object") return { created: 0, updated: 0 };
 
             flattenKeyAssociations(entity, row);
+
+            // Resolve master data descriptions once, at creation/update time,
+            // so they are persisted as a snapshot rather than looked up from
+            // MDM on every subsequent read: wbsProjectCodeDescription,
+            // hpCompanyDescription, hpBuyerName
+            if (shortName(entity) === "SalesOrders") {
+                await resolveDescriptions(row, MDM_DESCRIPTIONS.SalesOrder, { fill: true });
+            }
 
             // Children travel separately: writing them with the parent would
             // replace the composition rather than upsert into it

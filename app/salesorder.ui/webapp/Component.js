@@ -26,6 +26,24 @@ sap.ui.define([
             this._loadUserInfo(oUserModel);
 
             this.getRouter().initialize();
+
+            // Cross App Nav
+
+            const oComponentData = this.getComponentData();
+
+            if (oComponentData && oComponentData.startupParameters && oComponentData.startupParameters.salesorderID) {
+
+                const sSalesorderID = oComponentData.startupParameters.salesorderID[0];
+
+                this.getRouter().navTo("salesOrderDetail", {
+
+                    salesOrder: sSalesorderID
+
+                });
+
+            }
+
+            //  Cross App Nav
         },
 
         /**

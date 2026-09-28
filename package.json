@@ -19,6 +19,7 @@
     "rimraf": "^5.0.5"
   },
   "scripts": {
+    "test": "node --test test/*.test.js",
     "start": "cds-serve",
     "watch-salesorder.ui": "cds watch --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false",
     "watch-users": "cds watch --profile users --open hpbuysell.otc.salesorder.ui/index.html?sap-ui-xx-viewCache=false --livereload false",
@@ -133,7 +134,7 @@
         "[production]": {
           "credentials": {
             "destination": "hpbuysell-mdm-common-srv-dest",
-            "path": "/odata/v4/common"
+            "path": "/odata/v4/common/"
           }
         },
         "csrf": true,

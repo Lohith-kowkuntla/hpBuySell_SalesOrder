@@ -63,6 +63,30 @@ sap.ui.define(
         var SCOPES = ["ALL", "PAGE", "SELECTED"];
 
         // -------------------------------------------------------------------------
+        // Stale filter values
+        //
+        // SalesOrderStatuses/LineStatuses/SalesOrderOrigins/SoAckOutOrigins were
+        // re-keyed from SAP technical codes to business values (e.g. "AACK" ->
+        // "Awaiting Ack", "MANCUST" -> "ZMBC"). A SmartVariantManagement default
+        // variant saved before that rename (persisted client-side, since
+        // flexEnabled is false) replays the old dead codes into these fields on
+        // every page load, which SmartFilterBar's own value-help metadata
+        // validation then reports as "Value doesn't exist" - even though the
+        // visible customControl ComboBox itself renders fine. Any such value is
+        // cleared once, on filter bar initialisation (see
+        // _sanitizeStaleFilterValues below), so an old saved variant or deep
+        // link can never reintroduce this symptom.
+        // -------------------------------------------------------------------------
+
+        var STALE_FILTER_VALUES = {
+            salesOrderStatus: ["AACK", "OPEN", "CONF", "CHPR", "PSHP", "SHIP", "DLVD", "INVD", "CANC"],
+            lineStatus: ["AACK", "OPEN", "CONF", "CHPR", "PSHP", "SHIP", "DLVD", "INVD", "CANC"],
+            salesOrderOrigin: ["MANCUST", "MANHP", "MUCUST", "MUHP"],
+            soChangeInOrigin: ["MANCUST", "MANHP", "MUCUST", "MUHP"],
+            soAckOutOrigin: ["NONEDI"]
+        };
+
+        // -------------------------------------------------------------------------
         // Value Help configuration
         // -------------------------------------------------------------------------
         //
@@ -239,55 +263,17 @@ sap.ui.define(
                 multi: true
             },
 
-            soAckOutOrigin: {
-                entity: "VH_SoAckOutOrigin",
-                valueField: "soAckOutOrigin",
-                title: "SO Ack Out Origin",
-                multi: true
-            },
-
-            soChangeInOrigin: {
-                entity: "VH_SoChangeInOrigin",
-                valueField: "soChangeInOrigin",
-                title: "SO Change In Origin",
-                multi: true
-            },
-
-            salesOrderType: {
-                entity: "VH_SalesOrderType",
-                valueField: "code",
-                title: "Sales Order Type",
-                multi: true
-            },
-
-            salesOrderOrigin: {
-                entity: "VH_SalesOrderOrigin",
-                valueField: "code",
-                title: "Sales Order Origin",
-                multi: true
-            },
-
-            salesOrderStatus: {
-                entity: "VH_OrderStatus",
-                valueField: "code",
-                title: "Sales Order Status",
-                multi: true
-            },
-
-            lineStatus: {
-                entity: "VH_LineStatus",
-                valueField: "code",
-                title: "Line Status",
-                multi: true
-            },
-
-            specialDealFlagSo: {
-                entity: "VH_SpecialDealFlag",
-                valueField: "code",
-                descriptionField: "description",
-                title: "Special Deal Flag",
-                multi: false
-            },
+            // lineStatus, salesOrderStatus, salesOrderOrigin, salesOrderType,
+            // soAckOutOrigin, soChangeInOrigin and specialDealFlagSo are
+            // deliberately NOT configured here. Per the FDS UI Mapping
+            // Sheet they are "Dropdown With Values" fields, not "Search
+            // Filter" - each now has an explicit <sfb:customControl>
+            // ComboBox in the view bound directly to its VH_* entity, so
+            // they don't need (and must not get) the ValueHelpDialog this
+            // dictionary attaches to Search Filter fields. A ComboBox
+            // inherits setShowValueHelp(), so leaving one of these keys in
+            // here would silently bolt an extra value-help trigger onto
+            // what's supposed to be a plain bounded dropdown.
 
             gtsHold: {
                 entity: "VH_GtsHold",
@@ -352,12 +338,18 @@ sap.ui.define(
                     var oQuery =
                         oArguments["?query"] || {};
 
-                    var sStatus =
-                        oQuery.lineStatus ||
-                        oQuery.salesOrderStatus;
+                    var sFieldKey =
+                        oQuery.lineStatus
+                            ? "lineStatus"
+                            : oQuery.salesOrderStatus
+                                ? "salesOrderStatus"
+                                : null;
 
-                    if (sStatus) {
-                        this._applyStatusFilter(sStatus);
+                    if (sFieldKey) {
+                        this._applyStatusFilter(
+                            sFieldKey,
+                            oQuery[sFieldKey]
+                        );
                         return;
                     }
 
@@ -373,7 +365,7 @@ sap.ui.define(
                 // Status filtering
                 // =====================================================================
 
-                _applyStatusFilter: function (sStatus) {
+                _applyStatusFilter: function (sFieldKey, sStatus) {
 
                     var oFilterBar = this._getFilterBar();
 
@@ -383,16 +375,17 @@ sap.ui.define(
 
                     oFilterBar.clear();
 
+                    // lineStatus/salesOrderStatus are filterType="single"
+                    // customControl ComboBoxes (selectedKey bound directly
+                    // to a scalar) - NOT filterType="multiple" fields, so
+                    // the filter data must be the plain scalar value, not
+                    // the {items: [{key: ...}]} shape MultiComboBox fields
+                    // expect.
+                    var oFilterData = {};
+                    oFilterData[sFieldKey] = sStatus;
+
                     oFilterBar.setFilterData(
-                        {
-                            lineStatus: {
-                                items: [
-                                    {
-                                        key: sStatus
-                                    }
-                                ]
-                            }
-                        },
+                        oFilterData,
                         true
                     );
 
@@ -408,9 +401,57 @@ sap.ui.define(
 
                 onFilterBarInitialised: function () {
 
+                    this._sanitizeStaleFilterValues();
+
                     this._setupValueHelps();
 
                     this._updateFilterSummary();
+                },
+
+
+                /**
+                 * Clears any pre-rename SAP-code filter value (see
+                 * STALE_FILTER_VALUES) that a persisted SmartVariant or deep
+                 * link may have injected into the filter bar's model before
+                 * this handler runs, so it can never surface as a
+                 * "Value doesn't exist" validation error.
+                 */
+                _sanitizeStaleFilterValues: function () {
+
+                    var oFilterBar = this._getFilterBar();
+
+                    if (!oFilterBar) {
+                        return;
+                    }
+
+                    var oFilterData =
+                        oFilterBar.getFilterData() || {};
+
+                    var bChanged = false;
+
+                    Object.keys(STALE_FILTER_VALUES).forEach(
+                        function (sField) {
+
+                            var vValue =
+                                oFilterData[sField];
+
+                            if (
+                                typeof vValue === "string" &&
+                                STALE_FILTER_VALUES[sField].indexOf(vValue) !== -1
+                            ) {
+
+                                oFilterData[sField] = "";
+                                bChanged = true;
+                            }
+                        }
+                    );
+
+                    if (bChanged) {
+                        oFilterBar.setFilterData(
+                            oFilterData,
+                            true
+                        );
+                    }
                 },
 
 

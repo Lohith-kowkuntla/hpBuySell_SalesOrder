@@ -681,7 +681,7 @@
 
             <Text
                 id="soValOrigin"
-                text="{salesOrderOrigin}"
+                text="{salesOrderOrigin/name}"
                 wrapping="true" />
 
         </VBox>
@@ -787,6 +787,9 @@
                                 rowsUpdated=".onItemsUpdateFinished"
                                 rows="{
                                     path: 'items',
+                                    parameters: {
+                                        expand: 'reasonForCancellation,soAckOutOrigin,soChangeInOrigin'
+                                    },
                                     sorter: {
                                         path: 'lineId',
                                         descending: false
@@ -1419,7 +1422,7 @@
                                                     id="soCellReasonCancel"
                                                     wrapping="false"
                                                     visible="{parts: ['view>/itemsCancelMode', 'view>/selectedLines', 'lineId', 'lineStatus_code'], formatter: '.formatter.lineCancelReadOnly'}"
-                                                    text="{reasonForCancellation_code}" />
+                                                    text="{reasonForCancellation/name}" />
 
                                                 <Select
                                                     id="soSelReasonCancel"
@@ -1730,7 +1733,7 @@
                             mode="None"
                             noDataText="{i18n>noDataAttachments}"
                             items="{
-                                path: 'attachments',
+                                path: 'acknowledgements',
                                 sorter: {
                                     path: 'version',
                                     descending: true
@@ -1798,7 +1801,7 @@
 
                                         <Text
                                             id="soAttCellDate"
-                                            text="{path: 'uploadedAt', formatter: '.formatter.dateTime'}" />
+                                            text="{path: 'receivedAt', formatter: '.formatter.dateTime'}" />
 
 
                                         <Button

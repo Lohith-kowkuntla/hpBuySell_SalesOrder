@@ -15,23 +15,26 @@ service HpBuySellOtcSalesOrderService {
 
     @title                 : '{i18n>SalesOrders}'
     @cds.redirection.target: true
-    @restrict              : [
-        {
-            grant: ['READ'],
-            to   : [
-                'SalesOrderManage',
-                'SalesOrderViewer'
-            ]
-        },
-        {
-            // CREATE is granted so that CPI/integration senders can POST a
-            // Sales Order without checking existence first - the UPSERT
-            // handler in srv.js resolves INSERT vs UPDATE by key. Same role
-            // as UPDATE: only SalesOrderManage may write.
-            grant: ['CREATE', 'UPDATE','DELETE'],
-            to   : ['SalesOrderManage']
-        }
-    ]
+
+    // @restrict              : [
+    //     {
+    //         grant: ['READ'],
+    //         to   : [
+    //             'SalesOrderManage',
+    //             'SalesOrderViewer'
+    //         ]
+    //     },
+    //     {
+    //         // CREATE is granted so that CPI/integration senders can POST a
+    //         // Sales Order without checking existence first - the UPSERT
+    //         // handler in srv.js resolves INSERT vs UPDATE by key. Same role
+    //         // as UPDATE: only SalesOrderManage may write.
+    //         grant: ['CREATE', 'UPDATE','DELETE'],
+    //         to   : ['SalesOrderManage']
+    //     }
+    // ]
+    
+    
     entity SalesOrders                as projection on db.SalesOrders
         actions {
 
@@ -43,29 +46,32 @@ service HpBuySellOtcSalesOrderService {
 
     @title                 : '{i18n>SalesOrderItems}'
     @cds.redirection.target: true
-    @restrict              : [
-        {
-            grant: ['READ'],
-            to   : [
-                'SalesOrderManage',
-                'SalesOrderViewer'
-            ]
-        },
-        {
-            // CREATE is granted for the same CPI/UPSERT reason as on
-            // SalesOrders - see srv.js "UPSERT (create-or-update)" section.
-            grant: ['CREATE', 'UPDATE','DELETE'],
-            to   : ['SalesOrderManage']
-        },
-        {
-            // Custom bound actions must be explicitly granted here - once an
-            // entity has @restrict, it governs ALL events on that entity,
-            // including bound actions, regardless of the action's own
-            // @requires annotation below.
-            grant: ['cancelLine'],
-            to   : ['SalesOrderManage']
-        }
-    ]
+
+    // @restrict              : [
+    //     {
+    //         grant: ['READ'],
+    //         to   : [
+    //             'SalesOrderManage',
+    //             'SalesOrderViewer'
+    //         ]
+    //     },
+    //     {
+    //         // CREATE is granted for the same CPI/UPSERT reason as on
+    //         // SalesOrders - see srv.js "UPSERT (create-or-update)" section.
+    //         grant: ['CREATE', 'UPDATE','DELETE'],
+    //         to   : ['SalesOrderManage']
+    //     },
+    //     {
+    //         // Custom bound actions must be explicitly granted here - once an
+    //         // entity has @restrict, it governs ALL events on that entity,
+    //         // including bound actions, regardless of the action's own
+    //         // @requires annotation below.
+    //         grant: ['cancelLine'],
+    //         to   : ['SalesOrderManage']
+    //     }
+    // ]
+    
+    
     entity SalesOrderItems            as projection on db.SalesOrderItems
         actions {
 
@@ -82,7 +88,7 @@ service HpBuySellOtcSalesOrderService {
     // Sales Order Item Update
     // =========================================================================
 
-    @requires: 'SalesOrderManage'
+    // @requires: 'SalesOrderManage'
     action   updateSalesOrderItem(salesOrder: String(10),
                                   lineID: String(6),
                                   salesPrice: Decimal(15, 3),
@@ -96,7 +102,8 @@ service HpBuySellOtcSalesOrderService {
     // Sales Order Header Update
     // =========================================================================
 
-    @requires: 'SalesOrderManage'
+    // @requires: 'SalesOrderManage'
+
     action   updateSalesOrderHeader(hpSalesOrder: String(10),
                                     hpNotesToCustomer: String(1000)) returns UpdateResult;
 
@@ -111,19 +118,22 @@ service HpBuySellOtcSalesOrderService {
      * UPDATE are granted here rather than the whole entity staying @readonly.
      */
     @title   : '{i18n>SalesOrderAcknowledgements}'
-    @restrict: [
-        {
-            grant: ['READ'],
-            to   : [
-                'SalesOrderManage',
-                'SalesOrderViewer'
-            ]
-        },
-        {
-            grant: ['CREATE', 'UPDATE','DELETE'],
-            to   : ['SalesOrderManage']
-        }
-    ]
+
+    // @restrict: [
+    //     {
+    //         grant: ['READ'],
+    //         to   : [
+    //             'SalesOrderManage',
+    //             'SalesOrderViewer'
+    //         ]
+    //     },
+    //     {
+    //         grant: ['CREATE', 'UPDATE','DELETE'],
+    //         to   : ['SalesOrderManage']
+    //     }
+    // ]
+
+
     entity SalesOrderAcknowledgements as
         projection on db.SalesOrderAcknowledgements {
             *,
@@ -156,13 +166,16 @@ service HpBuySellOtcSalesOrderService {
     @readonly
     @title                 : '{i18n>SalesOrderSearchExport}'
     @cds.redirection.target: false
-    @restrict              : [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict              : [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
+
     entity SalesOrderSearchExport     as
         projection on db.SalesOrderItems {
 
@@ -177,6 +190,18 @@ service HpBuySellOtcSalesOrderService {
                 salesOrder.hpCompanyCode                 as hpCompanyCode,
                 salesOrder.hpCompanyDescription          as hpCompanyDescription,
                 salesOrder.customerCode                  as customerCode,
+
+                /*
+                 * customerDescription has no local column - it only exists
+                 * in MDM. Resolved on read (srv.js after-READ handler,
+                 * mdmDescriptionResolver's CUSTOMER source) and, when
+                 * filtered on, translated to a customerCode IN (...)
+                 * condition before the query runs (srv.js before-READ
+                 * handler, customerDescriptionFilter.js) since a virtual
+                 * field can't be pushed into the local SQL WHERE clause.
+                 */
+                virtual null                             as customerDescription : String(40),
+
                 salesOrder.shipTo                        as shipTo,
                 salesOrder.billTo                        as billTo,
                 salesOrder.payer                         as payer,
@@ -185,6 +210,7 @@ service HpBuySellOtcSalesOrderService {
                 salesOrder.hpBuyerName                   as hpBuyerName,
                 salesOrder.hpSalesOrganization           as hpSalesOrganization,
                 salesOrder.salesOrderOrigin.code         as salesOrderOrigin,
+                salesOrder.salesOrderOrigin.name         as salesOrderOriginName,
                 salesOrder.businessUnit                  as businessUnit,
                 salesOrder.paymentTerms                  as paymentTerms,
                 salesOrder.hpPlant                       as hpPlant,
@@ -196,6 +222,7 @@ service HpBuySellOtcSalesOrderService {
                 salesOrder.blanketIndicator              as blanketIndicator,
                 salesOrder.lspAddress                    as lspAddress,
                 salesOrder.salesOrderType.code           as salesOrderType,
+                salesOrder.salesOrderType.name           as salesOrderTypeName,
 
             key lineId,
                 hpPartNumber,
@@ -214,10 +241,13 @@ service HpBuySellOtcSalesOrderService {
                 originalPlannedReceiptDate,
                 carrierSo,
                 otherCarrierSo,
-                soChangeInOrigin,
+                soChangeInOrigin.code                    as soChangeInOrigin,
+                soChangeInOrigin.name                    as soChangeInOriginName,
                 reasonForCancellation.code               as reasonForCancellation,
+                reasonForCancellation.name                as reasonForCancellationName,
                 shippingPoint,
-                soAckOutOrigin,
+                soAckOutOrigin.code                       as soAckOutOrigin,
+                soAckOutOrigin.name                       as soAckOutOriginName,
                 storageLocation,
                 endSupplier,
                 hpNotesToCustomer,
@@ -248,16 +278,17 @@ service HpBuySellOtcSalesOrderService {
     @readonly
     @title                 : '{i18n>SalesOrderScheduleSummary}'
     @cds.redirection.target: false
-    @restrict              : [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict              : [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
     entity SalesOrderScheduleSummary  as
         select from db.SalesOrderItems {
-            key lineStatus.code     as lineStatus     : String(4) @title: '{i18n>summary.lineStatus}',
+            key lineStatus.code     as lineStatus     : String(30) @title: '{i18n>summary.lineStatus}',
                 lineStatus.name     as lineStatusName : String    @title: '{i18n>summary.lineStatusName}',
                 lineStatus.priority as priority       : Integer   @title: '{i18n>summary.priority}',
                 count(1)            as orderCount     : Integer   @title: '{i18n>summary.orderCount}'
@@ -273,57 +304,67 @@ service HpBuySellOtcSalesOrderService {
 
     @readonly  @cds.odata.valuelist
     @title   : '{i18n>SalesOrderStatuses}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict: [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
     entity SalesOrderStatuses         as projection on db.SalesOrderStatuses;
 
     @readonly  @cds.odata.valuelist
     @title   : '{i18n>LineStatuses}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict: [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
     entity LineStatuses               as projection on db.LineStatuses;
 
     @readonly  @cds.odata.valuelist
     @title   : '{i18n>SalesOrderTypes}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict: [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
     entity SalesOrderTypes            as projection on db.SalesOrderTypes;
 
     @readonly  @cds.odata.valuelist
     @title   : '{i18n>SalesOrderOrigins}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict: [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
     entity SalesOrderOrigins          as projection on db.SalesOrderOrigins;
 
     @readonly  @cds.odata.valuelist
     @title   : '{i18n>CancellationReasons}'
-    @restrict: [{
-        grant: ['READ'],
-        to   : [
-            'SalesOrderManage',
-            'SalesOrderViewer'
-        ]
-    }]
+
+    // @restrict: [{
+    //     grant: ['READ'],
+    //     to   : [
+    //         'SalesOrderManage',
+    //         'SalesOrderViewer'
+    //     ]
+    // }]
+
     entity CancellationReasons        as projection on db.CancellationReasons;
 
     // ==========================================================================
@@ -387,18 +428,32 @@ service HpBuySellOtcSalesOrderService {
     @cds.redirection.target: false
     entity VH_SalesOrderType          as
         projection on db.SalesOrderTypes {
-            code
+            code,
+            name
         };
 
 
     // Sales Order Origin
-    // Values maintained in SalesOrderOrigins CodeList
+    // Values maintained in SalesOrderOrigins CodeList; also drives the
+    // SO Change IN Origin value help (same domain of values).
 
     @readonly
     @cds.redirection.target: false
     entity VH_SalesOrderOrigin        as
         projection on db.SalesOrderOrigins {
-            code
+            code,
+            name
+        };
+
+
+    // SO Ack Out Origin — EDI / Alert / EDI + Alert
+
+    @readonly
+    @cds.redirection.target: false
+    entity VH_SoAckOutOrigin          as
+        projection on db.SoAckOutOrigins {
+            code,
+            name
         };
 
 
@@ -408,7 +463,8 @@ service HpBuySellOtcSalesOrderService {
     @cds.redirection.target: false
     entity VH_ReasonForCancellation   as
         projection on db.CancellationReasons {
-            code
+            code,
+            name
         };
 
 
@@ -668,30 +724,6 @@ service HpBuySellOtcSalesOrderService {
             and endSupplier <>     '';
 
 
-    //-------------------------------------------------------------------------------*
-    // SO Ack Out Origin
-    //-------------------------------------------------------------------------------*
-
-    @cds.redirection.target: false
-    entity VH_SoAckOutOrigin          as
-        select distinct key soAckOutOrigin from db.SalesOrderItems
-        where
-                soAckOutOrigin is not null
-            and soAckOutOrigin <>     '';
-
-
-    //-------------------------------------------------------------------------------*
-    // SO Change In Origin
-    //-------------------------------------------------------------------------------*
-
-    @cds.redirection.target: false
-    entity VH_SoChangeInOrigin        as
-        select distinct key soChangeInOrigin from db.SalesOrderItems
-        where
-                soChangeInOrigin is not null
-            and soChangeInOrigin <>     '';
-
-
     //===============================================================================*
     // Static Value Helps
     //===============================================================================*
@@ -767,6 +799,23 @@ service HpBuySellOtcSalesOrderService {
 
     @requires: 'authenticated-user'
     function getUserInfo()                                           returns UserInfoResult;
+
+    // ==========================================================================
+    // Sales Order Summary screen — status count tiles, filterable by
+    // Business Model / Customer Code / HP Company Code (FDS 3.13)
+    // ==========================================================================
+
+    type SOSummaryCount       : {
+        code        : String(4);
+        description : String;
+        count       : Integer;
+        criticality : String;
+    };
+
+    @requires: 'authenticated-user'
+    function getSOSummaryCounts(businessModel: String,
+                                customerCode: String,
+                                hpCompanyCode: String)                returns array of SOSummaryCount;
 
     // ==========================================================================
     // MDM Common Service
@@ -881,5 +930,12 @@ service HpBuySellOtcSalesOrderService {
     @cds.persistence.skip
     @cds.redirection.target: false
     entity MDM_BusinessModelVH           as projection on mdm.BusinessModelVH;
+
+    @readonly
+    @cds.persistence.skip
+    @cds.redirection.target: false
+    entity MDM_StorageLoc         as projection on mdm.Storageloc;
+
+    
 
 }

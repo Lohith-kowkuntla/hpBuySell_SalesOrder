@@ -12,7 +12,6 @@
 namespace hpbuysell.otc.salesorder;
 
 using {
-    cuid,
     managed,
     sap.common.CodeList
 } from '@sap/cds/common';
@@ -303,6 +302,9 @@ entity SalesOrderItems : managed {
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
         carrierSo                          : String(10);
 
+        @title              : '{i18n>soItem.carrierSoDetails}' 
+        carrierSoDetails             : PartnerAddressDetails;
+
         @title              : '{i18n>soItem.otherCarrierSo}' // CHAR10
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
         otherCarrierSo                     : String(10);
@@ -351,11 +353,11 @@ entity SalesOrderItems : managed {
 
         @title              : '{i18n>soItem.soAckOutOrigin}' // CHAR10
         @readonly
-        soAckOutOrigin                     : String(10);
+        soAckOutOrigin                     : Association to SoAckOutOrigins;
 
         @title              : '{i18n>soItem.soChangeInOrigin}' // CHAR10
         @readonly
-        soChangeInOrigin                   : String(10);
+        soChangeInOrigin                   : Association to SalesOrderOrigins;
 
         @title              : '{i18n>soItem.customerNotesToHp}' // CHAR255
         @Common.FieldControl: #ReadOnly // editable in Phase 2 (FDS 3.7.2)
@@ -471,12 +473,16 @@ entity SalesOrderAcknowledgements : managed {
 // ---------------------------------------------------------------------------
 
 // FDS 3.7.6 — priority drives the derived header status
-// DEVIATION: sheet says CHAR1, but there are 11 states and both status fields
-// are BTP-calculated (never sent on the wire), so a readable key is used.
+// DEVIATION: sheet says CHAR1, but there are 10 business-value states and
+// both status fields are BTP-calculated (never sent on the wire), so the
+// code key IS the business value itself (e.g. "Open", "Confirmed") rather
+// than a 4-letter SAP code — ORDRSP processing, search filters, and UI
+// exports all work with these business values directly, never abbreviated
+// codes like AACK/CONF/PSHP.
 @title: '{i18n>SalesOrderStatuses}'
 entity SalesOrderStatuses : CodeList {
         @title: '{i18n>codeList.code}'
-    key code     : String(4);
+    key code     : String(30);
 
         @title: '{i18n>codeList.priority}'
         priority : Integer;
@@ -485,7 +491,7 @@ entity SalesOrderStatuses : CodeList {
 @title: '{i18n>LineStatuses}'
 entity LineStatuses : CodeList {
         @title: '{i18n>codeList.code}'
-    key code     : String(4);
+    key code     : String(30);
 
         @title: '{i18n>codeList.priority}'
         priority : Integer;
@@ -497,10 +503,21 @@ entity SalesOrderTypes : CodeList {
     key code : String(4); // ZBLB, ZCBS, ZICB
 }
 
+// SAP technical code persisted internally; name/descr (localized) carry the
+// business-friendly display text shown in value helps. Shared by both
+// salesOrderOrigin (Sales Order Origin) and soChangeInOrigin (SO Change IN
+// Origin) associations, since both draw from the same set of values.
 @title: '{i18n>SalesOrderOrigins}'
 entity SalesOrderOrigins : CodeList {
         @title: '{i18n>codeList.code}'
-    key code : String(10); // Manual Customer / Manual HP / Mass Upload / EDI
+    key code : String(10); // ZEDB, ZMBC, ZMBG, ZMSB, ZMBU, ZBSP
+}
+
+// SO Ack Out Origin — EDI / Alert / EDI + Alert
+@title: '{i18n>SoAckOutOrigins}'
+entity SoAckOutOrigins : CodeList {
+        @title: '{i18n>codeList.code}'
+    key code : String(10);
 }
 
 // FDS slide 39

@@ -75,11 +75,11 @@ const SOURCES = {
     },
 
     // Customer description
-    // CUSTOMER: {
-    //     entity: 'Customer',
-    //     keys: ['customerid'],
-    //     text: 'customername'
-    // },
+    CUSTOMER: {
+        entity: 'Customer',
+        keys: ['customerid'],
+        text: 'customername'
+    },
 
     // HP Buyer name
     BUYER: {
@@ -146,11 +146,58 @@ const PROJECT_DETAILS = {
 };
 
 //-----------------------------------------------------------------------------------*
+// Storage location detail mapping
+//-----------------------------------------------------------------------------------*
+// Sales Order item fields <- MDM Storageloc
+//
+// storageLocationDetails_name       <- name1
+// storageLocationDetails_address1   <- name2
+// storageLocationDetails_address2   <- name3
+// storageLocationDetails_city       <- name5
+// storageLocationDetails_postalCode <- postalcode
+// storageLocationDetails_country    <- countrykey
+//-----------------------------------------------------------------------------------*
+
+const STORAGE_LOCATION_DETAILS = {
+    entity: 'Storageloc',
+    key: 'storageloc',
+
+    fields: [
+        'name1',
+        'name2',
+        'name3',
+        'name5',
+        'postalcode',
+        'countrykey'
+    ]
+};
+
+//-----------------------------------------------------------------------------------*
+// Search export mapping
+//-----------------------------------------------------------------------------------*
+//
+// customerDescription only - NOT the full SALES_ORDER array. The other three
+// descriptions (wbsProjectCodeDescription, hpCompanyDescription, hpBuyerName)
+// are already real, correctly-populated local columns on
+// SalesOrderSearchExport; re-resolving them here via MDM would overwrite
+// correct local values with a second, redundant remote lookup.
+//-----------------------------------------------------------------------------------*
+
+const SALES_ORDER_SEARCH_EXPORT = [
+    {
+        source: 'CUSTOMER',
+        keys: ['customerCode'],
+        target: 'customerDescription'
+    }
+];
+
+//-----------------------------------------------------------------------------------*
 // MAPPINGS
 //-----------------------------------------------------------------------------------*
 
 const MAPPINGS = {
-    SalesOrder: SALES_ORDER
+    SalesOrder: SALES_ORDER,
+    SalesOrderSearchExport: SALES_ORDER_SEARCH_EXPORT
 };
 
 //-----------------------------------------------------------------------------------*
@@ -728,6 +775,218 @@ function projectWbsWhere(projectCodes) {
 }
 
 //-----------------------------------------------------------------------------------*
+// Storage location details
+//-----------------------------------------------------------------------------------*
+
+async function resolveStorageLocationDetails(rows) {
+
+    const list = toRows(rows);
+
+    if (!list.length) {
+        return rows;
+    }
+
+    /*
+     * The SO item field storageLocation maps to MDM Storageloc.storageloc.
+     *
+     * Called from the SalesOrders after-READ handler, rows are header rows
+     * whose storage locations live on row.items. Fall back to the row itself
+     * when it already carries storageLocation directly.
+     */
+    const targets = [];
+
+    for (const row of list) {
+
+        if (Array.isArray(row.items)) {
+
+            for (const item of row.items) {
+
+                if (item) {
+                    targets.push(item);
+                }
+            }
+
+        } else if ('storageLocation' in row) {
+
+            targets.push(row);
+        }
+    }
+
+    const storageLocationCodes = [
+        ...new Set(
+            targets
+                .map((item) =>
+                    asText(item.storageLocation)
+                )
+                .filter(Boolean)
+        )
+    ];
+
+    if (!storageLocationCodes.length) {
+        return rows;
+    }
+
+    const mdm = await connect();
+
+    if (!mdm) {
+        return rows;
+    }
+
+    const entity =
+        (mdm.entities &&
+            mdm.entities[STORAGE_LOCATION_DETAILS.entity]) ||
+        STORAGE_LOCATION_DETAILS.entity;
+
+    let storagelocs;
+
+    try {
+
+        console.log(
+            "[MDM] STORAGE_LOCATION_DETAILS requests:",
+            JSON.stringify(storageLocationCodes)
+        );
+
+        storagelocs = await mdm.run(
+            SELECT
+                .from(entity)
+                .columns(
+                    STORAGE_LOCATION_DETAILS.key,
+                    ...STORAGE_LOCATION_DETAILS.fields
+                )
+                .where(
+                    storagelocWhere(storageLocationCodes)
+                )
+        );
+
+        console.log(
+            "[MDM] STORAGE_LOCATION_DETAILS response:",
+            JSON.stringify(storagelocs || [], null, 2)
+        );
+
+    } catch (error) {
+
+        standDown(
+            'Storage location details',
+            error
+        );
+
+        return rows;
+    }
+
+    const storagelocMap = new Map();
+
+    for (const storageloc of storagelocs || []) {
+
+        const key =
+            asText(
+                storageloc[STORAGE_LOCATION_DETAILS.key]
+            );
+
+        if (key) {
+            storagelocMap.set(
+                key,
+                storageloc
+            );
+        }
+    }
+
+    for (const item of targets) {
+
+        const code =
+            asText(item.storageLocation);
+
+        if (!code) {
+            continue;
+        }
+
+        const storageloc =
+            storagelocMap.get(code);
+
+        if (!storageloc) {
+            continue;
+        }
+
+        if (
+            storageloc.name1 !== undefined &&
+            storageloc.name1 !== null
+        ) {
+            item.storageLocationDetails_name =
+                plainText(storageloc.name1);
+        }
+
+        if (
+            storageloc.name2 !== undefined &&
+            storageloc.name2 !== null
+        ) {
+            item.storageLocationDetails_address1 =
+                plainText(storageloc.name2);
+        }
+
+        if (
+            storageloc.name3 !== undefined &&
+            storageloc.name3 !== null
+        ) {
+            item.storageLocationDetails_address2 =
+                plainText(storageloc.name3);
+        }
+
+        if (
+            storageloc.name5 !== undefined &&
+            storageloc.name5 !== null
+        ) {
+            item.storageLocationDetails_city =
+                plainText(storageloc.name5);
+        }
+
+        if (
+            storageloc.postalcode !== undefined &&
+            storageloc.postalcode !== null
+        ) {
+            item.storageLocationDetails_postalCode =
+                plainText(storageloc.postalcode);
+        }
+
+        if (
+            storageloc.countrykey !== undefined &&
+            storageloc.countrykey !== null
+        ) {
+            item.storageLocationDetails_country =
+                plainText(storageloc.countrykey);
+        }
+    }
+
+    return rows;
+}
+
+//-----------------------------------------------------------------------------------*
+// Storage location WHERE
+//-----------------------------------------------------------------------------------*
+
+function storagelocWhere(storageLocationCodes) {
+
+    const xpr = [];
+
+    for (const code of storageLocationCodes) {
+
+        if (xpr.length) {
+            xpr.push('or');
+        }
+
+        xpr.push({
+            ref: [STORAGE_LOCATION_DETAILS.key]
+        });
+
+        xpr.push('=');
+
+        xpr.push({
+            val: code
+        });
+    }
+
+    return xpr;
+}
+
+//-----------------------------------------------------------------------------------*
 // Reverse resolution: description -> codes
 //-----------------------------------------------------------------------------------*
 
@@ -1275,6 +1534,8 @@ module.exports = {
     resolveDescriptions,
 
     resolveProjectDetails,
+
+    resolveStorageLocationDetails,
 
     clearDescriptions,
 

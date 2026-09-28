@@ -1,6 +1,7 @@
 code,locale,name,descr
-MANCUST,en,Manual Customer,Created manually by a customer user
-MANHP,en,Manual HP,Created manually by an HP user
-MUCUST,en,Mass Upload Customer,Created via customer mass upload
-MUHP,en,Mass Upload HP,Created via HP mass upload
-EDI,en,EDI,Received via EDI
+ZEDB,en,EDI,Received via EDI
+ZMBC,en,Manual Customer,Created manually by a customer user
+ZMBG,en,Manual HP,Created manually by an HP user
+ZMSB,en,Mass Upload Customer,Created via customer mass upload
+ZMBU,en,Mass Upload HP,Created via HP mass upload
+ZBSP,en,Buy-Sell Site Balance,Created via buy-sell site balance processing

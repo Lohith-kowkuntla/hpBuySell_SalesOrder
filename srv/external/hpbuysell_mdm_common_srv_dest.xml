@@ -31,6 +31,8 @@
                 <EntitySet Name="CompanyCodeVH" EntityType="CommonMDMService.CompanyCodeVH"/>
                 <EntitySet Name="MaterialVH" EntityType="CommonMDMService.MaterialVH"/>
                 <EntitySet Name="PlantVH" EntityType="CommonMDMService.PlantVH"/>
+                <EntitySet Name="Plant" EntityType="CommonMDMService.Plant"/>
+                <EntitySet Name="Storageloc" EntityType="CommonMDMService.Storageloc"/>
                 <EntitySet Name="StorageLocationVH" EntityType="CommonMDMService.StorageLocationVH"/>
                 <EntitySet Name="BusinessModelVH" EntityType="CommonMDMService.BusinessModelVH"/>
                 <EntitySet Name="BuyerVH" EntityType="CommonMDMService.BuyerVH"/>
@@ -40,6 +42,7 @@
                 <EntitySet Name="CustomerPartners" EntityType="CommonMDMService.CustomerPartners"/>
                 <EntitySet Name="SupplierPartners" EntityType="CommonMDMService.SupplierPartners"/>
                 <EntitySet Name="Customer" EntityType="CommonMDMService.Customer"/>
+                <EntitySet Name="salesorg" EntityType="CommonMDMService.salesorg"/>
                 <EntitySet Name="Supplier" EntityType="CommonMDMService.Supplier"/>
                 <EntitySet Name="Project" EntityType="CommonMDMService.Project"/>
                 <EntitySet Name="ProjectUAMVH" EntityType="CommonMDMService.ProjectUAMVH"/>
@@ -49,13 +52,10 @@
                 <EntitySet Name="UserProjects" EntityType="CommonMDMService.UserProjects"/>
                 <EntitySet Name="UserPartners" EntityType="CommonMDMService.UserPartners"/>
                 <EntitySet Name="Buyer" EntityType="CommonMDMService.Buyer"/>
+                <EntitySet Name="Rmacoordinator" EntityType="CommonMDMService.Rmacoordinator"/>
                 <EntitySet Name="CompanyCode" EntityType="CommonMDMService.CompanyCode"/>
-                <EntitySet Name="Alert" EntityType="CommonMDMService.Alert"/>
-                <EntitySet Name="AlertAllowedProfile" EntityType="CommonMDMService.AlertAllowedProfile"/>
-                <EntitySet Name="AlertSubscriptionType" EntityType="CommonMDMService.AlertSubscriptionType"/>
-                <EntitySet Name="Subscription" EntityType="CommonMDMService.Subscription"/>
-                <EntitySet Name="SubscriptionFilter" EntityType="CommonMDMService.SubscriptionFilter"/>
-                <EntitySet Name="UserProfile" EntityType="CommonMDMService.UserProfile"/>
+                <EntitySet Name="OutboundStatusFromOutbound" EntityType="CommonMDMService.OutboundStatusFromOutbound"/>
+                <EntitySet Name="InboundStatusFromInbound" EntityType="CommonMDMService.InboundStatusFromInbound"/>
             </EntityContainer>
             <EntityType Name="SupplierVH">
                 <Key>
@@ -98,6 +98,28 @@
                 </Key>
                 <Property Name="plant" Type="Edm.String" MaxLength="10" Nullable="false"/>
                 <Property Name="plantname" Type="Edm.String" MaxLength="10"/>
+            </EntityType>
+            <EntityType Name="Plant">
+                <Key>
+                    <PropertyRef Name="plant"/>
+                </Key>
+                <Property Name="plant" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="storageloc" Type="Edm.String" MaxLength="4"/>
+            </EntityType>
+            <EntityType Name="Storageloc">
+                <Key>
+                    <PropertyRef Name="storageloc"/>
+                </Key>
+                <Property Name="storageloc" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="name1" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name2" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name3" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name4" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name5" Type="Edm.String" MaxLength="40"/>
+                <Property Name="city" Type="Edm.String" MaxLength="40"/>
+                <Property Name="region" Type="Edm.String" MaxLength="3"/>
+                <Property Name="countrykey" Type="Edm.String" MaxLength="3"/>
+                <Property Name="postalcode" Type="Edm.String" MaxLength="10"/>
             </EntityType>
             <EntityType Name="StorageLocationVH">
                 <Key>
@@ -170,6 +192,26 @@
                 </Key>
                 <Property Name="customerid" Type="Edm.String" MaxLength="10" Nullable="false"/>
                 <Property Name="customername" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name2" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name3" Type="Edm.String" MaxLength="40"/>
+                <Property Name="name4" Type="Edm.String" MaxLength="40"/>
+                <Property Name="street" Type="Edm.String" MaxLength="60"/>
+                <Property Name="street2" Type="Edm.String" MaxLength="40"/>
+                <Property Name="street3" Type="Edm.String" MaxLength="40"/>
+                <Property Name="street4" Type="Edm.String" MaxLength="40"/>
+                <Property Name="street5" Type="Edm.String" MaxLength="40"/>
+                <Property Name="city" Type="Edm.String" MaxLength="35"/>
+                <Property Name="countryregionkey" Type="Edm.String" MaxLength="3"/>
+                <Property Name="postalcode" Type="Edm.String" MaxLength="10"/>
+                <Property Name="district" Type="Edm.String" MaxLength="40"/>
+                <Property Name="region" Type="Edm.String" MaxLength="3"/>
+            </EntityType>
+            <EntityType Name="salesorg">
+                <Key>
+                    <PropertyRef Name="salesorg"/>
+                </Key>
+                <Property Name="salesorg" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="salesorgdescription" Type="Edm.String" MaxLength="25"/>
             </EntityType>
             <EntityType Name="Supplier">
                 <Key>
@@ -333,7 +375,17 @@
                 </Key>
                 <Property Name="searchterm1" Type="Edm.String" MaxLength="10" Nullable="false"/>
                 <Property Name="buyername" Type="Edm.String" MaxLength="512"/>
-                <Property Name="buyername2" Type="Edm.String" MaxLength="512"/>
+                <Property Name="buyername1" Type="Edm.String" MaxLength="512"/>
+                <Property Name="email" Type="Edm.String" MaxLength="512"/>
+            </EntityType>
+            <EntityType Name="Rmacoordinator">
+                <Key>
+                    <PropertyRef Name="contactperson"/>
+                </Key>
+                <Property Name="contactperson" Type="Edm.String" MaxLength="10" Nullable="false"/>
+                <Property Name="searchterm1" Type="Edm.String" MaxLength="10"/>
+                <Property Name="buyername" Type="Edm.String" MaxLength="512"/>
+                <Property Name="buyername1" Type="Edm.String" MaxLength="512"/>
                 <Property Name="email" Type="Edm.String" MaxLength="512"/>
             </EntityType>
             <EntityType Name="CompanyCode">
@@ -343,87 +395,17 @@
                 <Property Name="companycode" Type="Edm.String" MaxLength="4" Nullable="false"/>
                 <Property Name="companycodedescription" Type="Edm.String" MaxLength="40"/>
             </EntityType>
-            <EntityType Name="Alert">
+            <EntityType Name="OutboundStatusFromOutbound">
                 <Key>
-                    <PropertyRef Name="alertId"/>
+                    <PropertyRef Name="headerStatus"/>
                 </Key>
-                <Property Name="alertId" Type="Edm.Int32" Nullable="false"/>
-                <Property Name="description" Type="Edm.String" MaxLength="120"/>
-                <Property Name="category" Type="Edm.String" MaxLength="255"/>
-                <Property Name="isActive" Type="Edm.Boolean"/>
-                <Property Name="subscriptionTypeCode" Type="Edm.String" MaxLength="10"/>
-                <Property Name="isDefault" Type="Edm.Boolean"/>
-                <Property Name="flexField1" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField2" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField3" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField4" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField5" Type="Edm.String" MaxLength="255"/>
-                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
-                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="headerStatus" Type="Edm.String" MaxLength="20" Nullable="false"/>
             </EntityType>
-            <EntityType Name="AlertAllowedProfile">
+            <EntityType Name="InboundStatusFromInbound">
                 <Key>
-                    <PropertyRef Name="alertId"/>
-                    <PropertyRef Name="userGroupIndicator"/>
+                    <PropertyRef Name="headerStatus"/>
                 </Key>
-                <Property Name="alertId" Type="Edm.Int32" Nullable="false"/>
-                <Property Name="userGroupIndicator" Type="Edm.String" MaxLength="2" Nullable="false"/>
-            </EntityType>
-            <EntityType Name="AlertSubscriptionType">
-                <Key>
-                    <PropertyRef Name="code"/>
-                </Key>
-                <Property Name="code" Type="Edm.String" MaxLength="10" Nullable="false"/>
-                <Property Name="description" Type="Edm.String" MaxLength="100"/>
-                <Property Name="defaultSubscribed" Type="Edm.Boolean"/>
-                <Property Name="canUnsubscribe" Type="Edm.Boolean"/>
-            </EntityType>
-            <EntityType Name="Subscription">
-                <Key>
-                    <PropertyRef Name="ID"/>
-                </Key>
-                <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
-                <Property Name="userId" Type="Edm.String" MaxLength="256"/>
-                <Property Name="alert_alertId" Type="Edm.Int32"/>
-                <Property Name="active" Type="Edm.Boolean"/>
-                <Property Name="flexField1" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField2" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField3" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField4" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField5" Type="Edm.String" MaxLength="255"/>
-                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
-                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
-            </EntityType>
-            <EntityType Name="SubscriptionFilter">
-                <Key>
-                    <PropertyRef Name="ID"/>
-                </Key>
-                <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
-                <Property Name="subscription_ID" Type="Edm.String" MaxLength="36"/>
-                <Property Name="fieldCode" Type="Edm.String" MaxLength="255"/>
-                <Property Name="value" Type="Edm.String" MaxLength="40"/>
-                <Property Name="valueText" Type="Edm.String" MaxLength="120"/>
-                <Property Name="flexField1" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField2" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField3" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField4" Type="Edm.String" MaxLength="255"/>
-                <Property Name="flexField5" Type="Edm.String" MaxLength="255"/>
-            </EntityType>
-            <EntityType Name="UserProfile">
-                <Key>
-                    <PropertyRef Name="ID"/>
-                </Key>
-                <Property Name="ID" Type="Edm.String" MaxLength="36" Nullable="false"/>
-                <Property Name="userId" Type="Edm.String" MaxLength="256"/>
-                <Property Name="userGroupIndicator" Type="Edm.String" MaxLength="255"/>
-                <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
-                <Property Name="modifiedAt" Type="Edm.DateTimeOffset" Precision="7"/>
-                <Property Name="modifiedBy" Type="Edm.String" MaxLength="255"/>
+                <Property Name="headerStatus" Type="Edm.String" MaxLength="20" Nullable="false"/>
             </EntityType>
             <Annotations Target="CommonMDMService.SupplierVH">
                 <Annotation Term="UI.SelectionFields">
@@ -678,6 +660,40 @@
             </Annotations>
             <Annotations Target="CommonMDMService.PlantVH/plantname">
                 <Annotation Term="Common.Label" String="common.label.plantName"/>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Plant">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Storageloc">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
             </Annotations>
             <Annotations Target="CommonMDMService.StorageLocationVH">
                 <Annotation Term="UI.SelectionFields">
@@ -996,6 +1012,23 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/salesorg">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="CommonMDMService.EntityContainer/Supplier">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record Type="Capabilities.DeleteRestrictionsType">
@@ -1149,6 +1182,23 @@
                     </Record>
                 </Annotation>
             </Annotations>
+            <Annotations Target="CommonMDMService.EntityContainer/Rmacoordinator">
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
             <Annotations Target="CommonMDMService.EntityContainer/CompanyCode">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record Type="Capabilities.DeleteRestrictionsType">
@@ -1166,7 +1216,7 @@
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/Alert">
+            <Annotations Target="CommonMDMService.EntityContainer/OutboundStatusFromOutbound">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record Type="Capabilities.DeleteRestrictionsType">
                         <PropertyValue Property="Deletable" Bool="false"/>
@@ -1183,75 +1233,7 @@
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/AlertAllowedProfile">
-                <Annotation Term="Capabilities.DeleteRestrictions">
-                    <Record Type="Capabilities.DeleteRestrictionsType">
-                        <PropertyValue Property="Deletable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.InsertRestrictions">
-                    <Record Type="Capabilities.InsertRestrictionsType">
-                        <PropertyValue Property="Insertable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.UpdateRestrictions">
-                    <Record Type="Capabilities.UpdateRestrictionsType">
-                        <PropertyValue Property="Updatable" Bool="false"/>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/AlertSubscriptionType">
-                <Annotation Term="Capabilities.DeleteRestrictions">
-                    <Record Type="Capabilities.DeleteRestrictionsType">
-                        <PropertyValue Property="Deletable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.InsertRestrictions">
-                    <Record Type="Capabilities.InsertRestrictionsType">
-                        <PropertyValue Property="Insertable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.UpdateRestrictions">
-                    <Record Type="Capabilities.UpdateRestrictionsType">
-                        <PropertyValue Property="Updatable" Bool="false"/>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/Subscription">
-                <Annotation Term="Capabilities.DeleteRestrictions">
-                    <Record Type="Capabilities.DeleteRestrictionsType">
-                        <PropertyValue Property="Deletable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.InsertRestrictions">
-                    <Record Type="Capabilities.InsertRestrictionsType">
-                        <PropertyValue Property="Insertable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.UpdateRestrictions">
-                    <Record Type="Capabilities.UpdateRestrictionsType">
-                        <PropertyValue Property="Updatable" Bool="false"/>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/SubscriptionFilter">
-                <Annotation Term="Capabilities.DeleteRestrictions">
-                    <Record Type="Capabilities.DeleteRestrictionsType">
-                        <PropertyValue Property="Deletable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.InsertRestrictions">
-                    <Record Type="Capabilities.InsertRestrictionsType">
-                        <PropertyValue Property="Insertable" Bool="false"/>
-                    </Record>
-                </Annotation>
-                <Annotation Term="Capabilities.UpdateRestrictions">
-                    <Record Type="Capabilities.UpdateRestrictionsType">
-                        <PropertyValue Property="Updatable" Bool="false"/>
-                    </Record>
-                </Annotation>
-            </Annotations>
-            <Annotations Target="CommonMDMService.EntityContainer/UserProfile">
+            <Annotations Target="CommonMDMService.EntityContainer/InboundStatusFromInbound">
                 <Annotation Term="Capabilities.DeleteRestrictions">
                     <Record Type="Capabilities.DeleteRestrictionsType">
                         <PropertyValue Property="Deletable" Bool="false"/>

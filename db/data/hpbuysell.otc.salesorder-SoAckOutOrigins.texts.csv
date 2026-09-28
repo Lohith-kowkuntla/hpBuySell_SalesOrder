@@ -1,0 +1,4 @@
+code,locale,name,descr
+EDI,en,EDI,Acknowledgement sent via EDI
+ALERT,en,Alert,Acknowledgement sent via alert
+EDI_ALERT,en,EDI + Alert,Acknowledgement sent via EDI and alert

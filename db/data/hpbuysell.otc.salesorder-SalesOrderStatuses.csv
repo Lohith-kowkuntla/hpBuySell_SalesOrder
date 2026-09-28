@@ -1,10 +1,11 @@
 code,priority
-AACK,1
-OPEN,2
-CONF,3
-CHPR,4
-PSHP,5
-SHIP,6
-DLVD,7
-INVD,8
-CANC,99
+Open,1
+Awaiting Ack,2
+Confirmed,3
+Change Processing,4
+Pending Cancellation,5
+Partially Shipped,6
+Shipped,7
+Delivered,8
+Invoiced,9
+Cancelled,10

@@ -136,6 +136,11 @@ sap.ui.define(
                                 this._sHpSalesOrder
                             ),
 
+                        parameters: {
+                            expand:
+                                "salesOrderOrigin,salesOrderType"
+                        },
+
                         events: {
 
                             change:
@@ -2190,7 +2195,7 @@ sap.ui.define(
                     }
 
                     var sUrl =
-                        oContext.getProperty("url");
+                        oContext.getProperty("__metadata/media_src");
 
                     if (sUrl) {
 

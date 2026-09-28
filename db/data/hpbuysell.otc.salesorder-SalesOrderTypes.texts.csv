@@ -1,4 +1,4 @@
 code,locale,name,descr
-ZBLB,en,ZBLB,Buy-Sell order type ZBLB
-ZCBS,en,ZCBS,Buy-Sell order type ZCBS
-ZICB,en,ZICB,Buy-Sell order type ZICB
+ZBLB,en,Buy-Sell Order,Standard buy-sell sales order type
+ZCBS,en,Consignment Buy-Sell Order,Consignment-based buy-sell sales order type
+ZICB,en,Intercompany Buy-Sell Order,Intercompany buy-sell sales order type

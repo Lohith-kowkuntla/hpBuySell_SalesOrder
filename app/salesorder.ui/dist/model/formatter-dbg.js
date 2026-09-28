@@ -6,13 +6,13 @@ sap.ui.define([], function () {
     // Status configuration
     // -----------------------------------------------------------------------*
 
-    var CANCELLED_STATUS_CODE = "CANC";
+    var CANCELLED_STATUS_CODE = "CANCELLED";
 
     var CANCELLABLE_STATUS_CODES = [
-        "AACK",
+        "AWAITING ACK",
         "OPEN",
-        "CONF",
-        "CHPR"
+        "CONFIRMED",
+        "CHANGE PROCESSING"
     ];
 
 
@@ -66,18 +66,19 @@ sap.ui.define([], function () {
 
             switch (normalize(status)) {
 
-                case "CONF":
-                case "DLVD":
-                case "INVD":
+                case "CONFIRMED":
+                case "DELIVERED":
+                case "INVOICED":
                     return "Success";
 
-                case "CANC":
+                case "CANCELLED":
                     return "Error";
 
-                case "AACK":
+                case "AWAITING ACK":
                 case "OPEN":
-                case "CHPR":
-                case "PSHP":
+                case "CHANGE PROCESSING":
+                case "PENDING CANCELLATION":
+                case "PARTIALLY SHIPPED":
                     return "Warning";
 
                 default:
@@ -90,18 +91,19 @@ sap.ui.define([], function () {
 
             switch (normalize(status)) {
 
-                case "CONF":
-                case "DLVD":
-                case "INVD":
+                case "CONFIRMED":
+                case "DELIVERED":
+                case "INVOICED":
                     return "sap-icon://sys-enter-2";
 
-                case "CANC":
+                case "CANCELLED":
                     return "sap-icon://sys-cancel-2";
 
-                case "AACK":
+                case "AWAITING ACK":
                 case "OPEN":
-                case "CHPR":
-                case "PSHP":
+                case "CHANGE PROCESSING":
+                case "PENDING CANCELLATION":
+                case "PARTIALLY SHIPPED":
                     return "sap-icon://warning";
 
                 default:

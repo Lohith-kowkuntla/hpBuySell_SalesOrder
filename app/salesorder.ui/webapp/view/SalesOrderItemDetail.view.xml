@@ -391,7 +391,7 @@
 
                                         <Text
                                             id="itemValChangeInOrigin"
-                                            text="{soChangeInOrigin}" />
+                                            text="{soChangeInOrigin/name}" />
 
 
                                         <Label
@@ -400,7 +400,7 @@
 
                                         <Text
                                             id="itemValAckOutOrigin"
-                                            text="{soAckOutOrigin}" />
+                                            text="{soAckOutOrigin/name}" />
 
 
                                         <Label
@@ -710,7 +710,7 @@
 
                                         <Text
                                             id="itemValCancellationReason"
-                                            text="{reasonForCancellation_code}"
+                                            text="{reasonForCancellation/name}"
                                             visible="{= ${view>/mode} !== 'CANCEL' }" />
 
                                         <Select

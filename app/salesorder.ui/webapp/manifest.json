@@ -93,7 +93,7 @@
       },
       "routes": [
         {
-          "pattern": "",
+          "pattern": ":?query:",
           "name": "salesOrderOverview",
           "target": "salesOrderOverview"
         },
@@ -111,6 +111,11 @@
           "pattern": "salesorder/{salesOrder}/item/{lineId}/history",
           "name": "viewHistory",
           "target": "viewHistory"
+        },
+        {
+          "pattern": "summary",
+          "name": "salesOrderSummary",
+          "target": "salesOrderSummary"
         }
       ],
       "targets": {
@@ -118,6 +123,11 @@
           "type": "View",
           "id": "salesOrderOverview",
           "name": "SalesOrderOverview"
+        },
+        "salesOrderSummary": {
+          "type": "View",
+          "id": "salesOrderSummary",
+          "name": "SalesOrderSummary"
         },
         "salesOrderDetail": {
           "type": "View",

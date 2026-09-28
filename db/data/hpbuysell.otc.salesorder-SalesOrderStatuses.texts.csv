@@ -1,10 +1,11 @@
 code,locale,name,descr
-AACK,en,Awaiting Acknowledgement,Order is awaiting acknowledgement from the supplier
-OPEN,en,Open,Order is open and has not yet been confirmed
-CONF,en,Confirmed,Order has been confirmed by the supplier
-CHPR,en,Change Processing,Order is undergoing simple change processing (Phase 2 - not yet reachable in MVP)
-PSHP,en,Partially Shipped,Order has been partially shipped
-SHIP,en,Shipped,Order has been fully shipped
-DLVD,en,Delivered,Order has been delivered
-INVD,en,Invoiced,Order has been invoiced
-CANC,en,Cancelled,Order has been cancelled
+Open,en,Open,Order is open and has not yet been confirmed
+Awaiting Ack,en,Awaiting Ack,Order is awaiting acknowledgement from the supplier
+Confirmed,en,Confirmed,Order has been confirmed by the supplier
+Change Processing,en,Change Processing,Order is undergoing simple change processing (Phase 2 - not yet reachable in MVP)
+Pending Cancellation,en,Pending Cancellation,Order cancellation has been requested and is pending confirmation
+Partially Shipped,en,Partially Shipped,Order has been partially shipped
+Shipped,en,Shipped,Order has been fully shipped
+Delivered,en,Delivered,Order has been delivered
+Invoiced,en,Invoiced,Order has been invoiced
+Cancelled,en,Cancelled,Order has been cancelled

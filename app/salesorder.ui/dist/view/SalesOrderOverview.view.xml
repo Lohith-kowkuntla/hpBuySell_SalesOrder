@@ -148,6 +148,16 @@
     <!-- ============================================================= -->
     <!-- 04 Customer Description                                       -->
     <!-- ============================================================= -->
+
+    <sfb:ControlConfiguration
+        key="customerDescription"
+        index="4"
+        visibleInAdvancedArea="true"
+        filterType="single"
+        label="{i18n>customerDescription}"/>
+
+
+    <!-- ============================================================= -->
     <!-- 05 Customer Order                                             -->
     <!-- ============================================================= -->
 
@@ -299,7 +309,24 @@
         index="17"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>lineStatus}"/>
+        label="{i18n>lineStatus}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterLineStatus"
+                selectedKey="{lineStatus}"
+                items="{path: '/VH_LineStatus', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{code}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -311,7 +338,24 @@
         index="18"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>salesOrderOrigin}"/>
+        label="{i18n>salesOrderOrigin}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSalesOrderOrigin"
+                selectedKey="{salesOrderOrigin}"
+                items="{path: '/VH_SalesOrderOrigin', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{name}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -323,7 +367,24 @@
         index="19"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>salesOrderStatus}"/>
+        label="{i18n>salesOrderStatus}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSalesOrderStatus"
+                selectedKey="{salesOrderStatus}"
+                items="{path: '/VH_OrderStatus', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{code}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -335,7 +396,24 @@
         index="20"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>soAckOutOrigin}"/>
+        label="{i18n>soAckOutOrigin}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSoAckOutOrigin"
+                selectedKey="{soAckOutOrigin}"
+                items="{path: '/VH_SoAckOutOrigin', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{name}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -347,7 +425,24 @@
         index="21"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>soChangeInOrigin}"/>
+        label="{i18n>soChangeInOrigin}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSoChangeInOrigin"
+                selectedKey="{soChangeInOrigin}"
+                items="{path: '/VH_SalesOrderOrigin', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{name}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -370,7 +465,24 @@
         index="23"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>specialDealFlagSo}"/>
+        label="{i18n>specialDealFlagSo}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSpecialDealFlagSo"
+                selectedKey="{specialDealFlagSo}"
+                items="{path: '/VH_SpecialDealFlag', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{description}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->
@@ -406,7 +518,24 @@
         index="26"
         visibleInAdvancedArea="true"
         filterType="single"
-        label="{i18n>salesOrderType}"/>
+        label="{i18n>salesOrderType}">
+
+        <sfb:customControl>
+
+            <ComboBox
+                id="soFilterSalesOrderType"
+                selectedKey="{salesOrderType}"
+                items="{path: '/VH_SalesOrderType', templateShareable: false}">
+
+                <core:Item
+                    key="{code}"
+                    text="{name}"/>
+
+            </ComboBox>
+
+        </sfb:customControl>
+
+    </sfb:ControlConfiguration>
 
 
     <!-- ============================================================= -->

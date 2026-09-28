@@ -3,773 +3,658 @@
 // Copyright 2026, HP
 // All Rights Reserved
 //-----------------------------------------------------------------------------------*
+// Value Help authorization + source routing.
+//
+// Three distinct problems used to be conflated in one hybrid table, which is
+// exactly why VH_Customer/VH_OrderStatus/VH_SalesOrderType were broken:
+//
+//   1. SOURCE  - where does this value help's data actually live?
+//        "local"    Sales-Order-specific data with no MDM equivalent
+//                    (VH_Customer, VH_SalesOrderNumber, ...)
+//        "mdm"      genuine MDM master data (VH_BusinessModel, VH_Buyer, ...)
+//        "static"   @cds.persistence.skip boolean code lists with no table
+//                    at all (VH_SpecialDealFlag, VH_GtsHold, VH_BlanketIndicator)
+//        (passthrough) plain CDS projections over shared, non-customer-
+//                    specific code lists (VH_OrderStatus, VH_LineStatus,
+//                    VH_SalesOrderType, VH_SalesOrderOrigin,
+//                    VH_SoAckOutOrigin, VH_ReasonForCancellation) are
+//                    deliberately NOT registered here at all - they already
+//                    work correctly via CAP's generic READ handler, because
+//                    their exposed field names already match their own CDS
+//                    projection. Redirecting them onto SalesOrders (as the
+//                    old VALUE_HELP_CONFIG did) is exactly what broke them.
+//
+//   2. FIELD MAPPING - once the source is decided, exposed VH field names
+//      (e.g. "code") must be translated to the real source column (e.g.
+//      "salesOrderType_code", or plain "soAckOutOrigin" with NO "_code"
+//      suffix - it isn't an association). See valueHelpFieldTranslation.js.
+//
+//   3. AUTHORIZATION - Customer users may only see values derived from Sales
+//      Orders their Customer Code + WBS Project assignment actually grants
+//      them (buildScopeExpression, already used for the Overview list
+//      itself). HP users are unrestricted UNLESS the field is one already
+//      hidden from Customer users entirely (CUSTOMER_HIDDEN, userScope.js) -
+//      in that case the value help is HP-only, for consistency with the
+//      field-level policy already enforced on SalesOrders/SalesOrderItems.
+//-----------------------------------------------------------------------------------*
+
+"use strict";
 
 const cds = require("@sap/cds");
+const { SELECT } = cds.ql;
+
+const LOG = cds.log("sales-order-value-help");
 
 const {
     loadUserScope,
-    buildScopeExpression
+    buildScopeExpression,
+    CUSTOMER_HIDDEN
 } = require("./userScope");
 
 const {
     isMdmValueHelp,
     readMdmValueHelp,
-    MDM_VALUE_HELP_CONFIG
+    localColumnToMdmField
 } = require("./mdmValueHelps");
 
+const {
+    UnknownValueHelpFieldError,
+    translateExpr,
+    buildSourceColumns,
+    mapRowToOutput,
+    resolveReader,
+    validateFieldMapAgainstCsn
+} = require("./valueHelpFieldTranslation");
 
-// -----------------------------------------------------------------------------
-// Customer-visible Value Helps
-// -----------------------------------------------------------------------------
-//
-// These are the Value Helps that a Customer user is allowed to see.
-//
-// IMPORTANT:
-//   - This list controls Customer visibility.
-//   - It does NOT decide whether the source is LOCAL or MDM.
-//   - HP users continue using the existing MDM routing.
-// -----------------------------------------------------------------------------
 
-const CUSTOMER_VISIBLE_VALUE_HELPS = new Set([
-    "VH_SalesOrderNumber",
-    "VH_Customer",
-    "VH_CustomerName",
-    "VH_CustomerOrder",
-    "VH_CustomerPart",
-    "VH_LineId",
-    "VH_LineStatus",
-    "VH_SalesOrderStatus",
-    "VH_SalesOrderOrigin",
-    "VH_SoAckOutOrigin",
-    "VH_SoChangeInOrigin",
-    "VH_WbsProject",
-    "VH_Buyer",
-    "VH_BuyerName",
-    "VH_CompanyCode",
-    "VH_SalesOrganization",
-    "VH_BusinessModel",
-    "VH_SpecialDealFlag",
-    "VH_SalesOrderType",
-    "VH_BillTo"
-]);
+const SALES_ORDERS = "hpbuysell.otc.salesorder.SalesOrders";
+const SALES_ORDER_ITEMS = "hpbuysell.otc.salesorder.SalesOrderItems";
+
+const YES_NO_ROWS = [
+    { code: true, description: "Yes" },
+    { code: false, description: "No" }
+];
 
 
 // -----------------------------------------------------------------------------
-// Local Value Help configuration
+// Value Help configuration
 // -----------------------------------------------------------------------------
 //
-// sourceEntity = REAL service entity used for querying.
-//
-// We deliberately DO NOT query the VH projection directly.
-//
-// Example:
-//
-// VH_BusinessModel
-//      exposed fields:
-//          businessModel
-//
-// underlying source:
-//      SalesOrders
-//
-// authorization fields:
-//      customerCode
-//      wbsProjectCode
-//
-// This avoids:
-//
-//   "customerCode not found in the elements of VH_BusinessModel"
+// fieldMap keys are the field names exposed on the VH_* OData entity; values
+// are the *real* column on sourceEntity. Verified against
+// db/hpbuysell-otc-salesorder-model.cds - not assumed - and re-verified at
+// startup by validateAllFieldMaps() below.
 // -----------------------------------------------------------------------------
 
 const VALUE_HELP_CONFIG = {
 
+    // -------------------------------------------------------------------
+    // local - Sales-Order-specific, no MDM equivalent
+    // -------------------------------------------------------------------
+
     VH_Customer: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "customerCode",
-            "customerDescription"
-        ],
-        scope: true
-    },
-
-    VH_CustomerName: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "customerCode",
-            "customerDescription"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["customerCode"],
+        fields: { customerCode: "customerCode" }
+        // customerDescription is NOT mapped: no such column exists on
+        // SalesOrders (it's only ever resolved from MDM). Requesting it
+        // throws UnknownValueHelpFieldError instead of a silent 500.
     },
 
     VH_SalesOrderNumber: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "hpSalesOrder",
-            "customerDescription"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["hpSalesOrder"],
+        fields: { hpSalesOrder: "hpSalesOrder" }
     },
 
     VH_CustomerOrder: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "customerOrder"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["customerOrder"],
+        fields: { customerOrder: "customerOrder" }
     },
 
-    VH_CustomerPart: {
+    VH_SalesOrganization: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "customerPartNumber"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["hpSalesOrganization"],
+        fields: { hpSalesOrganization: "hpSalesOrganization" }
     },
 
-    VH_SalesOrder: {
+    VH_BusinessUnit: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "hpSalesOrder"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["businessUnit"],
+        fields: { businessUnit: "businessUnit" }
     },
 
-    VH_LineId: {
+    VH_ShipTo: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "lineId"
-        ],
-        scope: true
-    },
-
-    VH_OrderStatus: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "salesOrderStatus_code"
-        ],
-        scope: true
-    },
-
-    VH_LineStatus: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "lineStatus_code"
-        ],
-        scope: true
-    },
-
-    VH_SalesOrderOrigin: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "salesOrderOrigin_code"
-        ],
-        scope: true
-    },
-
-    VH_SoAckOutOrigin: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "soAckOutOrigin_code"
-        ],
-        scope: true
-    },
-
-    VH_SoChangeInOrigin: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "soChangeInOrigin_code"
-        ],
-        scope: true
-    },
-
-    VH_SpecialDealFlag: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "specialDealFlagSo"
-        ],
-        scope: true
-    },
-
-    VH_SalesOrderType: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "salesOrderType_code"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["shipTo"],
+        fields: { shipTo: "shipTo" }
     },
 
     VH_BillTo: {
         source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "billTo",
-            "billToDescription"
-        ],
-        scope: true
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["billTo"],
+        fields: { billTo: "billTo" }
+    },
+
+    VH_Payer: {
+        source: "local",
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["payer"],
+        fields: { payer: "payer" }
+    },
+
+    VH_OtherShipTo: {
+        source: "local",
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["otherShipTo"],
+        fields: { otherShipTo: "otherShipTo" }
+    },
+
+    VH_PaymentTerms: {
+        source: "local",
+        sourceEntity: SALES_ORDERS,
+        scopeLevel: "header",
+        hiddenFields: ["paymentTerms"],
+        fields: { paymentTerms: "paymentTerms" }
+    },
+
+    VH_CustomerPart: {
+        source: "local",
+        sourceEntity: SALES_ORDER_ITEMS,
+        scopeLevel: "item",
+        hiddenFields: ["customerPartNumber"],
+        fields: {
+            customerPartNumber: "customerPartNumber",
+            hpPartNumber: "hpPartNumber",
+            hpPartDescription: "hpPartDescription"
+        }
+    },
+
+    VH_EndSupplier: {
+        source: "local",
+        sourceEntity: SALES_ORDER_ITEMS,
+        scopeLevel: "item",
+        hiddenFields: ["endSupplier"],
+        fields: { endSupplier: "endSupplier" }
+    },
+
+    // -------------------------------------------------------------------
+    // VH_SoAckOutOrigin (SoAckOutOrigins CodeList) and VH_SoChangeInOrigin
+    // (now served by VH_SalesOrderOrigin, over the SalesOrderOrigins
+    // CodeList) are, like VH_OrderStatus/VH_SalesOrderOrigin above,
+    // deliberately NOT registered here - they are plain CDS projections
+    // over real CodeList tables and already work via CAP's generic READ
+    // handler.
+    // -------------------------------------------------------------------
+
+    // -------------------------------------------------------------------
+    // mdm - genuine MDM master data. Must have a matching entry in
+    // MDM_VALUE_HELP_CONFIG (mdmValueHelps.js) - enforced by resolveReader.
+    // localKeyField names the local column used to compute the Customer
+    // user's authorized set of values before intersecting with MDM.
+    // -------------------------------------------------------------------
+
+    VH_BusinessModel: {
+        source: "mdm",
+        hiddenFields: ["businessModel"],
+        localKeyField: { entity: SALES_ORDERS, scopeLevel: "header", column: "businessModel" }
     },
 
     VH_Buyer: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "hpBuyerCode",
-            "hpBuyerName"
-        ],
-        scope: true
-    },
-
-    VH_BuyerName: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "hpBuyerCode",
-            "hpBuyerName"
-        ],
-        scope: true
+        source: "mdm",
+        hiddenFields: ["hpBuyerCode"],
+        localKeyField: { entity: SALES_ORDERS, scopeLevel: "header", column: "hpBuyerCode" }
     },
 
     VH_CompanyCode: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "hpCompanyCode",
-            "hpCompanyDescription"
-        ],
-        scope: true
+        source: "mdm",
+        hiddenFields: ["hpCompanyCode"],
+        localKeyField: { entity: SALES_ORDERS, scopeLevel: "header", column: "hpCompanyCode" }
     },
 
     VH_WbsProject: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "wbsProjectCode",
-            "wbsProjectCodeDescription"
-        ],
-        scope: true
-    },
-
-    VH_BusinessModel: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrders",
-        columns: [
-            "businessModel"
-        ],
-        scope: true
+        source: "mdm",
+        hiddenFields: ["wbsProjectCode"],
+        localKeyField: { entity: SALES_ORDERS, scopeLevel: "header", column: "wbsProjectCode" }
     },
 
     VH_HpPartNumber: {
-        source: "local",
-        entity: "hpbuysell.otc.salesorder.SalesOrderItems",
-        columns: [
-            "hpPartNumber",
-            "hpPartDescription"
-        ],
-        scope: true
+        source: "mdm",
+        hiddenFields: ["hpPartNumber"],
+        localKeyField: { entity: SALES_ORDER_ITEMS, scopeLevel: "item", column: "hpPartNumber" }
+    },
+
+    VH_Plant: {
+        source: "mdm",
+        hiddenFields: ["hpPlant"],
+        localKeyField: { entity: SALES_ORDERS, scopeLevel: "header", column: "hpPlant" }
+    },
+
+    VH_StorageLocation: {
+        source: "mdm",
+        hiddenFields: ["storageLocation"],
+        localKeyField: { entity: SALES_ORDER_ITEMS, scopeLevel: "item", column: "storageLocation" }
+    },
+
+    // -------------------------------------------------------------------
+    // static - @cds.persistence.skip entities with no backing table at
+    // all. CAP's generic READ handler cannot serve these; a custom handler
+    // must supply the two hardcoded rows.
+    // -------------------------------------------------------------------
+
+    VH_SpecialDealFlag: {
+        source: "static",
+        hiddenEntity: "SalesOrderItems",
+        hiddenFields: ["specialDealFlagSo"],
+        rows: YES_NO_ROWS
+    },
+
+    VH_GtsHold: {
+        source: "static",
+        hiddenEntity: "SalesOrderItems",
+        hiddenFields: ["gtsHold"],
+        rows: YES_NO_ROWS
+    },
+
+    VH_BlanketIndicator: {
+        source: "static",
+        hiddenEntity: "SalesOrders",
+        hiddenFields: [],
+        rows: YES_NO_ROWS
     }
 };
 
 
 // -----------------------------------------------------------------------------
-// Utility: identify Value Help
+// Customer visibility - derived from CUSTOMER_HIDDEN, not hand-maintained.
+//
+// A value help is hidden from Customer users whenever the field(s) behind it
+// are already hidden from them on SalesOrders/SalesOrderItems - the same
+// policy enforced everywhere else, so a value help can never leak a field a
+// Customer isn't allowed to see through the entity itself.
 // -----------------------------------------------------------------------------
 
-function isConfiguredValueHelp(valueHelpName) {
-    return Boolean(VALUE_HELP_CONFIG[valueHelpName]);
+function hiddenEntityForConfig(valueHelpName, config) {
+
+    if (config.hiddenEntity) {
+        return config.hiddenEntity;
+    }
+
+    const entity = config.sourceEntity || config.localKeyField?.entity;
+
+    if (!entity) {
+        return null;
+    }
+
+    return entity.split(".").pop();
 }
 
 
-// -----------------------------------------------------------------------------
-// Utility: make Value Help return no rows
-// -----------------------------------------------------------------------------
-function makeValueHelpEmpty(req) {
+function isHiddenFromCustomer(valueHelpName, config) {
 
-    if (!req.query?.SELECT) {
-        return;
+    const entityName = hiddenEntityForConfig(valueHelpName, config);
+
+    if (!entityName) {
+        return false;
     }
 
-    const select = req.query.SELECT;
+    const hiddenSet = new Set(CUSTOMER_HIDDEN[entityName] || []);
 
-    const emptyExpression = cds.parse.expr("1 = 0").xpr;
-
-    if (select.where?.length) {
-
-        select.where = [
-            "(",
-            ...select.where,
-            ")",
-            "and",
-            ...emptyExpression
-        ];
-
-    } else {
-
-        select.where = emptyExpression;
-    }
+    return (config.hiddenFields || []).some((field) => hiddenSet.has(field));
 }
 
 
+const CUSTOMER_VISIBLE_VALUE_HELPS = new Set(
+    Object.entries(VALUE_HELP_CONFIG)
+        .filter(([name, config]) => !isHiddenFromCustomer(name, config))
+        .map(([name]) => name)
+);
+
+
 // -----------------------------------------------------------------------------
-// Utility: copy incoming OData query options
-// -----------------------------------------------------------------------------
-//
-// The incoming query is based on the exposed VH.
-//
-// Example:
-//
-// VH_BusinessModel
-//      $filter=contains(businessModel,'ABC')
-//      $top=20
-//
-// These options are copied to the underlying SalesOrders query.
-//
-// Most VH field names intentionally match the underlying SalesOrders fields.
+// Startup validation - fail loudly, not on first request
 // -----------------------------------------------------------------------------
 
-function copyQueryOptions(sourceSelect, targetSelect) {
+function validateAllFieldMaps(csnDefinitions) {
 
-    if (!sourceSelect || !targetSelect) {
-        return;
-    }
+    for (const [valueHelpName, config] of Object.entries(VALUE_HELP_CONFIG)) {
 
-    // WHERE / $filter
-    if (sourceSelect.where) {
-        targetSelect.where = sourceSelect.where;
-    }
+        if (config.source === "local" && config.fields) {
 
-    // $search
-    if (sourceSelect.search) {
-        targetSelect.search = sourceSelect.search;
-    }
+            validateFieldMapAgainstCsn(
+                csnDefinitions,
+                config.sourceEntity,
+                config.fields,
+                valueHelpName
+            );
+        }
 
-    // $orderby
-    if (sourceSelect.orderBy) {
-        targetSelect.orderBy = sourceSelect.orderBy;
-    }
+        if (config.source === "mdm" && config.localKeyField) {
 
-    // $top / $skip
-    if (sourceSelect.limit) {
-        targetSelect.limit = sourceSelect.limit;
-    }
-
-    // DISTINCT
-    if (sourceSelect.distinct) {
-        targetSelect.distinct = sourceSelect.distinct;
+            validateFieldMapAgainstCsn(
+                csnDefinitions,
+                config.localKeyField.entity,
+                { [config.localKeyField.column]: config.localKeyField.column },
+                valueHelpName
+            );
+        }
     }
 }
 
 
 // -----------------------------------------------------------------------------
-// Build local Value Help query
+// Local query construction
 // -----------------------------------------------------------------------------
 
-function buildLocalValueHelpQuery(req, valueHelpName, config, scope) {
-
-    const sourceEntity = config.entity;
+function translateIncomingQuery(req, fieldMap) {
 
     const sourceSelect = req.query?.SELECT || {};
 
-    const columns = config.columns.map(column => ({
-        ref: [column]
-    }));
+    const translated = {};
+
+    if (sourceSelect.where) {
+        translated.where = translateExpr(sourceSelect.where, fieldMap);
+    }
+
+    if (sourceSelect.orderBy) {
+        translated.orderBy = translateExpr(sourceSelect.orderBy, fieldMap);
+    }
+
+    // $search has no field references (it's a bare literal term applied
+    // across text columns by the DB adapter) - safe to copy verbatim.
+    if (sourceSelect.search) {
+        translated.search = sourceSelect.search;
+    }
+
+    if (sourceSelect.limit) {
+        translated.limit = sourceSelect.limit;
+    }
+
+    return translated;
+}
+
+
+function buildLocalValueHelpQuery(req, valueHelpName, config, scope) {
 
     const query = SELECT
         .distinct
-        .from(sourceEntity)
-        .columns(columns);
+        .from(config.sourceEntity)
+        .columns(buildSourceColumns(config.fields));
 
+    const translated = translateIncomingQuery(req, config.fields);
 
-    // -------------------------------------------------------------------------
-    // Preserve incoming OData query options
-    // -------------------------------------------------------------------------
-
-    copyQueryOptions(
-        sourceSelect,
-        query.SELECT
-    );
-
-
-    // -------------------------------------------------------------------------
-    // Apply existing Customer + WBS authorization
-    // -------------------------------------------------------------------------
-    //
-    // IMPORTANT:
-    //
-    // buildScopeExpression() already knows how to construct:
-    //
-    //     customerCode
-    //     wbsProjectCode
-    //
-    // and preserves Customer + WBS assignment pairing.
-    //
-    // We only change the target entity used for the scope expression.
-    // We DO NOT modify userScope.js.
-    // -------------------------------------------------------------------------
-
-    if (config.scope) {
-
-        const scopeExpression = buildScopeExpression(
-            {
-                ...req,
-                target: {
-                    name: sourceEntity
-                }
-            },
-            scope
-        );
-
-        if (scopeExpression) {
-
-            const existingWhere = query.SELECT.where;
-
-            if (existingWhere?.length) {
-
-                query.SELECT.where = [
-                    "(",
-                    ...existingWhere,
-                    ")",
-                    "and",
-                    ...scopeExpression
-                ];
-
-            } else {
-
-                query.SELECT.where = scopeExpression;
-
-            }
-        }
+    if (translated.where?.length) {
+        query.where(translated.where);
     }
 
+    if (translated.orderBy) {
+        query.SELECT.orderBy = translated.orderBy;
+    }
+
+    if (translated.search) {
+        query.SELECT.search = translated.search;
+    }
+
+    if (translated.limit) {
+        query.SELECT.limit = translated.limit;
+    }
+
+    // ---------------------------------------------------------------
+    // Authorization scope - applied AFTER client filters, ANDed in, so
+    // a client can never widen it. Header/item level path (through the
+    // parent SalesOrder association for item-level VHs) is already
+    // encoded in userScope.js's SCOPE_PATHS.
+    // ---------------------------------------------------------------
+
+    const scopeExpression = buildScopeExpression(
+        { target: { name: config.sourceEntity.split(".").pop() } },
+        scope
+    );
+
+    if (scopeExpression) {
+
+        const existingWhere = query.SELECT.where;
+
+        if (existingWhere?.length) {
+
+            query.SELECT.where = ["(", ...existingWhere, ")", "and", "(", ...scopeExpression, ")"];
+
+        } else {
+
+            query.SELECT.where = scopeExpression;
+        }
+    }
 
     return query;
 }
 
 
-// -----------------------------------------------------------------------------
-// Read local Value Help
-// -----------------------------------------------------------------------------
-
 async function readLocalValueHelp(req, valueHelpName, config, scope) {
 
-    const query = buildLocalValueHelpQuery(
-        req,
-        valueHelpName,
-        config,
-        scope
-    );
+    let query;
 
-    console.log(
-        `[VALUE HELP] ${valueHelpName} -> LOCAL`
-    );
+    try {
 
-    console.log(
-        `[VALUE HELP] ${valueHelpName} authorization applied: ` +
-        `customer=${scope.customerIds?.join(",") || "none"}, ` +
-        `projects=${scope.projectIds?.join(",") || "none"}`
+        query = buildLocalValueHelpQuery(req, valueHelpName, config, scope);
+
+    } catch (error) {
+
+        if (error instanceof UnknownValueHelpFieldError) {
+
+            return req.reject(400, error.message);
+        }
+
+        throw error;
+    }
+
+    LOG.info(
+        `[VALUE HELP] ${valueHelpName} -> LOCAL (${config.sourceEntity}), ` +
+        `scope=${scope.unrestricted ? "unrestricted" : (scope.customerIds?.join(",") || "none")}`
     );
 
     const tx = cds.tx(req);
+    const rows = await tx.run(query);
 
-    return tx.run(query);
+    return rows
+        .filter((row) => Object.values(row).some((value) => value !== null && value !== undefined && value !== ""))
+        .map((row) => mapRowToOutput(row, config.fields));
 }
 
 
 // -----------------------------------------------------------------------------
-// Register Value Help authorization
+// Authorized local keys, for scoping an MDM lookup
+// -----------------------------------------------------------------------------
+
+async function getAuthorizedLocalKeys(req, localKeyField, scope) {
+
+    const query = SELECT
+        .distinct
+        .from(localKeyField.entity)
+        .columns([{ ref: [localKeyField.column] }])
+        .where([{ ref: [localKeyField.column] }, "is not null"]);
+
+    const scopeExpression = buildScopeExpression(
+        { target: { name: localKeyField.entity.split(".").pop() } },
+        scope
+    );
+
+    if (scopeExpression) {
+        query.where(["(", ...query.SELECT.where, ")", "and", "(", ...scopeExpression, ")"]);
+    }
+
+    const tx = cds.tx(req);
+    const rows = await tx.run(query);
+
+    return [...new Set(
+        rows
+            .map((row) => row[localKeyField.column])
+            .filter((value) => value !== null && value !== undefined && value !== "")
+    )];
+}
+
+
+async function readScopedMdmValueHelp(req, valueHelpName, config, scope) {
+
+    if (scope.unrestricted) {
+
+        LOG.info(`[VALUE HELP] ${valueHelpName} -> MDM (unrestricted)`);
+
+        return readMdmValueHelp(req, valueHelpName);
+    }
+
+    if (!config.localKeyField) {
+
+        // No local correlate configured - an unrestricted MDM call would
+        // hand a Customer user the entire master catalog, which is exactly
+        // what this fix must prevent. Fail closed.
+        LOG.warn(
+            `[VALUE HELP] ${valueHelpName}: no localKeyField configured, ` +
+            `refusing to return the full MDM catalog to a Customer user`
+        );
+
+        return [];
+    }
+
+    const localValues = await getAuthorizedLocalKeys(req, config.localKeyField, scope);
+
+    if (!localValues.length) {
+
+        LOG.info(`[VALUE HELP] ${valueHelpName}: no authorized local keys -> []`);
+
+        return [];
+    }
+
+    const mdmField = localColumnToMdmField(valueHelpName, config.localKeyField.column);
+
+    const additionalWhere = mdmField
+        ? [{ ref: [mdmField] }, "in", { list: localValues.map((value) => ({ val: value })) }]
+        : null;
+
+    if (!additionalWhere) {
+
+        LOG.warn(
+            `[VALUE HELP] ${valueHelpName}: local key column ` +
+            `'${config.localKeyField.column}' has no corresponding MDM ` +
+            `field - refusing unrestricted MDM call`
+        );
+
+        return [];
+    }
+
+    LOG.info(
+        `[VALUE HELP] ${valueHelpName} -> MDM, scoped to ` +
+        `${localValues.length} authorized local value(s)`
+    );
+
+    return readMdmValueHelp(req, valueHelpName, additionalWhere);
+}
+
+
+// -----------------------------------------------------------------------------
+// Register handlers
 // -----------------------------------------------------------------------------
 
 function registerValueHelpScope(srv) {
 
-  // -----------------------------------------------------------------------------
-// Hybrid Value Help READ handlers
-// -----------------------------------------------------------------------------
-//
-// These Value Helps have two possible sources:
-//
-//     HP       -> MDM
-//     Customer -> LOCAL
-//
-// We handle the routing here explicitly.
-//
-// DO NOT call next().
-// DO NOT return undefined for HP.
-// HP must explicitly call readMdmValueHelp().
-// -----------------------------------------------------------------------------
-
-for (const [valueHelpName, config] of Object.entries(VALUE_HELP_CONFIG)) {
-
-    srv.on("READ", valueHelpName, async req => {
-
-        const scope = await loadUserScope(req);
-
-        const groupIndicator = scope.groupIndicator;
-
-
-        // ---------------------------------------------------------------------
-        // HP
-        // ---------------------------------------------------------------------
-
-        if (groupIndicator === "HP") {
-
-            console.log(
-                `${valueHelpName} -> MDM`
-            );
-
-            return readMdmValueHelp(
-                req,
-                valueHelpName
-            );
-        }
-
-
-        // ---------------------------------------------------------------------
-        // Customer
-        // ---------------------------------------------------------------------
-
-        if (groupIndicator === "C") {
-
-            // -------------------------------------------------------------
-            // Customer visibility
-            // -------------------------------------------------------------
-
-            if (!CUSTOMER_VISIBLE_VALUE_HELPS.has(valueHelpName)) {
-
-                console.log(
-                    `${valueHelpName} hidden for ` +
-                    `${scope.email || "customer"}`
-                );
-
-                return [];
-            }
-
-
-            // -------------------------------------------------------------
-            // Customer must have a valid scope
-            // -------------------------------------------------------------
-
-            if (
-                !scope.customerIds ||
-                scope.customerIds.length === 0
-            ) {
-
-                console.log(
-                    `${valueHelpName} customer scope empty -> []`
-                );
-
-                return [];
-            }
-
-
-            // -------------------------------------------------------------
-            // LOCAL
-            // -------------------------------------------------------------
-
-            console.log(
-                `${valueHelpName} -> LOCAL`
-            );
-
-            console.log(
-                `${valueHelpName} authorization applied: ` +
-                `customer=${scope.customerIds?.join(",") || "none"}, ` +
-                `projects=${scope.projectIds?.join(",") || "none"}`
-            );
-
-            return readLocalValueHelp(
-                req,
-                valueHelpName,
-                config,
-                scope
-            );
-        }
-
-
-        // ---------------------------------------------------------------------
-        // Unknown / unsupported group
-        // ---------------------------------------------------------------------
-
-        console.log(
-            `${valueHelpName} unsupported group=${groupIndicator} -> []`
-        );
-
-        return [];
-    });
-}
- 
-
-
-    // -------------------------------------------------------------------------
-    // 2. Local READ handlers
-    // -------------------------------------------------------------------------
-    //
-    // IMPORTANT:
-    //
-    // These handlers are only responsible for Customer/local requests.
-    //
-    // We do NOT call next().
-    //
-    // For HP requests, the handler returns undefined so the existing MDM
-    // handler can continue.
-    // -------------------------------------------------------------------------
+    validateAllFieldMaps(srv.model.definitions);
 
     for (const [valueHelpName, config] of Object.entries(VALUE_HELP_CONFIG)) {
 
-        srv.on("READ", valueHelpName, async req => {
+        const reader = resolveReader(config, isMdmValueHelp, valueHelpName);
 
-            // -------------------------------------------------------------
-            // Only handle Customer LOCAL requests.
-            // -------------------------------------------------------------
-
-            if (!req._valueHelpLocal) {
-                return;
-            }
-
-
-            const scope = req._valueHelpScope;
-
-            if (!scope) {
-
-                console.log(
-                    `${valueHelpName} missing scope -> empty`
-                );
-
-                return [];
-            }
-
-
-            // -------------------------------------------------------------
-            // Customer authorization
-            // -------------------------------------------------------------
-
-            if (scope.groupIndicator !== "C") {
-
-                return [];
-            }
-
-
-            // -------------------------------------------------------------
-            // No customer assignment -> empty
-            // -------------------------------------------------------------
-
-            if (
-                !scope.customerIds ||
-                scope.customerIds.length === 0
-            ) {
-
-                console.log(
-                    `${valueHelpName} no customer scope -> empty`
-                );
-
-                return [];
-            }
-
-
-            // -------------------------------------------------------------
-            // Execute LOCAL query against SalesOrders / SalesOrderItems
-            // -------------------------------------------------------------
-
-            return readLocalValueHelp(
-                req,
-                valueHelpName,
-                config,
-                scope
-            );
-        });
-    }
-
-
-    // -------------------------------------------------------------------------
-    // 3. MDM-only Value Helps
-    // -------------------------------------------------------------------------
-    //
-    // Do NOT register these again if they already have an explicit MDM READ
-    // handler in the service implementation.
-    //
-    // For Customer users, they must return empty.
-    //
-    // For HP users, the existing MDM handler remains responsible for the
-    // actual remote read.
-    // -------------------------------------------------------------------------
-
-    for (const valueHelpName of Object.keys(MDM_VALUE_HELP_CONFIG)) {
-
-        // -------------------------------------------------------------
-        // Hybrid VH already handled above.
-        // -------------------------------------------------------------
-
-        if (isConfiguredValueHelp(valueHelpName)) {
-            continue;
-        }
-
-
-        srv.before("READ", valueHelpName, async req => {
+        srv.on("READ", valueHelpName, async (req) => {
 
             const scope = await loadUserScope(req);
 
-            const groupIndicator = scope.groupIndicator;
+            // -----------------------------------------------------------
+            // static - no scope concept, just gated by hiddenFields (via
+            // CUSTOMER_VISIBLE_VALUE_HELPS) same as everything else.
+            // -----------------------------------------------------------
 
+            if (reader === "static") {
 
-            // -------------------------------------------------------------
-            // HP
-            // -------------------------------------------------------------
+                if (scope.groupIndicator !== "HP" && !CUSTOMER_VISIBLE_VALUE_HELPS.has(valueHelpName)) {
+                    return [];
+                }
 
-            if (groupIndicator === "HP") {
-
-                console.log(
-                    `${valueHelpName} source determination: ` +
-                    `group=HP, source=MDM`
-                );
-
-                return;
+                return config.rows;
             }
 
+            // -----------------------------------------------------------
+            // Unknown / unsupported group -> fail closed, same as
+            // every other Sales Order read.
+            // -----------------------------------------------------------
 
-            // -------------------------------------------------------------
-            // Customer
-            // -------------------------------------------------------------
+            if (scope.groupIndicator !== "HP" && scope.groupIndicator !== "C") {
 
-            if (groupIndicator === "C") {
+                LOG.warn(`[VALUE HELP] ${valueHelpName}: unsupported group '${scope.groupIndicator}' -> []`);
 
-                console.log(
-                    `${valueHelpName} source determination: ` +
-                    `group=C, source=LOCAL`
-                );
-
-
-                // Customer cannot use MDM-only VH.
-                console.log(
-                    `${valueHelpName} hidden for ` +
-                    `${scope.email || "customer"}`
-                );
-
-                makeValueHelpEmpty(req);
-
-                return;
+                return [];
             }
 
+            // -----------------------------------------------------------
+            // Field-level visibility - applies to HP and Customer alike,
+            // for consistency with the entity-level hidden-fields policy.
+            // -----------------------------------------------------------
 
-            // -------------------------------------------------------------
-            // Unknown group
-            // -------------------------------------------------------------
+            if (scope.groupIndicator === "C" && !CUSTOMER_VISIBLE_VALUE_HELPS.has(valueHelpName)) {
 
-            console.log(
-                `${valueHelpName} unsupported group=${groupIndicator} -> empty`
-            );
+                LOG.info(`[VALUE HELP] ${valueHelpName} hidden for ${scope.email || "customer"}`);
 
-            makeValueHelpEmpty(req);
+                return [];
+            }
+
+            if (scope.groupIndicator === "C" && (!scope.customerIds || scope.customerIds.length === 0)) {
+
+                LOG.info(`[VALUE HELP] ${valueHelpName}: customer has no valid scope -> []`);
+
+                return [];
+            }
+
+            // -----------------------------------------------------------
+            // mdm
+            // -----------------------------------------------------------
+
+            if (reader === "mdm") {
+                return readScopedMdmValueHelp(req, valueHelpName, config, scope);
+            }
+
+            // -----------------------------------------------------------
+            // local
+            // -----------------------------------------------------------
+
+            return readLocalValueHelp(req, valueHelpName, config, scope);
         });
     }
+
+    LOG.info(
+        "[VALUE HELP] Registered " +
+        `${Object.keys(VALUE_HELP_CONFIG).length} value help(s): ` +
+        `${Object.values(VALUE_HELP_CONFIG).filter((c) => c.source === "local").length} local, ` +
+        `${Object.values(VALUE_HELP_CONFIG).filter((c) => c.source === "mdm").length} mdm, ` +
+        `${Object.values(VALUE_HELP_CONFIG).filter((c) => c.source === "static").length} static ` +
+        "(VH_OrderStatus/VH_LineStatus/VH_SalesOrderType/VH_SalesOrderOrigin/" +
+        "VH_ReasonForCancellation are intentionally not registered here - " +
+        "they are shared code lists served correctly by CAP's generic READ " +
+        "handler directly from their own CDS projection)"
+    );
 }
 
 
@@ -780,5 +665,13 @@ for (const [valueHelpName, config] of Object.entries(VALUE_HELP_CONFIG)) {
 module.exports = {
     registerValueHelpScope,
     VALUE_HELP_CONFIG,
-    CUSTOMER_VISIBLE_VALUE_HELPS
+    CUSTOMER_VISIBLE_VALUE_HELPS,
+    isHiddenFromCustomer,
+
+    // exported for tests only
+    buildLocalValueHelpQuery,
+    readLocalValueHelp,
+    readScopedMdmValueHelp,
+    getAuthorizedLocalKeys,
+    validateAllFieldMaps
 };

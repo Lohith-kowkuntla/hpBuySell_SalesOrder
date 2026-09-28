@@ -250,9 +250,38 @@ function isMdmValueHelp(valueHelpName) {
 }
 
 
+/**
+ * Reverse-looks-up the MDM field name that a given local column is exposed
+ * as, for a specific MDM value help. Used to build an "IN (authorized local
+ * values)" filter against MDM in the caller's own field terms, without
+ * hardcoding the MDM-side names anywhere else.
+ *
+ * Example: localColumnToMdmField("VH_BusinessModel", "businessModel") -> "businessmodel"
+ *
+ * @param {string} valueHelpName
+ * @param {string} localColumn
+ * @returns {string|null}
+ */
+function localColumnToMdmField(valueHelpName, localColumn) {
+
+  const config = MDM_VALUE_HELP_CONFIG[valueHelpName];
+
+  if (!config) {
+    return null;
+  }
+
+  const entry = Object.entries(config.outputMap).find(
+    ([, local]) => local === localColumn
+  );
+
+  return entry ? entry[0] : null;
+}
+
+
 module.exports = {
   MDM_SERVICE_NAME,
   MDM_VALUE_HELP_CONFIG,
   isMdmValueHelp,
-  readMdmValueHelp
+  readMdmValueHelp,
+  localColumnToMdmField
 };
